@@ -1,0 +1,10 @@
+{
+  "name": "redux",
+  "_cacheHeaders": {
+    "Content-Type": "application/javascript; charset=utf-8"
+  },
+  "main": "index.js",
+  "_source": "https://npmcdn.com/redux@3.5.2/dist/redux.js",
+  "_target": "*",
+  "_originalSource": "https://npmcdn.com/redux@3.5.2/dist/redux.js"
+}

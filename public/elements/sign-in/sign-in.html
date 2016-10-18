@@ -1,0 +1,98 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/components/paper-menu/paper-menu.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+
+
+<!--
+`sign-in`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="sign-in">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .dropdown-trigger {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+      }
+      .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+      }
+      img {
+        width: 100%;
+      }
+      .dropdown-content {
+        width: 200px;
+      }
+      paper-item {
+        --paper-item: {
+          cursor: pointer;
+        };
+      }
+    </style>
+    <template is="dom-if" if="[[signedIn]]">
+    <paper-menu-button ignore-select horizontal-align="right">
+      <div class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div>[[user.displayName]]</div>
+      <paper-menu class="dropdown-content">
+        <paper-item>Favorites</paper-item>
+        <paper-item>History</paper-item>
+      </paper-menu>
+    </paper-menu-button>
+    </template>
+    <template is="dom-if" if="[[!signedIn]]">
+    <paper-menu-button ignore-select horizontal-align="right">
+      <div class="dropdown-trigger">Sign In</div>
+      <paper-menu class="dropdown-content">
+        <paper-item on-tap="_signIn" id="google">Sign in with Google</paper-item>
+        <paper-item on-tap="_signIn" id="facebook">Sign in with Facebook</paper-item>
+        <paper-item on-tap="_signIn" id="twitter">Sign in with Twitter</paper-item>
+      </paper-menu>
+    </paper-menu-button>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'sign-in',
+      behaviors: [__state__],
+      properties: {
+        user: {
+          type: Object,
+          statePath: 'user',
+          observer: '_userObserver'
+        },
+        signedIn: {
+          type: Boolean,
+          value: false
+        }
+      },
+      ready: function(){
+        this.googleProvider = new firebase.auth.GoogleAuthProvider();
+        this.facebookProvider = new firebase.auth.FacebookAuthProvider();
+        this.twitterProvider = new firebase.auth.TwitterAuthProvider();
+      },
+      _userObserver: function(user){
+        if(user){
+          this.set('signedIn', true);
+        } else {
+          this.set('signedIn', false);
+        }
+      },
+      _signIn: function(e){
+        let social = e.target.id;
+        fb.auth().signInWithRedirect(this[`${social}Provider`]);
+      }
+    });
+  </script>
+</dom-module>

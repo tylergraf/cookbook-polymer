@@ -1,0 +1,140 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/iron-list/iron-list.html">
+<link rel="import" href="/components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/components/iron-input/iron-input.html">
+<link rel="import" href="/components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="/components/file-upload/file-upload.html">
+<link rel="import" href="/elements/polymer-dropzone/polymer-dropzone.html">
+
+<!--
+`manage-icons`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="manage-icons">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input {
+        height: 36px;
+        font-size: 30px;
+        line-height: 30px;
+        font-family: 'Scope One', sans-serif;
+      }
+      iron-autogrow-textarea {
+        background: #fff;
+        line-height: 1.4rem;
+        font-size: 30px;
+        line-height: 30px;
+        font-family: 'Scope One', sans-serif;
+        border: none;
+      }
+      paper-button {
+        background: green;
+        color: #fff;
+      }
+      paper-item {
+        cursor: pointer;
+      }
+      .icon {
+        height: 50px;
+        width: 50px;
+        background: transparent no-repeat 0 0;
+        background-size: contain;
+      }
+      iron-list {
+        height: 100vh;
+      }
+      .icons {
+        display: flex;
+        flex-flow: wrap;
+      }
+      .icon-wrapper {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        padding: 10px;
+      }
+    </style>
+
+    <h1>New Recipe</h1>
+    <form id="newRecipeForm" on-submit="_save">
+      <div>
+        <label for="name">Name</label>
+        <input id="name" is="iron-input" bind-value="{{name}}" type="text">
+      </div>
+      <div>
+        <label for="image">Image</label>
+        <polymer-dropzone id="iconUploader" user="[[user]]" path="/icons"></polymer-dropzone>
+      </div>
+
+      <paper-button on-tap="_save">Save</paper-button>
+    </form>
+    <div class="icons">
+      <template is="dom-repeat" items="[[icons]]" as="icon">
+        <div class="icon-wrapper">
+          <div class="icon" style$="background-image:url('[[icon.imageUrl]]')"></div>
+          <p>[[icon.name]]</p>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'manage-icons',
+      behaviors: [__state__],
+      properties: {
+        user: {
+          type: Object,
+          statePath: 'user'
+        },
+        imageUrl: {
+          type: Object
+        },
+        icons: {
+          type: Array,
+          statePath: 'icons',
+          observer: '_ok'
+        }
+      },
+      ready: function(){
+        this.dispatch(__actions__.getIcons());
+        this.$.iconUploader.addEventListener('image-uploaded',e=>{
+          this.imageUrl = e.detail.downloadURL;
+          if(!this.name){
+            this.name = e.detail.file.name.split('.svg')[0];
+          }
+        });
+      },
+      _ok: function(e){
+
+      },
+      _save: function(e){
+        e.preventDefault();
+
+        var newIcon = {
+          name: this.name,
+          imageUrl: this.imageUrl,
+          created: new Date().getTime(),
+        }
+        this.dispatch(__actions__.addIcon(newIcon));
+
+        return false;
+      },
+    });
+  </script>
+</dom-module>

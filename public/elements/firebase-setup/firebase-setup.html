@@ -1,0 +1,59 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymerfire/firebase-app.html">
+<link rel="import" href="/components/polymerfire/firebase-auth.html">
+
+<!--
+`firebase-setup`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="firebase-setup">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <firebase-app auth-domain="cookbook-144005.firebaseapp.com"
+      database-url="https://cookbook-144005.firebaseio.com"
+      api-key="AIzaSyAhh3pxACqcPjT7stYyNYeH5NLXAUWkyao">
+    </firebase-app>
+    <!-- <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+    </firebase-auth> -->
+  </template>
+
+  <script>
+    Polymer({
+      is: 'firebase-setup',
+      // handleError: function(err){
+      //   // debugger;
+      //   console.log(err);
+      // },
+      // ready: function(){
+      //   debugger;
+      //   firebase.auth().onAuthStateChanged(function(user) {
+      //     if (user) {
+      //       return that._listen();
+      //     }
+      //
+      //     firebase.auth().signInWithCustomToken(FS.User.FB_JWT).then(function(result) {
+      //       // This gives you a Google Access Token. You can use it to access the Google API.
+      //       var token = result.credential.accessToken;
+      //     }).catch(function(error) {
+      //       console.log(error);
+      //     });
+      //   });
+      //   // if(this.$.auth.)
+      //   this.$.auth.signInWithPopup()
+      //     .then(function(response) {
+      //       console.log(response);
+      //     })
+      //     .catch(function(error) {
+      //       console.log(error);
+      //     });
+      // }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,103 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/components/paper-menu/paper-menu.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/iron-icons/iron-icons.html">
+
+
+<!--
+`favorite-recipe`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="favorite-recipe">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .dropdown-trigger {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+      }
+      .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+      }
+      img {
+        width: 100%;
+      }
+      .dropdown-content {
+        width: 200px;
+      }
+      paper-item {
+        --paper-item: {
+          cursor: pointer;
+        };
+      }
+    </style>
+
+    <template is="dom-if" if="[[_showFavorite()]]">
+      <template is="dom-if" if="[[favorite]]">
+      <iron-icon icon="favorite" on-tap="_unfavorite" title="Remove this recipe from your Favorites."></iron-icon>
+      </template>
+      <template is="dom-if" if="[[!favorite]]">
+      <iron-icon icon="favorite-border" on-tap="_favorite" title="Add this recipe to your Favorites."></iron-icon>
+      </template>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'favorite-recipe',
+      behaviors: [__state__],
+      properties: {
+        recipeId: {
+          type: String,
+          observer: '_recipeIdObserver'
+        },
+        subcategoryId: {
+          type: String
+        },
+        userId: {
+          type: String,
+          observer: '_userIdObserver',
+          statePath: 'user.uid'
+        },
+        favorites: {
+          type: Array,
+          statePath: 'favorites',
+          observer: '_favoritesObserver'
+        }
+      },
+      ready: function(){
+
+      },
+      _userIdObserver: function(){
+        if(this.recipeId){
+          this.dispatch(__actions__.getFavorite(this.recipeId, this.userId));
+        }
+      },
+      _favoritesObserver: function(favorites){
+        this.set('favorite', favorites.includes(this.recipeId))
+      },
+      _showFavorite: function(){
+        return this.recipeId && this.userId;
+      },
+      _favorite: function(e){
+        e.preventDefault();
+        this.dispatch(__actions__.addFavorite(this.recipeId, this.subcategoryId, this.userId));
+      },
+      _unfavorite: function(e){
+        e.preventDefault();
+        this.dispatch(__actions__.removeFavorite(this.recipeId, this.subcategoryId, this.userId));
+      }
+    });
+  </script>
+</dom-module>

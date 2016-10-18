@@ -1,0 +1,169 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-card/paper-card.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
+<link rel="import" href="/elements/recipe-service/recipe-service.html">
+<link rel="import" href="/elements/favorite-recipe/favorite-recipe.html">
+<link rel="import" href="/components/iron-icons/iron-icons.html">
+
+<!--
+`recipe-card`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="recipe-card">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+        max-width: 400px;
+        font-family: 'Scope One', serif;
+      }
+      .card-header {
+        padding: 0;
+        margin: 0;
+      }
+      paper-card {
+        font-family: 'Scope One', serif;
+        margin: 10px;
+        width: 300px;
+        color: #333;
+      }
+    
+      paper-card.blue {
+        --paper-card-header: {
+          background: var(--blue-color);
+          height: 140px;
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          justify-content: center;
+        };
+      }
+      paper-card.red {
+        --paper-card-header: {
+          background: var(--red-color);
+          height: 140px;
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          justify-content: center;
+        };
+      }
+      paper-card.yellow {
+        --paper-card-header: {
+          background: var(--yellow-color);
+          height: 140px;
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          justify-content: center;
+        };
+      }
+      paper-card.green {
+        --paper-card-header: {
+          background: var(--green-color);
+          height: 140px;
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          justify-content: center;
+        };
+      }
+      paper-card.purple {
+        --paper-card-header: {
+          background: var(--purple-color);
+          height: 140px;
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          justify-content: center;
+        };
+      }
+      paper-card.orange {
+        --paper-card-header: {
+          background: var(--orange-color);
+          height: 140px;
+          display: flex;
+          flex-flow: row;
+          align-items: center;
+          justify-content: center;
+        };
+      }
+      paper-card {
+        --paper-card-header-image: {
+          width: 90px;
+        };
+      }
+
+    </style>
+    <a href="/recipe/[[id]]">
+      <paper-card id="card" image="[[imageUrl]]" class$="[[_hasIcon(icon, color)]]">
+        <div class="card-content">
+          <template is="dom-if" if="[[color]]">
+            <div class$="card-header [[color]]"></div>
+          </template>
+          <h2 class="card-header">[[title]]</h2>
+          <p>[[description]]</p>
+          <div><iron-icon icon="favorite"></iron-icon> [[favorites]]</div>
+        </div>
+        <div class="card-actions">
+          <favorite-recipe recipe-id="[[recipe.id]]" subcategory-id="[[recipe.subcategoryId]]"></favorite-recipe>
+        </div>
+      </paper-card>
+    </a>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'recipe-card',
+      properties: {
+        recipe: {
+          type: Object,
+          observer: '_recipeObserver'
+        },
+        title: {
+          type: String
+        },
+        icon: {
+          type: Object
+        },
+        id: {
+          type: String
+        },
+        description: {
+          type: String
+        },
+        imageUrl: {
+          type: String,
+          value: 'https://firebasestorage.googleapis.com/v0/b/cookbook-144005.appspot.com/o/i…2e50cb5df0-cheese.svg?alt=media&token=0ee3dc9f-bf14-47c5-86c6-d498984a75a7',
+          observer: '_imageUrlObserver'
+        },
+        color: {
+          type: String
+        }
+      },
+
+      _hasIcon: function(icon, color){
+        return (icon) ? `icon ${color}`: color;
+      },
+      _imageUrlObserver: function(imageUrl){
+        console.log(imageUrl);
+      },
+      _recipeImage: function(recipe){
+
+        if(!this.recipe) return;
+        console.log(this.recipe);
+        if(this.recipe.icon){
+          return this.recipe.imageUrl || this.recipe.icon.imageUrl;
+        }
+        return this.recipe.imageUrl;
+      },
+      _recipeObserver: function(recipe){
+        debugger;
+        console.log(recipe);
+      }
+    });
+  </script>
+</dom-module>

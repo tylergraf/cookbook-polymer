@@ -1,0 +1,10 @@
+{
+  "name": "redux-thunk",
+  "_cacheHeaders": {
+    "Content-Type": "application/javascript"
+  },
+  "main": "index.js",
+  "_source": "https://npmcdn.com/redux-thunk@2.1.0/dist/redux-thunk.js",
+  "_target": "*",
+  "_originalSource": "https://npmcdn.com/redux-thunk@2.1.0/dist/redux-thunk.js"
+}
