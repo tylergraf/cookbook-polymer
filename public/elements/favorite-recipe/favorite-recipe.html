@@ -1,8 +1,6 @@
 <link rel="import" href="/components/polymer/polymer.html">
-<link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="/components/paper-menu/paper-menu.html">
-<link rel="import" href="/components/paper-item/paper-item.html">
 <link rel="import" href="/components/iron-icons/iron-icons.html">
+<link rel="import" href="/components/iron-icon/iron-icon.html">
 
 
 <!--
@@ -16,34 +14,10 @@
   <template>
     <style>
       :host {
-        display: block;
-      }
-      .dropdown-trigger {
-        display: flex;
-        flex-flow: row;
-        align-items: center;
-      }
-      .avatar {
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 10px;
-      }
-      img {
-        width: 100%;
-      }
-      .dropdown-content {
-        width: 200px;
-      }
-      paper-item {
-        --paper-item: {
-          cursor: pointer;
-        };
       }
     </style>
 
-    <template is="dom-if" if="[[_showFavorite()]]">
+    <template is="dom-if" if="[[_showFavorite(userId, recipeId, subcategoryId)]]">
       <template is="dom-if" if="[[favorite]]">
       <iron-icon icon="favorite" on-tap="_unfavorite" title="Remove this recipe from your Favorites."></iron-icon>
       </template>
@@ -60,7 +34,7 @@
       properties: {
         recipeId: {
           type: String,
-          observer: '_recipeIdObserver'
+          observer: '_userIdObserver'
         },
         subcategoryId: {
           type: String
@@ -80,15 +54,15 @@
 
       },
       _userIdObserver: function(){
-        if(this.recipeId){
+        if(this.recipeId && this.userId){
           this.dispatch(__actions__.getFavorite(this.recipeId, this.userId));
         }
       },
       _favoritesObserver: function(favorites){
         this.set('favorite', favorites.includes(this.recipeId))
       },
-      _showFavorite: function(){
-        return this.recipeId && this.userId;
+      _showFavorite: function(userId, recipeId){
+        return recipeId && userId;
       },
       _favorite: function(e){
         e.preventDefault();

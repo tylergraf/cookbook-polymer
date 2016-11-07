@@ -4,7 +4,10 @@
     categories: [],
     subcategories: [],
     favorites: [],
-    newRecipe: {}
+    recipes: [],
+    recipeObjs: {},
+    newRecipe: {},
+    user: null
   };
   function reducer(state, action){
     switch (action.type) {
@@ -26,7 +29,28 @@
         }
         break;
       case 'SET_USER':
-        state.user = action.user;
+        state.user = Object.assign({}, action.user);
+        break;
+      case 'UNSET_USER':
+        state.user = null;
+        break;
+      case 'SET_RECIPE_COLOR':
+        state.recipes = state.recipes.map(recipe=>{
+          var newRecipe = Object.assign({}, recipe);
+          if(action.recipe.id === newRecipe.id){
+            newRecipe.color = action.color;
+          }
+          return newRecipe;
+        });
+        break;
+      case 'SET_RECIPE_ICON':
+        state.recipes = state.recipes.map(recipe=>{
+          var newRecipe = Object.assign({}, recipe);
+          if(action.recipe.id === newRecipe.id){
+            newRecipe.icon = action.icon;
+          }
+          return newRecipe;
+        });
         break;
       case 'SELECT_CATEGORY':
         state.categoryId = action.categoryId;
@@ -38,6 +62,9 @@
         break;
       case 'RECEIVE_CATEGORIES':
         state.categories = action.categories;
+        break;
+      case 'RECEIVE_FAVORITES':
+        state.favorites = action.favorites;
         break;
       case 'RECEIVE_ICONS':
         state.icons = action.icons;
@@ -52,9 +79,13 @@
         break;
       case 'RECEIVE_SUBCATEGORY':
         if(action.recipes){
-          state.recipes = toArray(action.recipes);
+          var recipes = toArray(action.recipes);
+          state.recipes = recipes;
         }
         state.subcategory = Object.assign({}, action.subcategory);
+        break;
+      case 'RECEIVE_RECIPE':
+        state.recipeObjs[action.recipe.id] = action.recipe;
         break;
       case 'RECIPE_ADDED':
         state.recipeAdded = true;

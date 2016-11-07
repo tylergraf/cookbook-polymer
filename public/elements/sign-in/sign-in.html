@@ -2,6 +2,7 @@
 <link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="/components/paper-menu/paper-menu.html">
 <link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
 
 
 <!--
@@ -17,10 +18,21 @@
       :host {
         display: block;
       }
+      paper-item {
+        font-family: var(--body-font);
+      }
+      a {
+        text-decoration: none;
+        width: 100%;
+      }
+      a:hover paper-item {
+        background: #f0f0f0;
+      }
       .dropdown-trigger {
         display: flex;
         flex-flow: row;
         align-items: center;
+        white-space: nowrap;
       }
       .avatar {
         height: 40px;
@@ -35,18 +47,32 @@
       .dropdown-content {
         width: 200px;
       }
+      paper-button {
+        margin-top: 5px;
+        background-color: var(--blue-color);
+        color: #fff;
+      }
       paper-item {
         --paper-item: {
           cursor: pointer;
         };
       }
+      @media (max-width: 550px) {
+        .avatar {
+          height: 25px;
+          width: 25px;
+        }
+        .dropdown-trigger span {
+          display: none;
+        }
+      }
     </style>
     <template is="dom-if" if="[[signedIn]]">
     <paper-menu-button ignore-select horizontal-align="right">
-      <div class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div>[[user.displayName]]</div>
+      <div class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div><span>[[user.displayName]]</span></div>
       <paper-menu class="dropdown-content">
-        <paper-item>Favorites</paper-item>
-        <paper-item>History</paper-item>
+        <!-- <a href="/favorites"><paper-item>Favorites</paper-item></a> -->
+        <paper-item><paper-button on-tap="_signOut">Sign Out</paper-button></paper-item>
       </paper-menu>
     </paper-menu-button>
     </template>
@@ -92,6 +118,10 @@
       _signIn: function(e){
         let social = e.target.id;
         fb.auth().signInWithRedirect(this[`${social}Provider`]);
+      },
+      _signOut: function(e){
+        let social = e.target.id;
+        fb.auth().signOut().then(()=>this.dispatch({type: 'UNSET_USER'}));
       }
     });
   </script>

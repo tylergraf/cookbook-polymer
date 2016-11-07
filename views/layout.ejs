@@ -14,8 +14,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>My App</title>
-    <meta name="description" content="My App description">
+    <title>Gretchen's Cookbook</title>
+    <meta name="description" content="Delicious recipes collected by my Mom. :)">
 
     <link rel="icon" href="/images/favicon.ico">
 
@@ -27,12 +27,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="My App">
+    <meta name="application-name" content="Gretchen's Cookbook">
 
     <!-- Add to homescreen for Safari on iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="My App">
+    <meta name="apple-mobile-web-app-title" content="Gretchen's Cookbook">
 
     <!-- Homescreen icons -->
     <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
@@ -122,30 +122,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               } catch(e){
                 return;
               }
-              console.log('got here');
               firebase.auth().signInWithCustomToken(user.stsTokenManagement.refreshToken);
 
             }
-
-            // firebase.auth().getRedirectResult().then(function(result) {
-            //   debugger;
-            //   if (result.credential) {
-            //     // This gives you a Google Access Token. You can use it to access the Google API.
-            //     var token = result.credential.accessToken;
-            //     // ...
-            //   }
-            //   // The signed-in user info.
-            //   var user = result.user;
-            // }).catch(function(error) {
-            //   // Handle Errors here.
-            //   var errorCode = error.code;
-            //   var errorMessage = error.message;
-            //   // The email of the user's account used.
-            //   var email = error.email;
-            //   // The firebase.auth.AuthCredential type that was used.
-            //   var credential = error.credential;
-            //   // ...
-            // });
           });
 
         </script>
@@ -157,6 +136,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <style is="custom-style">
       :root {
+        --white-color: #fff;
         --blue-color: #4A75E6;
         --red-color: #EA2533;
         --yellow-color: #FEBC1F;
@@ -181,19 +161,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --paper-icon-button-ink-color: white;
       }
       .page-wrapper {
-        max-width: 1000px;
-        margin: 0 auto;
+        /*max-width: 1000px;*/
+        /*margin: 0 auto;*/
       }
     </style>
 
   </head>
-  <body>
+  <body class="fullbleed layout vertical">
 
 
-    <app-header-layout>
+    <app-header-layout class="flex">
       <app-header fixed>
         <app-toolbar>
-          <div main-title>Gretchen's Cookbook</div>
+          <div main-title>
+            Gretchen's Cookbook
+          </div>
           <sign-in></sign-in>
         </app-toolbar>
       </app-header>

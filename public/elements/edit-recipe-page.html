@@ -1,0 +1,423 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/components/iron-selector/iron-selector.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="/components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="/components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/components/iron-input/iron-input.html">
+<link rel="import" href="/components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="/components/file-upload/file-upload.html">
+<link rel="import" href="/elements/polymer-dropzone/polymer-dropzone.html">
+<link rel="import" href="/elements/recipe-card/recipe-card.html">
+<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
+<link rel="import" href="/components/iron-icon/iron-icon.html">
+<link rel="import" href="/components/app-route/app-route.html">
+
+<!--
+`edit-recipe-page`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="edit-recipe-page">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input {
+        height: 36px;
+        font-size: 30px;
+        line-height: 30px;
+        font-family: 'Scope One', sans-serif;
+      }
+      iron-autogrow-textarea {
+        background: #fff;
+        line-height: 1.4rem;
+        font-size: 30px;
+        line-height: 30px;
+        font-family: 'Scope One', sans-serif;
+        border: none;
+      }
+      paper-button {
+        background: green;
+        color: #fff;
+      }
+      paper-item {
+        cursor: pointer;
+      }
+      .colors {
+        display: flex;
+        flex-flow: wrap;
+        justify-content: space-between;
+      }
+      .color-wrapper {
+        border: 1px solid transparent;
+
+      }
+      .color {
+        height: 50px;
+        width: 50px;
+        margin: 4px;
+      }
+      .color-wrapper.iron-selected {
+        border-color:#333;
+      }
+      .white {
+        background-color: var(--white-color);
+      }
+      .blue {
+        background-color: var(--blue-color);
+      }
+      .red {
+        background-color: var(--red-color);
+      }
+      .yellow {
+        background-color: var(--yellow-color);
+      }
+      .green {
+        background-color: var(--green-color);
+      }
+      .purple {
+        background-color: var(--purple-color);
+      }
+      .orange {
+        background-color: var(--orange-color);
+      }
+      .icon {
+        height: 50px;
+        width: 50px;
+        background: transparent no-repeat 0 0;
+        background-size: contain;
+        margin: 4px;
+      }
+      .icons {
+        display: flex;
+        flex-flow: wrap;
+        max-height: 300px;
+        overflow: scroll;
+      }
+      .icon-wrapper-plus.iron-selected .icon-wrapper {
+        border: 1px solid #333;
+      }
+      .icon-wrapper-plus {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        padding: 10px;
+        width: 28%;
+      }
+      .icon-wrapper-plus p {
+        margin-top: 6px;
+        margin-bottom: 0;
+      }
+      .icon-wrapper {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+        height: 80px;
+        width: 80px;
+        background: #fff;
+        border: 1px solid #fff;
+
+      }
+      .fix-it {
+        position: fixed;
+        right: 10px;
+        top: 80px;
+        z-index: 1;
+        width: 300px;
+      }
+      .icon-selector {
+        max-width: 400px;
+        width: 100%;
+      }
+    </style>
+    <div class="fix-it">
+      <recipe-card  title="[[title]]"
+                    description="[[description]]"
+                    ingredients="[[ingredientsArr]]"
+                    directions="[[directionsArr]]"
+                    color="[[color]]"
+                    icon="[[icon]]"
+                    image-url="[[imageUrl]]"
+      ></recipe-card>
+    </div>
+    
+    <h1>New Recipe</h1>
+    <form id="newRecipeForm" on-submit="_addRecipe">
+      <div>
+        <label for="title">Title</label>
+        <input id="title" is="iron-input" bind-value="{{title::input}}" type="text" autofocus>
+      </div>
+      <div>
+        <label for="description">Description</label>
+        <iron-autogrow-textarea rows="2" id="description" bind-value="{{description}}"></iron-autogrow-textarea>
+      </div>
+      <div>
+        <label for="ingredients">Ingredients (each ingredient on a new line)</label>
+        <iron-autogrow-textarea rows="2" id="ingredients" bind-value="{{ingredients}}"></iron-autogrow-textarea>
+      </div>
+      <div>
+        <label for="directions">Directions (each step on a new line)</label>
+        <iron-autogrow-textarea rows="2" id="directions" bind-value="{{directions}}"></iron-autogrow-textarea>
+      </div>
+      <div>
+        <label for="image">Image</label>
+        <paper-radio-group selected="icon" id="imageType">
+          <paper-radio-button name="icon" value="icon">Icon</paper-radio-button>
+          <paper-radio-button name="image" value="image">Image</paper-radio-button>
+        </paper-radio-group>
+        <section hidden$="[[!_showImageUploader(imageType)]]">
+          <polymer-dropzone id="upload" user="[[user]]" path="images/[[user.uid]]"></polymer-dropzone>
+          <input id="image" is="iron-input" bind-value="{{imageUrl}}" type="text">
+        </section>
+
+        <section hidden$="[[_showImageUploader(imageType)]]" class="icon-selector">
+          <iron-selector id="colors" selected="0" class="colors">
+            <template is="dom-repeat" items="[[colors]]" as="color">
+              <div class="color-wrapper" color$="[[color]]">
+                <div class$="color [[color]]"></div>
+              </div>
+            </template>
+          </iron-selector>
+
+          <div>
+            <input type="text" name="name" value="{{iconFilterVal::input}}" placeholder="Filter Icons">
+            <iron-selector id="icons" selected="0" class="icons">
+                <template is="dom-repeat" items="[[icons]]" as="icon" id="iconRepeat" filter="[[_filterIcons(iconFilterVal)]]">
+                  <div class="icon-wrapper-plus" icon$="[[icon.icon]]">
+                    <div class="icon-wrapper">
+                      <iron-icon class="icon" icon="[[icon.icon]]"></iron-icon>
+                    </div>
+                    <p>[[icon.name]]</p>
+                  </div>
+                </template>
+
+            </iron-selector>
+          </div>
+        </section>
+
+      </div>
+      <div>
+        <paper-dropdown-menu label="Category" disabled$="[[!categories.length]]" vertical-align="bottom" horizontal-align="left" on-iron-select="_categorySelected">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[categories]]" as="category">
+              <paper-item value="[[category.id]]">[[category.name]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+
+      <div>
+        <paper-dropdown-menu id="subcategoryDD" label="Subcategory" disabled$="[[!subcategories.length]]" vertical-align="bottom" horizontal-align="left" on-iron-select="_subcategorySelected">
+          <paper-listbox id="subcategoryList" class="dropdown-content">
+            <template is="dom-repeat" items="[[subcategories]]" as="subcategory">
+              <paper-item value="[[subcategory.id]]">[[subcategory.name]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+
+      <paper-button on-tap="_addRecipe">Save</paper-button>
+    </form>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'edit-recipe-page',
+      behaviors: [__state__],
+      properties: {
+        user: {
+          type: Object,
+          statePath: 'user'
+        },
+        categoryId: {
+          type: String,
+          statePath: 'categoryId',
+          observer: '_categoryIdObserver'
+        },
+        subcategoryId: {
+          type: String,
+          statePath: 'subcategoryId',
+          observer: '_subcategoryIdObserver'
+        },
+        categories: {
+          type: Object,
+          statePath: 'categories'
+        },
+        icons: {
+          type: Object,
+          statePath: 'icons'
+        },
+        subcategories: {
+          type: Object,
+          statePath: 'subcategories'
+        },
+        newRecipe: {
+          type: Object,
+          value: {
+            title: 'stuff'
+          }
+        },
+        title: {
+          type: String,
+          value: ''
+        },
+        description: {
+          type: String,
+          value: ''
+        },
+        icon: {
+          type: Object,
+          value: {}
+        },
+        color: {
+          type: String,
+          value: 'red'
+        },
+        ingredients: {
+          type: String,
+          observer: '_ingredientsObserver'
+        },
+        directions: {
+          type: String,
+          observer: '_directionsObserver'
+        },
+        imageUrl: {
+          type: Object,
+          value: '',
+          statePath: 'newRecipe.imageUrl'
+        },
+        imageType: {
+          type: String,
+        },
+        colors: {
+          type: Array,
+          value: ['white','red','blue','green','yellow','purple','orange']
+        }
+      },
+      observers: ['_recipePreview(title,description,color,icon,imageUrl)','_viewChanged(routeData.recipeId)'],
+      _viewChanged: function(recipeId){
+        debugger;
+        if(this.route.prefix.includes('/recipe') && recipeId){
+          this.recipeId = recipeId;
+          this.dispatch(__actions__.getRecipe(recipeId));
+        }
+      },
+      ready: function(){
+        debugger;
+        this.dispatch(__actions__.getCategories());
+        this.dispatch(__actions__.getIcons());
+
+        this.$.icons.addEventListener('iron-select', (e)=>{
+          this.set('icon.id', e.detail.item.id);
+          this.set('icon.icon', e.detail.item.getAttribute('icon'));
+        });
+        this.$.colors.addEventListener('iron-select', (e,a)=>{
+          this.set('color', e.detail.item.getAttribute('color'));
+        });
+        this.$.upload.addEventListener('image-uploaded', (e)=>{
+          this.set('imageUrl', e.detail.downloadURL);
+        });
+        this.$.upload.addEventListener('image-deleted', (e)=>{
+          this.set('imageUrl', '');
+        });
+        this.$.imageType.addEventListener('iron-select', (e)=>{
+          this.set('imageType', e.detail.item.value)
+        });
+        this.$.subcategoryList.addEventListener('iron-items-changed', (e)=>{
+          this.$.subcategoryList.selectIndex(0);
+        });
+      },
+      _ingredientsObserver: function(ingredients){
+        if(ingredients){
+          this.set('ingredientsArr',this.ingredients.split('\n'));
+        }
+      },
+      _directionsObserver: function(directions){
+        if(directions){
+          this.set('directionsArr',this.directions.split('\n'));
+        }
+      },
+      _showImageUploader: function(imageType){
+        return imageType === 'image';
+      },
+      _filterIconHandler: function(e) {
+        console.log(e.target.value);
+      },
+      _filterIcons: function(val) {
+        return function(icon) {
+          if (!val) return true;
+          if (!icon) return false;
+          return (icon.name && icon.name.includes(val));
+        };
+      },
+      _recipePreview: function(title,description,color,icon,imageUrl){
+        this.set('title',title);
+        this.set('description',description);
+        this.set('color',color);
+        this.set('icon',icon);
+        this.set('imageUrl',imageUrl);
+      },
+      _categoryIdObserver: function(categoryId){
+        let action = {
+          type: 'SELECT_SUBCATEGORY'
+        };
+
+        this.dispatch(action);
+        if(!categoryId) return;
+
+        this.dispatch(__actions__.getCategory(categoryId));
+      },
+      _subcategoryIdObserver: function(subcategoryId){
+        this.$.subcategoryList.selectIndex(0);
+      },
+      _categorySelected: function(e){
+        var selectedItem = e.target.selectedItem;
+        let action = {
+          type: 'SELECT_CATEGORY',
+          categoryId: selectedItem && selectedItem.value
+        };
+
+        this.dispatch(action);
+      },
+      _subcategorySelected: function(e){
+        var selectedItem = e.target.selectedItem;
+        let action = {
+          type: 'SELECT_SUBCATEGORY',
+          subcategoryId: selectedItem && selectedItem.value
+        };
+
+        this.dispatch(action);
+      },
+      _addRecipe: function(e){
+        e.preventDefault();
+
+        var newRecipe = {
+          title: this.title,
+          imageUrl: this.imageUrl || '',
+          description: this.description,
+          ingredients: this.ingredients.split('\n'),
+          directions: this.directions.split('\n'),
+          icon: this.icon,
+          color: this.color,
+          created: new Date().getTime(),
+        }
+        this.dispatch(__actions__.addRecipe(newRecipe, this.subcategoryId, this.user.uid));
+
+        return false;
+      },
+    });
+  </script>
+</dom-module>

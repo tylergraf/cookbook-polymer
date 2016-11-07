@@ -1,0 +1,100 @@
+<link rel="import" href="/components/polymer/polymer.html">
+
+
+<!--
+`taxonomy-path`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="taxonomy-path">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow:row;
+      }
+      h2 {
+        font-size: 20px;
+        line-height: 1.4em;
+        margin: 0;
+      }
+      a {
+        color: var(--white-color);
+        margin-right: 10px;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      [hidden] {
+        display: none;
+      }
+      @media (max-width: 550px) {
+        h2 {
+          font-size: 18px;
+        }
+      }
+    </style>
+
+    <h2><a href="/">Categories</a></h2>
+    <h2 hidden$="[[_show(show, 'category')]]"><a href="/category/[[category.id]]">[[category.name]]</a></h2>
+    <h2 hidden$="[[_show(show, 'subcategory')]]"><a href="/subcategory/[[subcategory.id]]">[[subcategory.name]]</a></h2>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'taxonomy-path',
+      behaviors: [__state__],
+      properties: {
+        categoryId: {
+          type: String,
+          observer: '_categoryIdObserver'
+        },
+        category: {
+          type: Object,
+          statePath: 'category'
+        },
+        subcategoryId: {
+          type: String,
+          observer: '_subcategoryIdObserver'
+        },
+        subcategory: {
+          type: Object,
+          statePath: 'subcategory',
+          observer: '_subcategoryObserver'
+        },
+        show: {
+          type: String,
+          value: ''
+        }
+      },
+      _show: function(show, item){
+        if(show){
+          var showing = show.split(',');
+          if(showing.includes(item)){
+            return false;
+          }
+        }
+        return true;
+      },
+      _categoryIdObserver: function(id){
+        if(id){
+          this.dispatch(__actions__.getCategory(id));
+        }
+      },
+      _subcategoryIdObserver: function(id){
+        if(id){
+          this.dispatch(__actions__.getSubcategory(id));
+        }
+      },
+      _subcategoryObserver: function(subcategory){
+        if(subcategory && subcategory.name && !(this.category && this.category.name)){
+          this.dispatch(__actions__.getCategory(subcategory.categoryId));
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -37,7 +37,12 @@
     "firebase-upload": "^0.0.2",
     "vaadin-upload": "^1.1.0",
     "dropzone": "^4.3.0",
-    "paper-progress": "PolymerElements/paper-progress#^1.0.11"
+    "paper-progress": "PolymerElements/paper-progress#^1.0.11",
+    "paper-radio-group": "PolymerElements/paper-radio-group#^1.2.1",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.1",
+    "paper-header-panel": "PolymerElements/paper-header-panel#^1.1.7",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.7",
+    "paper-ripple": "PolymerElements/paper-ripple#^1.0.10"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

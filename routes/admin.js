@@ -5,6 +5,9 @@ var router = express.Router();
 router.get('/icons', function(req, res, next) {
   res.render('admin/icons');
 });
+router.get('/convert', function(req, res, next) {
+  res.render('admin/converter');
+});
 
 
 module.exports = router;

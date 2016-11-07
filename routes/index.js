@@ -11,6 +11,9 @@ router.get('/category/:categoryId', function(req, res, next) {
 router.get('/subcategory/:subcategoryId', function(req, res, next) {
   res.render('subcategory', { title: 'Express', subcategoryId: req.params.subcategoryId });
 });
+router.get('/favorites', function(req, res, next) {
+  res.render('favorites');
+});
 router.get('/recipe/add', function(req, res, next) {
   res.render('add-recipe');
 });

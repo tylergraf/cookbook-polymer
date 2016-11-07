@@ -3,7 +3,9 @@
 <link rel="import" href="/components/paper-button/paper-button.html">
 <link rel="import" href="/elements/recipe-service/recipe-service.html">
 <link rel="import" href="/elements/favorite-recipe/favorite-recipe.html">
-<link rel="import" href="/components/iron-icons/iron-icons.html">
+<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
+<link rel="import" href="/components/iron-icon/iron-icon.html">
+<link rel="import" href="/components/paper-checkbox/paper-checkbox.html">
 
 <!--
 `recipe-card`
@@ -17,117 +19,151 @@
     <style is="custom-style">
       :host {
         display: block;
-        max-width: 400px;
         font-family: 'Scope One', serif;
       }
       .card-header {
         padding: 0;
         margin: 0;
       }
+      .card-heading {
+        margin: 0;
+        line-height: 1em;
+      }
+      .icon .card-heading {
+        margin: 0;
+        margin-top: 15px;
+      }
+      p {
+        margin: 5px 0;
+      }
       paper-card {
         font-family: 'Scope One', serif;
-        margin: 10px;
-        width: 300px;
+        margin: 0;
+        width: 100%;
         color: #333;
       }
-    
-      paper-card.blue {
+
+      paper-card.icon {
         --paper-card-header: {
-          background: var(--blue-color);
-          height: 140px;
-          display: flex;
-          flex-flow: row;
-          align-items: center;
-          justify-content: center;
-        };
-      }
-      paper-card.red {
-        --paper-card-header: {
-          background: var(--red-color);
-          height: 140px;
-          display: flex;
-          flex-flow: row;
-          align-items: center;
-          justify-content: center;
-        };
-      }
-      paper-card.yellow {
-        --paper-card-header: {
-          background: var(--yellow-color);
-          height: 140px;
-          display: flex;
-          flex-flow: row;
-          align-items: center;
-          justify-content: center;
-        };
-      }
-      paper-card.green {
-        --paper-card-header: {
-          background: var(--green-color);
-          height: 140px;
-          display: flex;
-          flex-flow: row;
-          align-items: center;
-          justify-content: center;
-        };
-      }
-      paper-card.purple {
-        --paper-card-header: {
-          background: var(--purple-color);
-          height: 140px;
-          display: flex;
-          flex-flow: row;
-          align-items: center;
-          justify-content: center;
-        };
-      }
-      paper-card.orange {
-        --paper-card-header: {
-          background: var(--orange-color);
-          height: 140px;
-          display: flex;
-          flex-flow: row;
-          align-items: center;
-          justify-content: center;
-        };
-      }
-      paper-card {
-        --paper-card-header-image: {
-          width: 90px;
+          display: none;
         };
       }
 
+      paper-card {
+        --paper-card-header: {
+          height: 140px;
+          overflow: hidden;
+          display: block;
+        };
+        --paper-card-header-image: {
+          position: relative;
+          top: -50%;
+        };
+      }
+      paper-card .header-icon {
+        height: 140px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: -16px -16px 0 -16px;
+      }
+      paper-card.blue .header-icon {
+        background-color: var(--blue-color);
+      }
+      paper-card.red .header-icon {
+        background-color: var(--red-color);
+      }
+      paper-card.yellow .header-icon {
+        background-color: var(--yellow-color);
+      }
+      paper-card.green .header-icon {
+        background-color: var(--green-color);
+      }
+      paper-card.purple .header-icon {
+        background-color: var(--purple-color);
+      }
+      paper-card.orange .header-icon {
+        background-color: var(--orange-color);
+      }
+      .header-icon iron-icon {
+        height: 80px;
+        width: 80px;
+      }
+      paper-card {
+        --paper-card-content {
+          padding: 0;
+        };
+      }
     </style>
-    <a href="/recipe/[[id]]">
-      <paper-card id="card" image="[[imageUrl]]" class$="[[_hasIcon(icon, color)]]">
-        <div class="card-content">
-          <template is="dom-if" if="[[color]]">
-            <div class$="card-header [[color]]"></div>
+    <paper-card id="card" image="[[imageUrl]]" class$="[[_cardIconColorClass(icon, color)]]">
+      <div class="card-content">
+        <header class="card-header">
+          <template is="dom-if" if="[[_hasImage(imageUrl)]]">
+            <div class="header-icon">
+              <iron-icon icon="[[icon.icon]]"></iron-icon>
+            </div>
           </template>
-          <h2 class="card-header">[[title]]</h2>
-          <p>[[description]]</p>
-          <div><iron-icon icon="favorite"></iron-icon> [[favorites]]</div>
-        </div>
-        <div class="card-actions">
-          <favorite-recipe recipe-id="[[recipe.id]]" subcategory-id="[[recipe.subcategoryId]]"></favorite-recipe>
-        </div>
-      </paper-card>
-    </a>
+          <h2 class="card-heading">[[title]]</h2>
+        </header>
+        <p>[[description]]</p>
+        <!-- <div><favorite-recipe recipe-id="[[id]]" subcategory-id="[[subcategoryId]]"></favorite-recipe> [[favorites]]</div> -->
+        <section hidden$="[[!ingredients.length]]">
+          <h3>Ingredients</h3>
+          <ul>
+            <template is="dom-repeat" items="[[ingredients]]" as="ingredient">
+              <li><paper-checkbox></paper-checkbox>[[ingredient]]</li>
+            </template>
+          </ul>
+        </section>
+        <section hidden$="[[!directions.length]]">
+          <h3>Directions</h3>
+          <ol>
+            <template is="dom-repeat" items="[[directions]]" as="direction">
+              <li><paper-checkbox></paper-checkbox>[[direction]]</li>
+            </template>
+          </ol>
+        </section>
+      </div>
+      <!-- <div class="card-actions">
+
+      </div> -->
+    </paper-card>
   </template>
 
   <script>
     Polymer({
       is: 'recipe-card',
+      behaviors: [__state__],
       properties: {
+        recipeId: {
+          type: String,
+          observer: '_recipeIdObserver'
+        },
         recipe: {
-          type: Object,
+          type: String,
+          statePath: function(state) {
+            return state.recipeObjs[this.recipeId]
+          },
           observer: '_recipeObserver'
         },
         title: {
           type: String
         },
+        favorites: {
+          type: Number
+        },
         icon: {
-          type: Object
+          type: Object,
+          value: {},
+          observer: '_saveIcon'
+        },
+        ingredients: {
+          type: Array,
+          value: []
+        },
+        directions: {
+          type: Array,
+          value: []
         },
         id: {
           type: String
@@ -137,15 +173,42 @@
         },
         imageUrl: {
           type: String,
-          value: 'https://firebasestorage.googleapis.com/v0/b/cookbook-144005.appspot.com/o/i…2e50cb5df0-cheese.svg?alt=media&token=0ee3dc9f-bf14-47c5-86c6-d498984a75a7',
-          observer: '_imageUrlObserver'
+          value: ''
         },
         color: {
-          type: String
-        }
+          type: String,
+          value: 'white',
+          observer: '_saveColor'
+        },
+        userId: {
+          type: String,
+          statePath: 'user.uid'
+        },
       },
-
-      _hasIcon: function(icon, color){
+      _saveColor: function(color, oldColor) {
+        // if(oldColor && color && oldColor !== color){
+        //   console.log(oldColor);
+        //   console.log(color);
+        //   this.dispatch(__actions__.updateRecipe(this.id, {color}, this.userId));
+        // }
+      },
+      _saveIcon: function(icon, oldIcon) {
+        // if(oldIcon && icon && oldIcon.icon !== icon.icon){
+        //   console.log(oldIcon.name);
+        //   console.log(icon.name);
+        //   this.dispatch(__actions__.updateRecipe(this.id, {icon}, this.userId));
+        // }
+      },
+      _recipeIdObserver: function(recipeId) {
+        this.dispatch(__actions__.getRecipe(recipeId));
+      },
+      _hasImage: function(imageUrl){
+        return !(imageUrl);
+      },
+      _cardImageClass: function(imageUrl){
+        return (imageUrl);
+      },
+      _cardIconColorClass: function(icon, color){
         return (icon) ? `icon ${color}`: color;
       },
       _imageUrlObserver: function(imageUrl){
@@ -154,15 +217,17 @@
       _recipeImage: function(recipe){
 
         if(!this.recipe) return;
-        console.log(this.recipe);
         if(this.recipe.icon){
           return this.recipe.imageUrl || this.recipe.icon.imageUrl;
         }
         return this.recipe.imageUrl;
       },
       _recipeObserver: function(recipe){
-        debugger;
-        console.log(recipe);
+        if(recipe){
+          this.set('title', recipe.title);
+          this.set('description', recipe.description);
+          this.set('id', recipe.id);
+        }
       }
     });
   </script>

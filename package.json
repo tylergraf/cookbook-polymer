@@ -21,6 +21,8 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.2.1",
-    "nodemon": "^1.11.0"
+    "gulp-watch": "^4.3.10",
+    "nodemon": "^1.11.0",
+    "sw-precache": "^4.2.1"
   }
 }

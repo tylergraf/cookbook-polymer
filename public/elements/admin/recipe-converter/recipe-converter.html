@@ -1,0 +1,237 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/iron-list/iron-list.html">
+<link rel="import" href="/components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/components/iron-input/iron-input.html">
+<link rel="import" href="/components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="/elements/recipe-card/recipe-card.html">
+
+<!--
+`recipe-converter`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="recipe-converter">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: column;
+        /*align-items: center;*/
+      }
+      .fix-it {
+        position: fixed;
+        top: 100px;
+        right: 0;
+        width: 500px;
+        bottom: 0;
+        overflow: scroll;
+      }
+      .form {
+        display: flex;
+        flex-flow: column;
+      }
+      paper-button {
+        background: green;
+        color: #fff;
+      }
+      .button-action {
+        margin-top: 10px;
+      }
+      .ok {
+        display: flex;
+        flex-flow: row;
+      }
+    </style>
+    <!-- <div class="fix-it">
+      <recipe-card
+        title="[[title]]"
+        description="[[description]]"
+        ingredients="[[ingredients]]"
+        directions="[[directions]]"
+      ></recipe-card>
+    </div> -->
+    <h1>Recipe Converter</h1>
+    <div class="ok">
+
+      <paper-listbox id="categories">
+        <template id="categoriesList" is="dom-repeat" items="[[categories]]" as="category">
+          <paper-item>[[category.name]]</paper-item>
+        </template>
+      </paper-listbox>
+      <paper-listbox id="subcategories">
+        <template id="subcategoriesList" is="dom-repeat" items="[[subcategories]]" as="subcategory">
+          <paper-item>[[subcategory.name]]</paper-item>
+        </template>
+      </paper-listbox>
+      <paper-listbox id="oldCategories">
+        <template id="oldCategoriesList" is="dom-repeat" items="[[oldCategories]]" as="category">
+          <paper-item>[[category.name]]</paper-item>
+        </template>
+      </paper-listbox>
+      <paper-listbox id="oldSubcategories">
+        <template id="oldSubcategoriesList" is="dom-repeat" items="[[oldSubcategories]]" as="subcategory">
+          <paper-item>[[subcategory.name]]</paper-item>
+        </template>
+      </paper-listbox>
+    </div>
+
+    <input id="title" is="iron-input" bind-value="{{oldSubcategoryId::input}}" type="text" autofocus>
+    <form id="newRecipeForm" class="form" on-submit="_save">
+      <!-- <iron-autogrow-textarea rows="2" id="json" bind-value="{{json}}"></iron-autogrow-textarea> -->
+      <input id="title" is="iron-input" bind-value="{{subcategoryId::input}}" type="text" autofocus>
+      <div class="button-action">
+        <paper-button on-tap="_transferRecipes">Save</paper-button>
+      </div>
+    </form>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'recipe-converter',
+      behaviors: [__state__],
+      properties: {
+        json: {
+          type: String,
+          observer: '_parseJSON'
+        },
+        recipes: {
+          type: Array
+        },
+        title: {
+          type: String
+        },
+        description: {
+          type: String
+        },
+        ingredients: {
+          type: Array
+        },
+        directions: {
+          type: Array
+        },
+        directions: {
+          type: Array
+        },
+        user: {
+          type: Object,
+          statePath: 'user'
+        },
+        categories: {
+          type: Array,
+          statePath: 'categories',
+          observer: '_categoriesObserver'
+        },
+        subcategories: {
+          type: Array,
+          statePath: 'subcategories',
+          observer: '_subcategoriesObserver'
+        },
+      },
+      ready: function(){
+        this.dispatch(__actions__.getCategories());
+        fetch(`http://localhost:4000/api/categories`)
+        .then(res=>res.json())
+        .then(({categories})=>{
+          this.oldCategories = categories;
+
+        });
+        this.$.categories.addEventListener('iron-select', e=>{
+          var {id} = this.$.categoriesList.itemForElement(e.detail.item);
+          this.dispatch(__actions__.getCategory(id));
+        });
+        this.$.subcategories.addEventListener('iron-select', e=>{
+          var {id} = this.$.subcategoriesList.itemForElement(e.detail.item);
+          this.set('subcategoryId', id)
+        });
+        this.$.oldCategories.addEventListener('iron-select', e=>{
+          var {_id} = this.$.oldCategoriesList.itemForElement(e.detail.item);
+          fetch(`http://localhost:4000/api/subcategories/${_id}`)
+          .then(res=>res.json())
+          .then(({subcategories})=>{
+            this.set('oldSubcategories', subcategories);
+          });
+        });
+        this.$.oldSubcategories.addEventListener('iron-select', e=>{
+          var {_id} = this.$.oldSubcategoriesList.itemForElement(e.detail.item);
+          this.set('oldSubcategoryId', _id)
+        });
+      },
+      _categoriesObserver: function(categories){
+        console.log(categories);
+      },
+      _transferRecipes: function(){
+        fetch(`http://localhost:4000/api/recipes/${this.oldSubcategoryId}`)
+        .then(res=>res.json())
+        .then(({recipes})=>{
+          // this.recipes = recipes;
+          console.log(recipes);
+          recipes.forEach(r=>this._loadIt(r));
+        })
+        .catch(err=>{
+          console.log(err);
+        });
+      },
+      _loadIt: function(r){
+        try{
+          this.title = this._unEntitify(this._toTitleCase(r.title));
+          this.description = this._unEntitify(r.subtitle);
+          if(r.ingredients){
+            this.ingredients = this._parseHTML(r.ingredients).split('\n');
+          }
+          if(r.directions){
+            this.directions = this._parseHTML(r.directions).split('\n');
+          }
+          this._save();
+        } catch(e){
+          console.log(e);
+          localStorage[this.old]=this.subcategoryId;
+        }
+      },
+      _save: function(e){
+        // e.preventDefault();
+        var newRecipe = {
+          title: this.title,
+          description: this.description,
+          ingredients: this.ingredients || [],
+          directions: this.directions || [],
+        }
+        this.dispatch(__actions__.addRecipe(newRecipe, this.subcategoryId, this.user.uid));
+
+      },
+      _parseHTML: function(html){
+        var text = [];
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        var ps = div.querySelectorAll('p')
+        ps.forEach(p=>text.push(p.innerText));
+        if(text.length>1){
+          return text.join('\n');
+        }
+        return text[0];
+      },
+      _parseJSON: function(json){
+        var parsed = JSON.parse(json);
+        if(parsed){
+          this.title = parsed.title;
+          this.description = parsed.subtitle;
+          this.ingredients = this._parseHTML(parsed.ingredients).split('\n');
+          this.directions = this._parseHTML(parsed.directions).split('\n');
+        }
+      },
+      _unEntitify: function(html){
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return div.innerText;
+      },
+      _toTitleCase: function(title){
+        return title.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
+    });
+  </script>
+</dom-module>
