@@ -1,0 +1,104 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/iron-input/iron-input.html">
+<link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
+<link rel="import" href="/components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="/components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/components/app-route/app-route.html">
+
+<!--
+`category-page`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="category-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        /*flex-flow: column;
+        align-items: center;*/
+      }
+      .page {
+
+      }
+      paper-item {
+        font-family: var(--body-font);
+      }
+      a {
+        text-decoration: none;
+        width: 100%;
+      }
+      a:hover paper-item {
+        background: #f0f0f0;
+      }
+      paper-header-panel {
+        height: 90vh;
+      }
+    </style>
+    <app-route
+      route="{{route}}"
+      pattern="/:categoryId"
+      data="{{routeData}}"></app-route>
+
+    <paper-header-panel>
+
+      <paper-toolbar><taxonomy-path category-id="[[category.id]]" show="category"></taxonomy-path></paper-toolbar>
+      <paper-listbox>
+        <template is="dom-repeat" items="[[subcategories]]" as="subcategory">
+          <a href$="/subcategory/[[subcategory.id]]"><paper-item>[[subcategory.name]]</paper-item></a>
+        </template>
+      </paper-listbox>
+    </paper-header-panel>
+    <!-- <form id="newSubcategoryForm" on-submit="_addNewSubcategory">
+      <div>
+        <input is="iron-input" bind-value="{{newSubcategory}}" type="text">
+      </div>
+      <button type="submit">Save</button>
+    </form> -->
+  </template>
+
+  <script>
+    Polymer({
+      is: 'category-page',
+      behaviors: [__state__],
+      properties: {
+        categoryId: String,
+        category: {
+          type: Object,
+          statePath: 'main.category',
+          observer: '_categoryObserver'
+        },
+        subcategories: {
+          type: Object,
+          statePath: 'main.subcategories',
+          observer: '_subcategoryObserver'
+        }
+      },
+      observers: ['_viewChanged(routeData.categoryId)'],
+      _viewChanged: function(categoryId){
+        if(this.route.prefix.includes('/category') && categoryId){
+          this.dispatch(__actions__.getCategory(categoryId));
+        }
+      },
+      _deleteSubcategory: function(e, detail){
+        e.preventDefault();
+        var id = e.model.__data__.subcategory.id
+        this.dispatch(__actions__.removeSubcategory(id, this.categoryId));
+
+        return false;
+      },
+      _addNewSubcategory: function(e){
+        e.preventDefault();
+        this.dispatch(__actions__.addSubcategory(this.newSubcategory, this.categoryId));
+        this.newSubcategory = '';
+
+        return false;
+      },
+    });
+  </script>
+</dom-module>

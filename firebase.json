@@ -9,6 +9,14 @@
         "source": "**",
         "destination": "/index.html"
       }
+    ],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [{
+          "key": "Link",
+          "value": "</components/firebase/firebase.js>;rel=preload;as=script;nopush,</components/redux/index.js>;rel=preload;as=script,</components/redux-thunk/index.js>;rel=preload;as=script"}]
+      }
     ]
   }
 }

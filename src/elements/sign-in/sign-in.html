@@ -1,0 +1,128 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="/components/paper-menu/paper-menu.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
+
+
+<!--
+`sign-in`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="sign-in">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      paper-item {
+        font-family: var(--body-font);
+      }
+      a {
+        text-decoration: none;
+        width: 100%;
+      }
+      a:hover paper-item {
+        background: #f0f0f0;
+      }
+      .dropdown-trigger {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        white-space: nowrap;
+      }
+      .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+      }
+      img {
+        width: 100%;
+      }
+      .dropdown-content {
+        width: 200px;
+      }
+      paper-button {
+        margin-top: 5px;
+        background-color: var(--blue-color);
+        color: #fff;
+      }
+      paper-item {
+        --paper-item: {
+          cursor: pointer;
+        };
+      }
+      @media (max-width: 550px) {
+        .avatar {
+          height: 25px;
+          width: 25px;
+        }
+        .dropdown-trigger span {
+          display: none;
+        }
+      }
+    </style>
+    <template is="dom-if" if="[[signedIn]]">
+    <paper-menu-button ignore-select horizontal-align="right">
+      <div class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div><span>[[user.displayName]]</span></div>
+      <paper-menu class="dropdown-content">
+        <a href="/favorites"><paper-item>Favorites</paper-item></a>
+        <paper-item><paper-button on-tap="_signOut">Sign Out</paper-button></paper-item>
+      </paper-menu>
+    </paper-menu-button>
+    </template>
+    <template is="dom-if" if="[[!signedIn]]">
+    <paper-menu-button ignore-select horizontal-align="right">
+      <div class="dropdown-trigger">Sign In</div>
+      <paper-menu class="dropdown-content">
+        <paper-item on-tap="_signIn" id="google">Sign in with Google</paper-item>
+        <paper-item on-tap="_signIn" id="facebook">Sign in with Facebook</paper-item>
+        <paper-item on-tap="_signIn" id="twitter">Sign in with Twitter</paper-item>
+      </paper-menu>
+    </paper-menu-button>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'sign-in',
+      behaviors: [__state__],
+      properties: {
+        user: {
+          type: Object,
+          statePath: 'main.user',
+          observer: '_userObserver'
+        },
+        signedIn: {
+          type: Boolean,
+          value: false
+        }
+      },
+      ready: function(){
+        this.googleProvider = new firebase.auth.GoogleAuthProvider();
+        this.facebookProvider = new firebase.auth.FacebookAuthProvider();
+        this.twitterProvider = new firebase.auth.TwitterAuthProvider();
+      },
+      _userObserver: function(user){
+        if(user){
+          this.set('signedIn', true);
+        } else {
+          this.set('signedIn', false);
+        }
+      },
+      _signIn: function(e){
+        let social = e.target.id;
+        fb.auth().signInWithRedirect(this[`${social}Provider`]);
+      },
+      _signOut: function(e){
+        let social = e.target.id;
+        fb.auth().signOut().then(()=>this.dispatch({type: 'UNSET_USER'}));
+      }
+    });
+  </script>
+</dom-module>

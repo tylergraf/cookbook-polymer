@@ -1,0 +1,87 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/iron-icons/iron-icons.html">
+<link rel="import" href="/components/iron-icon/iron-icon.html">
+
+
+<!--
+`favorite-recipe`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="favorite-recipe">
+  <template>
+    <style>
+      :host {
+      }
+      iron-icon {
+        cursor: pointer;
+      }
+    </style>
+
+    <template is="dom-if" if="[[_showFavorite(userId, recipeId, subcategoryId)]]">
+      <template is="dom-if" if="[[_userFavorited(favorites, userId)]]">
+      <iron-icon icon="favorite" on-tap="_unfavorite" title="Remove this recipe from your Favorites."></iron-icon>
+      </template>
+      <template is="dom-if" if="[[!_userFavorited(favorites, userId)]]">
+      <iron-icon icon="favorite-border" on-tap="_favorite" title="Add this recipe to your Favorites."></iron-icon>
+      </template>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'favorite-recipe',
+      behaviors: [__state__],
+      properties: {
+        recipeId: {
+          type: String,
+          observer: '_recipeIdObserver'
+        },
+        subcategoryId: {
+          type: String
+        },
+        userId: {
+          type: String,
+          observer: '_userIdObserver',
+          statePath: 'main.user.uid'
+        },
+        favorites: {
+          type: Array
+        }
+      },
+      ready: function(){
+
+      },
+      _recipeIdObserver: function(){
+
+      },
+      _userIdObserver: function(){
+        if(this.recipeId && this.userId){
+          this.dispatch(__actions__.getFavorite(this.recipeId, this.userId));
+        }
+      },
+      _favoritesObserver: function(favorites){
+        this.set('favorite', favorites.includes(this.recipeId))
+      },
+      _showFavorite: function(userId, recipeId){
+        return recipeId && userId;
+      },
+      _userFavorited: function(favorites, userId){
+        favorites = favorites.map(f=>f.value);
+        return favorites.includes(userId);
+      },
+      _favorite: function(e){
+        e.preventDefault();
+        this.dispatch(__actions__.addFavorite(this.recipeId, this.subcategoryId, this.userId));
+      },
+      _unfavorite: function(e){
+        e.preventDefault();
+        var id = this.favorites.filter(f=>f.value === this.userId)[0].id;
+
+        this.dispatch(__actions__.removeFavorite(this.recipeId, this.subcategoryId, this.userId, id));
+      }
+    });
+  </script>
+</dom-module>

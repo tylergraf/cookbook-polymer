@@ -1,0 +1,86 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
+<link rel="import" href="/components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/components/paper-header-panel/paper-header-panel.html">
+
+<!--
+`categories-page`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="categories-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+        /*flex-flow: column;
+        align-items: center;*/
+      }
+      paper-item {
+        font-family: var(--body-font);
+      }
+      a {
+        text-decoration: none;
+        width: 100%;
+      }
+      a:hover paper-item {
+        background: #f0f0f0;
+      }
+      iron-list {
+        min-height: 90vh; /* don't use % values unless the parent element is sized. */
+      }
+      paper-header-panel {
+        height: 90vh;
+      }
+    </style>
+    <paper-header-panel>
+      <paper-toolbar><taxonomy-path></taxonomy-path></paper-toolbar>
+      <paper-listbox>
+        <template is="dom-repeat" items="[[categories]]" as="category">
+          <a href$="/category/[[category.id]]"><paper-item>[[category.name]]</paper-item></a>
+        </template>
+      </paper-listbox>
+    </paper-header-panel>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'categories-page',
+      behaviors: [__state__],
+      properties: {
+        categories: {
+          type: Array,
+          statePath: 'main.categories',
+          observer: 'ok'
+        }
+      },
+      ok: function(d){
+        console.log(d);
+      },
+      ready: function(){
+        this.dispatch(__actions__.getCategories());
+      },
+      _deleteCategory: function(e, detail){
+        e.preventDefault();
+        var id = e.model.__data__.category.id
+        this.dispatch(__actions__.removeCategory(id));
+
+        return false;
+      },
+      _addNewCategory: function(e){
+        e.preventDefault();
+        this.dispatch(__actions__.addCategory(this.newCategory));
+        this.newCategory = '';
+
+        return false;
+      },
+      _categoriesObserver: function(data){
+        this.set('categories', data);
+      }
+    });
+  </script>
+</dom-module>

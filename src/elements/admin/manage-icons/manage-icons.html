@@ -1,0 +1,380 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/paper-button/paper-button.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/components/paper-item/paper-item.html">
+<link rel="import" href="/components/iron-list/iron-list.html">
+<link rel="import" href="/components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/components/iron-input/iron-input.html">
+<link rel="import" href="/components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="/components/file-upload/file-upload.html">
+<link rel="import" href="/elements/polymer-dropzone/polymer-dropzone.html">
+<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
+<link rel="import" href="/components/iron-icon/iron-icon.html">
+<link rel="import" href="/components/iron-selector/iron-selector.html">
+
+<!--
+`manage-icons`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="manage-icons">
+  <template>
+    <style>
+      :host {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input {
+        height: 36px;
+        font-size: 30px;
+        line-height: 30px;
+        font-family: 'Scope One', sans-serif;
+      }
+      iron-autogrow-textarea {
+        background: #fff;
+        line-height: 1.4rem;
+        font-size: 30px;
+        line-height: 30px;
+        font-family: 'Scope One', sans-serif;
+        border: none;
+      }
+      paper-button {
+        background: green;
+        color: #fff;
+      }
+      paper-item {
+        cursor: pointer;
+      }
+      .icon {
+        height: 50px;
+        width: 50px;
+        background: transparent no-repeat 0 0;
+        background-size: contain;
+      }
+      iron-list {
+        height: 100vh;
+      }
+      .icons {
+        display: flex;
+        flex-flow: wrap;
+      }
+      .icon-wrapper-plus {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        padding: 10px;
+      }
+      .icon-wrapper {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        justify-content: center;
+        height: 80px;
+        width: 80px;
+        background: #fff;
+      }
+      .icon-wrapper.iron-selected {
+        background: #eaeaea;
+      }
+      .form-wrapper {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+      .form-wrapper .icon-wrapper {
+        margin-right: 30px;
+      }
+    </style>
+
+    <h1>New Recipe</h1>
+    <div class="icons">
+      <template id="iconList" is="dom-repeat" items="[[icons]]" as="icon">
+        <div class="icon-wrapper-plus" on-tap="_deleteIcon">
+          <div class="icon-wrapper">
+            <iron-icon class="icon" icon="[[icon.icon]]"></iron-icon>
+          </div>
+          <p>[[icon.name]]</p>
+        </div>
+      </template>
+    </div>
+    <div class="form-wrapper">
+      <div class="icon-wrapper">
+        <iron-icon class="icon" icon="[[icon]]"></iron-icon>
+      </div>
+      <form id="newRecipeForm" on-submit="_save">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" is="iron-input" bind-value="{{name}}" type="text">
+        </div>
+        <!-- <div>
+          <label for="image">Image</label>
+          <polymer-dropzone id="iconUploader" user="[[user]]" path="/icons"></polymer-dropzone>
+        </div> -->
+        <div>
+          <label for="icon-name">Icon</label>
+          <input id="icon-name" is="iron-input" bind-value="{{icon}}" type="text">
+        </div>
+        <input type="submit" hidden>
+        <!-- <paper-button on-tap="_save">Save</paper-button> -->
+      </form>
+    </div>
+    <iron-selector class="icons" id="potentialIconList" attr-for-selected="name">
+      <template id="potentialIconsRepeat" is="dom-repeat" items="[[newIcons]]" as="icon">
+        <div name="[[icon]]" class="icon-wrapper">
+          <iron-icon class="icon" icon="[[icon]]"></iron-icon>
+          <p>[[icon.name]]</p>
+        </div>
+      </template>
+    </iron-selector>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'manage-icons',
+      behaviors: [__state__],
+      properties: {
+        user: {
+          type: Object,
+          statePath: 'user'
+        },
+        imageUrl: {
+          type: Object
+        },
+        icons: {
+          type: Array,
+          statePath: 'icons',
+        }
+      },
+      ready: function(){
+        this.dispatch(__actions__.getIcons());
+        this.$.potentialIconList.addEventListener('iron-select', e=>{
+          var item = this.$.potentialIconsRepeat.itemForElement(e.detail.item);
+          this.set('icon', item);
+          this.$.name.value = '';
+          this.$.name.focus();
+          localStorage.setItem('icon', item);
+        });
+        if(localStorage.getItem('icon')){
+          this.$.potentialIconList.select(localStorage.getItem('icon'));
+        }
+
+        document.addEventListener('keydown', e=>{
+          if(e.keyCode === 9 && e.shiftKey){
+            e.preventDefault();
+            this.$.potentialIconList.selectPrevious();
+          } else if(e.keyCode === 9){
+            e.preventDefault();
+            this.$.potentialIconList.selectNext();
+          }
+        });
+        // this.$.iconUploader.addEventListener('image-uploaded',e=>{
+        //   this.imageUrl = e.detail.downloadURL;
+        //   if(!this.name){
+        //     this.name = e.detail.file.name.split('.svg')[0];
+        //   }
+        // });
+        this.newIcons = [
+        'cookbook:beans',
+    'cookbook:berry',
+    'cookbook:blender',
+    'cookbook:carrot',
+    'cookbook:cheese 2',
+    'cookbook:cheese',
+    'cookbook:coffee',
+    'cookbook:cup 2',
+    'cookbook:cup 3',
+    'cookbook:cup',
+    'cookbook:drink 2',
+    'cookbook:drink 3',
+    'cookbook:drink-1 2',
+    'cookbook:drink-1 3',
+    'cookbook:drink-1',
+    'cookbook:drink-2 2',
+    'cookbook:drink-2',
+    'cookbook:drink-4',
+    'cookbook:drink-5',
+    'cookbook:drink',
+    'cookbook:food 3',
+    'cookbook:food 4',
+    'cookbook:food-1 2',
+    'cookbook:food-1 3',
+    'cookbook:food-1 4',
+    'cookbook:food-1',
+    'cookbook:food-10 2',
+    'cookbook:food-10 3',
+    'cookbook:food-10 4',
+    'cookbook:food-10',
+    'cookbook:food-11 2',
+    'cookbook:food-11 3',
+    'cookbook:food-11 4',
+    'cookbook:food-11',
+    'cookbook:food-12 2',
+    'cookbook:food-12 3',
+    'cookbook:food-12 4',
+    'cookbook:food-12',
+    'cookbook:food-13 2',
+    'cookbook:food-13 3',
+    'cookbook:food-13 4',
+    'cookbook:food-13',
+    'cookbook:food-14 2',
+    'cookbook:food-14 3',
+    'cookbook:food-14 4',
+    'cookbook:food-14',
+    'cookbook:food-15 2',
+    'cookbook:food-15 3',
+    'cookbook:food-15 4',
+    'cookbook:food-15',
+    'cookbook:food-16 2',
+    'cookbook:food-16 3',
+    'cookbook:food-16 4',
+    'cookbook:food-16',
+    'cookbook:food-17 2',
+    'cookbook:food-17 3',
+    'cookbook:food-17 4',
+    'cookbook:food-17',
+    'cookbook:food-18 2',
+    'cookbook:food-18 3',
+    'cookbook:food-18 4',
+    'cookbook:food-18',
+    'cookbook:food-19 2',
+    'cookbook:food-19 3',
+    'cookbook:food-19',
+    'cookbook:food-2 2',
+    'cookbook:food-2 3',
+    'cookbook:food-2 4',
+    'cookbook:food-2',
+    'cookbook:food-20 2',
+    'cookbook:food-20 3',
+    'cookbook:food-20 4',
+    'cookbook:food-20',
+    'cookbook:food-21 2',
+    'cookbook:food-21 3',
+    'cookbook:food-21 4',
+    'cookbook:food-21',
+    'cookbook:food-22 2',
+    'cookbook:food-22 3',
+    'cookbook:food-22',
+    'cookbook:food-23 2',
+    'cookbook:food-23 3',
+    'cookbook:food-23',
+    'cookbook:food-24 2',
+    'cookbook:food-24 3',
+    'cookbook:food-24',
+    'cookbook:food-25 2',
+    'cookbook:food-25 3',
+    'cookbook:food-25',
+    'cookbook:food-26 2',
+    'cookbook:food-26 3',
+    'cookbook:food-26',
+    'cookbook:food-27 2',
+    'cookbook:food-27 3',
+    'cookbook:food-27',
+    'cookbook:food-28 2',
+    'cookbook:food-28',
+    'cookbook:food-29 2',
+    'cookbook:food-29',
+    'cookbook:food-3 2',
+    'cookbook:food-3 3',
+    'cookbook:food-3 4',
+    'cookbook:food-3',
+    'cookbook:food-30 2',
+    'cookbook:food-30',
+    'cookbook:food-31 2',
+    'cookbook:food-31',
+    'cookbook:food-32 2',
+    'cookbook:food-32',
+    'cookbook:food-33 2',
+    'cookbook:food-33',
+    'cookbook:food-34 2',
+    'cookbook:food-34',
+    'cookbook:food-35 2',
+    'cookbook:food-35',
+    'cookbook:food-36',
+    'cookbook:food-37',
+    'cookbook:food-38',
+    'cookbook:food-4 2',
+    'cookbook:food-4 3',
+    'cookbook:food-5 2',
+    'cookbook:food-5 3',
+    'cookbook:food-5 4',
+    'cookbook:food-5',
+    'cookbook:food-6 2',
+    'cookbook:food-6 3',
+    'cookbook:food-6 4',
+    'cookbook:food-6',
+    'cookbook:food-7 2',
+    'cookbook:food-7 3',
+    'cookbook:food-7 4',
+    'cookbook:food-7',
+    'cookbook:food-8 2',
+    'cookbook:food-8 3',
+    'cookbook:food-8 4',
+    'cookbook:food-8',
+    'cookbook:food-9 2',
+    'cookbook:food-9 3',
+    'cookbook:food-9 4',
+    'cookbook:food-9',
+    'cookbook:food',
+    'cookbook:fruit 2',
+    'cookbook:fruit 3',
+    'cookbook:fruit-1 2',
+    'cookbook:fruit-1 3',
+    'cookbook:fruit-1',
+    'cookbook:fruit-10',
+    'cookbook:fruit-11',
+    'cookbook:fruit-2 2',
+    'cookbook:fruit-2 3',
+    'cookbook:fruit-2',
+    'cookbook:fruit-3 2',
+    'cookbook:fruit-3 3',
+    'cookbook:fruit-3',
+    'cookbook:fruit-4 2',
+    'cookbook:fruit-4 3',
+    'cookbook:fruit-4',
+    'cookbook:fruit-5 2',
+    'cookbook:fruit-5 3',
+    'cookbook:fruit-5',
+    'cookbook:fruit-6 2',
+    'cookbook:fruit-6',
+    'cookbook:fruit-7 2',
+    'cookbook:fruit-7',
+    'cookbook:fruit-8 2',
+    'cookbook:fruit-8',
+    'cookbook:fruit-9',
+    'cookbook:fruit',
+    'cookbook:potatoes',
+    'cookbook:shape',
+    'cookbook:strawberry 2',
+    'cookbook:strawberry',
+  ];
+      },
+      _save: function(e){
+        e.preventDefault();
+
+        var newIcon = {
+          name: this.name,
+          icon: this.icon,
+          created: new Date().getTime(),
+        }
+        this.dispatch(__actions__.addIcon(newIcon));
+
+        return false;
+      },
+      _deleteIcon: function(e){
+        var item = this.$.iconList.itemForElement(e.target);
+        var id = item && item.id;
+
+        this.dispatch(__actions__.removeIcon(id));
+      },
+    });
+  </script>
+</dom-module>

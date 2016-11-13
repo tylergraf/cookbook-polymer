@@ -1,0 +1,88 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/elements/recipe-card/recipe-card.html">
+<link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
+<link rel="import" href="/components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="/components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/components/app-route/app-route.html">
+<!--
+`recipe-page`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="recipe-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .recipe-card-wrapper {
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+      }
+      recipe-card {
+        max-width: 600px;
+        width: 100%;
+      }
+      paper-header-panel {
+        height: 90vh;
+      }
+    </style>
+    <paper-header-panel>
+      <paper-toolbar><taxonomy-path subcategory-id="[[recipeObj.subcategoryId]]" show="category,subcategory"></taxonomy-path></paper-toolbar>
+      <div class$="[[_computeWrapperClass(recipeObj)]]">
+        <recipe-card
+          title="[[recipeObj.title]]"
+          id="[[recipeObj.id]]"
+          subcategory-id="[[recipeObj.subcategoryId]]"
+          favorites="[[recipeObj.favorites]]"
+          description="[[recipeObj.description]]"
+          color="[[recipeObj.color]]"
+          ingredients="[[recipeObj.ingredients]]"
+          directions="[[recipeObj.directions]]"
+          image-url="[[recipeObj.imageUrl]]"
+          icon="[[recipeObj.icon]]"></recipe-card>
+      </div>
+    </paper-header-panel>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'recipe-page',
+      behaviors: [__state__],
+      ready: function(){
+
+      },
+      properties: {
+        recipeId: {
+          type: String,
+          observer: '_recipeIdObserver'
+        },
+        recipeObj: {
+          type: Object,
+          statePath: function({main}) {
+            return main.recipeObjs[this.recipeId]
+          }
+        }
+      },
+      observers: ['_viewChanged(routeData.recipeId)'],
+      _recipeIdObserver: function(recipeId){
+        if(!recipeId) return;
+        if(recipeId !== 'edit' && recipeId !== 'add'){
+          this.dispatch(__actions__.getRecipe(recipeId));
+        }
+      },
+      _computeWrapperClass: function(recipeObj){
+        if(!recipeObj) return '';
+
+        if(recipeObj.imageUrl){
+          return 'recipe-card-wrapper image';
+        }
+        return `recipe-card-wrapper ${recipeObj.color}`;
+      }
+    });
+  </script>
+</dom-module>

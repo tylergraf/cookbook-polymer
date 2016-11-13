@@ -1,0 +1,117 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/iron-list/iron-list.html">
+<link rel="import" href="/components/iron-input/iron-input.html">
+<link rel="import" href="/components/app-route/app-route.html">
+<link rel="import" href="/elements/recipe-card/recipe-card.html">
+
+<!--
+`favorites-page`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="favorites-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .recipes-wrapper {
+        display: flex;
+        flex-flow: column;
+      }
+      .recipes {
+        display: flex;
+        flex-flow: wrap;
+        width: 100%;
+      }
+      iron-selector.recipes {
+        width: calc(100vw - 300px);
+
+      }
+      .recipe-wrapper {
+        width: 33.333333%;
+      }
+      recipe-card {
+        /*width: 32%;*/
+        /*padding-right: 1%;*/
+        cursor: pointer;
+        margin: 10px;
+      }
+      recipe-card.iron-selected {
+        border: 1px solid #ccc;
+      }
+      @media (min-width: 1000px) {
+        .recipe-wrapper {
+          width: 25%;
+        }
+        .edit .recipe-wrapper {
+          width: 30%;
+        }
+      }
+      @media (max-width: 550px) {
+        .recipe-wrapper {
+          width: 50%;
+        }
+      }
+      paper-header-panel {
+        height: 90vh;
+      }
+      [hidden] {
+        display: none;
+      }
+    </style>
+    <app-route
+      route="{{route}}"
+      pattern="/"
+      data="{{routeData}}"></app-route>
+
+    <h1>Favorites</h1>
+    <section class="recipes">
+      <template is="dom-repeat" items="[[favorites]]" as="favorite">
+        <div class="recipe-wrapper">
+          <a href="/recipe/[[favorite]]">
+            <recipe-card
+              id="[[favorite]]"
+              recipe-id="[[favorite]]"></recipe-card>
+          </a>
+        </div>
+      </template>
+    </section>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'favorites-page',
+      behaviors: [__state__],
+      properties: {
+        subcategoryId: String,
+        subcategory: {
+          type: Object,
+          statePath: 'main.subcategory'
+        },
+        favorites: {
+          type: Object,
+          statePath: 'main.favorites',
+          observer: '_favoritesObserver'
+        },
+        userId: {
+          type: Object,
+          statePath: 'main.user.uid',
+          observer: '_userObserver'
+        }
+      },
+      ready: function(){
+      },
+      _userObserver: function(userId){
+        if(userId){
+          this.dispatch(__actions__.getFavorites(userId));
+        }
+      },
+      _favoritesObserver: function(favorites){
+
+      }
+    });
+  </script>
+</dom-module>

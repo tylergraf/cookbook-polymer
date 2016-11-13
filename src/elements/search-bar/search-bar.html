@@ -1,0 +1,102 @@
+<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
+<link rel="import" href="/components/iron-icon/iron-icon.html">
+<link rel="import" href="/components/iron-selector/iron-selector.html">
+<link rel="import" href="/components/paper-icon-button/paper-icon-button.html">
+
+<!--
+`search-bar`
+
+
+@demo demo/index.html
+-->
+
+<dom-module id="search-bar">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+        /*max-width: 400px;*/
+        width: 100%;
+      }
+      .form {
+        display: flex;
+        flex-flow: row;
+        justify-content: flex-end;
+      }
+      input {
+        padding: 0;
+        font-size: 18px;
+        font-family: 'Scope One', sans-serif;
+        margin-right: 0;
+        transition: max-width ease 260ms;
+        height: 100%;
+        width: 100%;
+        padding-left: 4px;
+        margin-right: -10px;
+      }
+      .input-wrapper {
+        flex: 1;
+        position: relative;
+      }
+      paper-button {
+        background-color: var(--white-color);
+        color: var(--blue-color);
+        flex-shrink: 0;
+      }
+      .form.open input {
+        max-width: 100%;
+      }
+      paper-icon-button.close {
+        color: #000;
+        position: absolute;
+        top: 2px;
+        right: -3px;
+      }
+
+    </style>
+    <form class$="[[_formClass(searchBarOpen)]]" on-submit="_search">
+      <div class="input-wrapper">
+        <input id="search" type="text" value="{{query::input}}">
+        <paper-icon-button class="close" icon="close" on-tap="_clearSearch"></paper-icon-button>
+      </div>
+      <paper-icon-button icon="search" on-tap="_search"></paper-icon-button>
+    </form>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'search-bar',
+      behaviors: [__state__],
+      properties: {
+        query: {
+          type: String,
+          statePath: 'main.searchQuery'
+        },
+        searchBarOpen: {
+          type: Boolean,
+          statePath: 'main.searchBarOpen'
+        }
+      },
+      listeners: {
+        'focus-search': '_focusSearchHandler',
+      },
+      _focusSearchHandler: function(e) {
+        this.$.search.focus();
+      },
+      _search: function(e) {
+        e.preventDefault();
+        if(!this.query) return;
+        this.dispatch({type:'NAVIGATE', href: `/results/${this.query}`});
+      },
+      _formClass: function(searchBarOpen) {
+        return (searchBarOpen) ? 'form open' : 'form';
+      },
+      _clearSearch: function(e) {
+        e.preventDefault();
+        this.dispatch({type: 'SET_SEARCH_QUERY', query: ''});
+        this.dispatch({type: 'SET_SEARCH_BAR_OPEN', showing: false});
+      },
+    });
+  </script>
+</dom-module>
