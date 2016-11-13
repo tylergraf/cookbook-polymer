@@ -135,10 +135,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       behaviors: [__state__],
       observers: [
+        '_routeChange(route)',
         '_routePageChanged(routeData.page)',
         '_routePageChanged(routeData.page, routeData.id)'
       ],
 
+      _routeChange: function({path}) {
+        this.fire('iron-signal', {name: 'track-page', data: { path} });
+      },
       _routePageChanged: function(page, id) {
         console.log('page', page);
         console.log('id', id);

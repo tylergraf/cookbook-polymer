@@ -104,6 +104,7 @@
                 user
               };
               __state__.dispatch(action);
+              document.querySelector("start-google-analytics-tracker").userId = user.uid;
             } else {
               var user = localStorage.getItem(`firebase:authUser:${FB_CONFIG.apiKey}:[DEFAULT]`);
               if(!user) return;
@@ -119,6 +120,7 @@
 
         </script>
     <link rel="import" href="/elements/my-app.html">
+    <link rel="import" href="/components/start-google-analytics-tracker/start-google-analytics-tracker.html">
 
     <style is="custom-style">
       :root {
@@ -156,5 +158,6 @@
   </head>
   <body class="fullbleed layout vertical">
     <my-app></my-app>
+    <start-google-analytics-tracker code="UA-50584064-1"></start-google-analytics-tracker>
   </body>
 </html>
