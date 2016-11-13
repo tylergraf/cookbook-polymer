@@ -5,7 +5,7 @@ gulp.task('start', function () {
   nodemon({
     exec: 'npm start'
   , ext: 'js html'
-  , ignore: 'public/'
+  , ignore: 'src/'
   , env: { 'NODE_ENV': 'development' }
   })
 });
@@ -24,4 +24,4 @@ gulp.task('generate-service-worker', function(callback) {
 
 gulp.task('default', ['generate-service-worker']);
 
-gulp.watch('public/**/*', ['generate-service-worker']);
+gulp.watch('src/**/*', ['generate-service-worker']);
