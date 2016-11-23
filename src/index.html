@@ -82,43 +82,18 @@
         });
       }
     </script>
-    <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet">
-    <script src="/components/firebase/firebase.js"></script>
-    <link rel="import" href="/elements/app-state/app-state.html">
-
-        <script>
-          // Initialize Firebase
-          var FB_CONFIG = {
-            apiKey: "AIzaSyAhh3pxACqcPjT7stYyNYeH5NLXAUWkyao",
-            authDomain: "cookbook-144005.firebaseapp.com",
-            databaseURL: "https://cookbook-144005.firebaseio.com",
-            storageBucket: "cookbook-144005.appspot.com",
-            messagingSenderId: "463542253160"
-          };
-          window.fb = firebase.initializeApp(FB_CONFIG);
-
-          firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-              let action = {
-                type: 'SET_USER',
-                user
-              };
-              __state__.dispatch(action);
-              document.querySelector("start-google-analytics-tracker").userId = user.uid;
-            } else {
-              var user = localStorage.getItem(`firebase:authUser:${FB_CONFIG.apiKey}:[DEFAULT]`);
-              if(!user) return;
-              try {
-                user = JSON.parse(user);
-              } catch(e){
-                return;
-              }
-              firebase.auth().signInWithCustomToken(user.stsTokenManagement.refreshToken);
-
-            }
-          });
-
-        </script>
+    <!-- <link rel="prefetch" href="/components/polymer/polymer.html">
+    <link rel="prefetch" href="/components/polymer/polymer-mini.html">
+    <link rel="prefetch" href="/components/polymer/polymer-micro.html">
+    <link rel="prefetch" href="/elements/app-state/app-state.html">
+    <link rel="prefetch" href="/components/app-layout/app-header/app-header.html">
+    <link rel="prefetch" href="/components/app-layout/app-header-layout/app-header-layout.html">
+    <link rel="prefetch" href="/components/app-layout/app-toolbar/app-toolbar.html">
+    <link rel="prefetch" href="/components/app-route/app-location.html">
+    <link rel="prefetch" href="/components/app-route/app-route.html">
+    <link rel="prefetch" href="/components/iron-pages/iron-pages.html">
+    <link rel="prefetch" href="/elements/search-bar/search-bar.html">
+    <link rel="prefetch" href="/elements/sign-in/sign-in.html"> -->
     <link rel="import" href="/elements/my-app.html">
     <link rel="import" href="/components/start-google-analytics-tracker/start-google-analytics-tracker.html">
 
@@ -153,11 +128,51 @@
         /*max-width: 1000px;*/
         /*margin: 0 auto;*/
       }
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-toolbar {
+        display: flex;
+        justify-content: space-between;
+        color: #fff;
+        background-color: #4285f4;
+        height: 64px;
+        align-items: center;
+      }
+      app-toolbar a {
+        color: #fff;
+        font-size: 20px;
+        text-decoration: none;
+        margin-left: 10px;
+      }
+      my-app:not([page]){
+        height: calc(100vh - 64px);
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+      }
     </style>
 
   </head>
   <body class="fullbleed layout vertical">
-    <my-app></my-app>
+    <app-header-layout class="flex">
+      <app-header fixed>
+        <app-toolbar>
+          <a href="/">
+            Gretchen's Cookbook
+          </a>
+          <sign-in></sign-in>
+        </app-toolbar>
+      </app-header>
+      <my-app>
+        <svg width='54px' height='54px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(0 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(30 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.08333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(60 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.16666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(90 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.25s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(120 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.3333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(150 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.4166666666666667s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(180 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(210 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5833333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(240 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.6666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(270 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.75s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(300 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.8333333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(330 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.9166666666666666s' repeatCount='indefinite'/></rect></svg>
+      </my-app>
+    </app-header-layout>
+
     <start-google-analytics-tracker code="UA-50584064-1"></start-google-analytics-tracker>
+
   </body>
 </html>

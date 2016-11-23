@@ -11,7 +11,7 @@
 <link rel="import" href="/components/file-upload/file-upload.html">
 <link rel="import" href="/elements/polymer-dropzone/polymer-dropzone.html">
 <link rel="import" href="/elements/recipe-card/recipe-card.html">
-<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
+<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html" async>
 <link rel="import" href="/components/iron-icon/iron-icon.html">
 <link rel="import" href="/components/app-route/app-route.html">
 

@@ -1,0 +1,36 @@
+{
+  "name": "firebase-upload",
+  "version": "0.0.1",
+  "authors": [
+    "Sami Suo-Heikki <samiheikki@vaadin.com>"
+  ],
+  "description": "An element providing a file upload to your Firebase database.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "firebase",
+    "upload",
+    "firebase-upload",
+    "file upload"
+  ],
+  "main": "firebase-upload.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/samiheikki/firebase-upload/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "vaadin-upload": "^1.0.0-alpha2",
+    "mock-http-request": "philikon/MockHttpRequest#master",
+    "firebase": "^2.4.1"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*",
+    "firebase-element": "GoogleWebComponents/firebase-element#^1.0.12"
+  }
+}
