@@ -1,4 +1,12 @@
 (function() {
+  var FB_CONFIG = {
+    apiKey: "AIzaSyAhh3pxACqcPjT7stYyNYeH5NLXAUWkyao",
+    authDomain: "cookbook-144005.firebaseapp.com",
+    databaseURL: "https://cookbook-144005.firebaseio.com",
+    storageBucket: "cookbook-144005.appspot.com",
+    messagingSenderId: "463542253160"
+  };
+
   var called = {
     getCategory: [],
     getFavorite: [],
@@ -31,6 +39,23 @@
       if(CACHE.exists(STORAGE_KEY)){
         action.categories = CACHE.get(STORAGE_KEY);
         dispatch(action);
+      }
+      if(!window.fb){
+        fetch(`${FB_CONFIG.databaseURL}/categories.json`)
+          .then(res=>res.json())
+          .then(data=>{
+            const categories = [];
+            for (var x in data) {
+              if (data.hasOwnProperty(x)) {
+                data[x].id = x;
+                categories.push(data[x]);
+              }
+            }
+            CACHE.set(STORAGE_KEY, categories)
+            action.categories = categories;
+            dispatch(action);
+          });
+        return;
       }
       fb.database().ref('categories').orderByChild('name').on('value', snapshot => {
         called.getCategories = true;
