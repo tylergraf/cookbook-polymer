@@ -138,6 +138,18 @@
         action.subcategories = action.category.subcategories;
         dispatch(action);
       }
+      if(!window.fb){
+        fetch(`${FB_CONFIG.databaseURL}/categories/${id}.json`)
+          .then(res=>res.json())
+          .then(category=>{
+            action.category = category;
+            action.subcategories = category.subcategories;
+            CACHE.set(STORAGE_KEY, category);
+
+            dispatch(action);
+          });
+        return;
+      }
       called.getCategory.forEach(cid=>{
         fb.database().ref('categories').child(cid).off();
       });
@@ -234,6 +246,18 @@
         action.recipes = action.subcategory.recipes;
         dispatch(action);
       }
+      if(!window.fb){
+        fetch(`${FB_CONFIG.databaseURL}/subcategories/${id}.json`)
+          .then(res=>res.json())
+          .then(subcategory=>{
+
+            CACHE.set(STORAGE_KEY, subcategory);
+            action.subcategory = subcategory;
+            action.recipes = subcategory.recipes;
+            dispatch(action);
+          });
+        return;
+      }
       called.getSubcategory.forEach(sid=>{
         fb.database().ref('subcategories').child(sid).off();
       });
@@ -274,6 +298,18 @@
         fb.database().ref('recipes').child(rid).off();
       });
       called.getRecipe = [];
+
+      if(!window.fb){
+        fetch(`${FB_CONFIG.databaseURL}/recipes/${id}.json`)
+          .then(res=>res.json())
+          .then(recipe=>{
+
+            CACHE.set(STORAGE_KEY, recipe)
+            action.recipe = recipe;
+            dispatch(action);
+          });
+        return;
+      }
 
       fb.database().ref('recipes').child(id).on('value', snapshot => {
         called.getRecipe.push(id);
