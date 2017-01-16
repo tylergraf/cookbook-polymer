@@ -5,6 +5,7 @@ var uglify = require('gulp-uglify');
 var babel = require('gulp-babel');
 var del = require('del');
 var replace = require('gulp-string-replace');
+var run = require('gulp-run');
 
 gulp.task('generate-service-worker', function(callback) {
   var path = require('path');
@@ -119,5 +120,10 @@ gulp.task('prod', [
   'images',
   'manifest'
 ]);
+
+gulp.task('deploy', ['prod'], function(done){
+  run('firebase deploy').exec();
+  done();
+});
 
 // gulp.watch('src/**/*', ['generate-service-worker']);
