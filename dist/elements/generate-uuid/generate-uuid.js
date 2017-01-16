@@ -1,0 +1,1 @@
+"use strict";!function(){function x(){var x=(new Date).getTime(),t="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(t){var n=(x+16*Math.random())%16|0;return x=Math.floor(x/16),("x"==t?n:3&n|8).toString(16)});return t}window.UUID=x}();

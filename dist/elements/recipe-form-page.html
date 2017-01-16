@@ -1,0 +1,137 @@
+<link rel="import" href="/components/polymer/polymer.html"><link rel="import" href="/components/iron-autogrow-textarea/iron-autogrow-textarea.html"><link rel="import" href="/components/app-route/app-route.html"><link rel="import" href="/components/paper-radio-group/paper-radio-group.html"><link rel="import" href="/components/paper-radio-button/paper-radio-button.html"><link rel="import" href="/components/paper-button/paper-button.html"><link rel="import" href="/components/app-route/app-route.html"><link rel="import" href="/elements/icon-picker/icon-picker.html"><link rel="import" href="/elements/cookbook-icon/cookbook-icon.html"><link rel="import" href="/elements/category-picker/category-picker.html"><dom-module id="recipe-form-page"><template><style>:host{display:flex;flex-flow:column;align-items:center}label{display:block;margin-top:10px}input{height:36px;font-size:18px;line-height:30px;font-family:'Scope One',sans-serif;width:100%;padding:4px}iron-autogrow-textarea{background:#fff;line-height:1.4rem;font-size:18px;line-height:1.2em;font-family:'Scope One',sans-serif;border:none;width:100%}paper-button{background:green;color:#fff}paper-item{cursor:pointer}.colors{display:flex;flex-flow:wrap;justify-content:space-between}.color-wrapper{border:1px solid transparent}.color{height:50px;width:50px;margin:4px}.color-wrapper.iron-selected{border-color:#333}.white{background-color:var(--white-color)}.blue{background-color:var(--blue-color)}.red{background-color:var(--red-color)}.yellow{background-color:var(--yellow-color)}.green{background-color:var(--green-color)}.purple{background-color:var(--purple-color)}.orange{background-color:var(--orange-color)}.icon{height:50px;width:50px;background:transparent no-repeat 0 0;background-size:contain;margin:4px}.icons{display:flex;flex-flow:wrap;max-height:300px;overflow:scroll}.icon-wrapper-plus.iron-selected .icon-wrapper{border:1px solid #333}.icon-wrapper-plus{display:flex;flex-flow:column;align-items:center;padding:10px;width:28%}.icon-wrapper-plus p{margin-top:6px;margin-bottom:0}.icon-wrapper{display:flex;flex-flow:column;align-items:center;justify-content:center;height:80px;width:80px;background:#fff;border:1px solid #fff}.fix-it{position:fixed;right:10px;top:80px;z-index:1;width:300px}.icon-selector{max-width:400px;width:100%}.form{width:600px}</style><app-route route="{{route}}" pattern="/:action/:recipeId" data="{{routeData}}"></app-route><icon-picker id="iconPicker"></icon-picker><h1>New Recipe</h1><form id="newRecipeForm" class="form" on-submit="_saveRecipe"><div><label for="title">Title</label><input id="title" value="{{title::input}}" type="text" autofocus></div><div><label for="description">Description</label><iron-autogrow-textarea rows="2" id="description" bind-value="{{description}}"></iron-autogrow-textarea></div><div><label for="ingredients">Ingredients (each ingredient on a new line)</label><iron-autogrow-textarea rows="2" id="ingredients" bind-value="{{ingredients}}"></iron-autogrow-textarea></div><div><label for="directions">Directions (each step on a new line)</label><iron-autogrow-textarea rows="2" id="directions" bind-value="{{directions}}"></iron-autogrow-textarea></div><div><label for="image">Image</label><paper-radio-group selected="icon" id="imageType"><paper-radio-button name="icon" value="icon">Icon</paper-radio-button><paper-radio-button name="image" value="image">Image</paper-radio-button></paper-radio-group><section hidden$="[[_showImageUploader(imageType)]]"><cookbook-icon icon="[[icon.icon]]" color="[[color]]"></cookbook-icon><paper-button type="button" on-tap="_openIconPicker">Choose Icon</paper-button></section><section hidden$="[[!_showImageUploader(imageType)]]"><polymer-dropzone id="upload" user="[[user]]" path="images/[[user.uid]]"></polymer-dropzone><input id="image" is="iron-input" bind-value="{{imageUrl}}" type="text"></section></div><category-picker></category-picker><paper-button on-tap="_saveRecipe">Save</paper-button></form></template><script>Polymer({
+      is: 'recipe-form-page',
+      ready: function(){
+
+      },
+      behaviors: [__state__],
+      properties: {
+        recipeId: {
+          type: String,
+          observer: '_recipeIdObserver'
+        },
+        recipeObj: {
+          type: Object,
+          statePath: function({main}) {
+            return main.recipeObjs[this.recipeId]
+          },
+          observer: '_recipeObjObserver'
+        },
+        userId: {
+          type: Object,
+          statePath: 'main.user.uid'
+        },
+        saved: {
+          type: Object,
+          statePath: 'main.saved',
+          observer: '_recipeSaved'
+        },
+        icon: {
+          type: Object,
+          statePath: 'icon.icon'
+        },
+        color: {
+          type: String,
+          statePath: 'icon.color'
+        },
+        subcategoryId: {
+          type: String,
+          statePath: 'main.subcategoryId'
+        },
+      },
+      observers: ['_routeChange(routeData)'],
+      _recipeSaved: function(recipe){
+        if(!recipe) return;
+        this.dispatch({type: 'NAVIGATE', href: `/recipe/${recipe.id}`});
+        this.dispatch({type: 'CLEAR_SAVED'});
+
+      },
+      _showImageUploader: function(imageType){
+        return imageType === 'image';
+      },
+      _recipeIdObserver: function(recipeId){
+        if(!recipeId) return;
+
+        if(recipeId !== 'add'){
+          this.dispatch(__actions__.getRecipe(recipeId));
+        }
+      },
+      _recipeObjObserver: function(recipeObj){
+        if(!recipeObj) return;
+        console.log(recipeObj);
+        this.set('title', recipeObj.title);
+        this.set('description', recipeObj.description);
+        if(recipeObj.ingredients && recipeObj.ingredients.length){
+          this.set('ingredients', recipeObj.ingredients.join('\n'));
+        }
+        if(recipeObj.directions && recipeObj.directions.length){
+          this.set('directions', recipeObj.directions.join('\n'));
+        }
+        this.dispatch({type:'SET_ICON_COLOR', color: recipeObj.color, icon: recipeObj.icon});
+        this.dispatch({type:'SET_SUBCATEGORY', subcategoryId: recipeObj.subcategoryId});
+      },
+      _routeChange: function(routeData){
+        if(!routeData) return;
+        this.set('action', routeData.action);
+        this.set('recipeId', routeData.recipeId);
+      },
+      _splitList: function(text){
+        if(!text.length){
+          return [];
+        }
+        // if text is one line
+        if(!text.includes('\n')){
+          return [text];
+        }
+        try {
+          return text.split('\n');
+        } catch(e){
+          console.error(`Error encoding directions or ingredients list: ${e}`);
+        }
+      },
+      _saveRecipe: function(e){
+        e.preventDefault();
+
+        var newRecipe = {
+          title: this.title,
+          description: this.description,
+          directions: this._splitList(this.directions),
+          ingredients: this._splitList(this.ingredients),
+          icon: this.icon,
+          color: this.color,
+          subcategoryId: this.subcategoryId
+        };
+
+        if(this.recipeId){
+          var recipe = Object.assign(this.recipeObj, newRecipe);
+          this.dispatch(__actions__.updateRecipe(recipe, this.userId));
+        } else {
+          this.dispatch(__actions__.addRecipe(newRecipe, this.subcategoryId, this.userId));
+        }
+
+      },
+      _openIconPicker: function(e){
+        e.preventDefault();
+        var action = {type: 'TOGGLE_ICON_PICKER', open: true};
+        this.dispatch(action);
+      },
+      _setIconColor: function(e){
+        console.log(e.detail);
+      },
+      _iconPickerObserver: function(open){
+        if(open){
+          this.$.iconPicker.addEventListener('', this._setIconColor);
+        } else {
+          this.$.iconPicker.removeEventListener('', this._setIconColor);
+        }
+        var action = {type: 'OPEN_ICON_PICKER'};
+        this.dispatch(action);
+      },
+      attached: function(){
+        this.$.imageType.addEventListener('iron-select', (e)=>{
+          this.set('imageType', e.detail.item.value)
+        });
+      },
+      detached: function(){
+        this.$.imageType.removeEventListener('iron-select');
+      }
+    });</script></dom-module>

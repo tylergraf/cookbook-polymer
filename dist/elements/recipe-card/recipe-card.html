@@ -1,0 +1,102 @@
+<link rel="import" href="/components/polymer/polymer.html"><link rel="import" href="/components/paper-card/paper-card.html"><link rel="import" href="/components/paper-button/paper-button.html"><link rel="import" href="/elements/favorite-recipe/favorite-recipe.html"><link rel="import" href="/elements/cookbook-icons/cookbook-icons.html" async><link rel="import" href="/components/iron-icon/iron-icon.html"><link rel="import" href="/components/paper-checkbox/paper-checkbox.html"><dom-module id="recipe-card"><template><style is="custom-style">:host{display:block;font-family:'Scope One',serif}.card-header{padding:0;margin:0}.card-heading{margin:0;line-height:1em}.icon .card-heading{margin:0;margin-top:15px}p{margin:5px 0}paper-card{font-family:'Scope One',serif;margin:0;width:100%;color:#333}paper-card.icon{--paper-card-header:{display:none};}paper-card{--paper-card-header:{height:140px;overflow:hidden;display:block};--paper-card-header-image:{position:relative;top:-50%};}paper-card .header-icon{height:140px;display:flex;justify-content:center;align-items:center;margin:-16px -16px 0 -16px}paper-card.blue .header-icon{background-color:var(--blue-color)}paper-card.red .header-icon{background-color:var(--red-color)}paper-card.yellow .header-icon{background-color:var(--yellow-color)}paper-card.green .header-icon{background-color:var(--green-color)}paper-card.purple .header-icon{background-color:var(--purple-color)}paper-card.orange .header-icon{background-color:var(--orange-color)}.header-icon iron-icon{height:80px;width:80px}</style><paper-card id="card" image="[[imageUrl]]" class$="[[_cardIconColorClass(icon, color)]]"><div class="card-content"><header class="card-header"><template is="dom-if" if="[[_hasImage(imageUrl)]]"><div class="header-icon"><iron-icon icon="[[icon.icon]]"></iron-icon></div></template><h2 class="card-heading">[[title]]</h2></header><p>[[description]]</p><div><favorite-recipe favorites="[[favorites]]" recipe-id="[[id]]" subcategory-id="[[subcategoryId]]"></favorite-recipe>[[favorites.length]]</div><section hidden$="[[!ingredients.length]]"><h3>Ingredients</h3><ul><template is="dom-repeat" items="[[ingredients]]" as="ingredient"><li><paper-checkbox></paper-checkbox>[[ingredient]]</li></template></ul></section><section hidden$="[[!directions.length]]"><h3>Directions</h3><ol><template is="dom-repeat" items="[[directions]]" as="direction"><li><paper-checkbox></paper-checkbox>[[direction]]</li></template></ol></section></div></paper-card></template><script>Polymer({
+      is: 'recipe-card',
+      behaviors: [__state__],
+      properties: {
+        recipeId: {
+          type: String,
+          observer: '_recipeIdObserver'
+        },
+        recipe: {
+          type: String,
+          statePath: function({main}) {
+            return main.recipeObjs[this.recipeId]
+          },
+          observer: '_recipeObserver'
+        },
+        title: {
+          type: String
+        },
+        favorites: {
+          type: Number
+        },
+        icon: {
+          type: Object,
+          value: {},
+          observer: '_saveIcon'
+        },
+        ingredients: {
+          type: Array,
+          value: []
+        },
+        directions: {
+          type: Array,
+          value: []
+        },
+        id: {
+          type: String
+        },
+        description: {
+          type: String
+        },
+        imageUrl: {
+          type: String,
+          value: ''
+        },
+        color: {
+          type: String,
+          value: 'white',
+          observer: '_saveColor'
+        },
+        userId: {
+          type: String,
+          statePath: 'main.user.uid'
+        },
+      },
+      _saveColor: function(color, oldColor) {
+        // if(oldColor && color && oldColor !== color){
+        //   console.log(oldColor);
+        //   console.log(color);
+        //   this.dispatch(__actions__.updateRecipe(this.id, {color}, this.userId));
+        // }
+      },
+      _saveIcon: function(icon, oldIcon) {
+        // if(oldIcon && icon && oldIcon.icon !== icon.icon){
+        //   console.log(oldIcon.name);
+        //   console.log(icon.name);
+        //   this.dispatch(__actions__.updateRecipe(this.id, {icon}, this.userId));
+        // }
+      },
+      _recipeIdObserver: function(recipeId) {
+        this.dispatch(__actions__.getRecipe(recipeId));
+      },
+      _hasImage: function(imageUrl){
+        return !(imageUrl);
+      },
+      _cardImageClass: function(imageUrl){
+        return (imageUrl);
+      },
+      _cardIconColorClass: function(icon, color){
+        return (icon) ? `icon ${color}`: color;
+      },
+      _imageUrlObserver: function(imageUrl){
+        console.log(imageUrl);
+      },
+      _recipeImage: function(recipe){
+
+        if(!this.recipe) return;
+        if(this.recipe.icon){
+          return this.recipe.imageUrl || this.recipe.icon.imageUrl;
+        }
+        return this.recipe.imageUrl;
+      },
+      _recipeObserver: function(recipe){
+        if(recipe){
+          this.set('title', recipe.title);
+          this.set('description', recipe.description);
+          this.set('icon', recipe.icon);
+          this.set('color', recipe.color);
+          this.set('imageUrl', recipe.imageUrl);
+          this.set('favorites', recipe.favorites);
+        }
+      }
+    });</script></dom-module>

@@ -1,0 +1,27 @@
+<!doctype html><html><head><title>Polymer Redux Demo</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes"><script src="../../webcomponentsjs/webcomponents-lite.js"></script><script src="../../../node_modules/redux/dist/redux.js"></script><link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html"><link rel="import" href="../../iron-demo-helpers/demo-snippet.html"><link rel="import" href="../polymer-redux.html"><style is="custom-style" include="demo-pages-shared-styles"></style></head><body><div class="vertical-section-container"><h3>Polymer Redux Demo</h3><demo-snippet><template><script>const reducer = (state, action) => {
+              if (!state) return { friends: [] };
+
+              // copy friends list
+              friends = state.friends.slice(0);
+
+              switch (action.type) {
+                case 'ADD_FRIEND':
+                  friends.push(action.friend);
+                  break;
+                case 'REMOVE_FRIEND':
+                  const idx = friends.indexOf(action.friend)
+                  if (idx !== -1) {
+                      friends.splice(idx, 1)
+                  }
+                  break;
+                case 'SORT_FRIENDS':
+                  friends.sort()
+                  break;
+              }
+
+              state.friends = friends;
+
+              return state;
+            }
+            const store = Redux.createStore(reducer);
+            const ReduxBehavior = PolymerRedux(store);</script><dom-module id="friends-list"><template><p><span>You have [[friends.length]] friend(s).</span><template is="dom-if" if="[[canSortFriends(friends.length)]]"><button on-click="sortFriends">Sort Friends</button></template></p><ul><template is="dom-repeat" items="[[friends]]"><li><span>[[item]]</span> <button on-click="removeFriend">Remove</button></li></template></ul><input id="friend-name" placeholder="Name" on-keypress="handleKeypress"> <button on-click="addFriend">Add Friend</button></template></dom-module><script>Polymer({is:"friends-list",behaviors:[ReduxBehavior],properties:{friends:{type:Array,statePath:"friends"}},actions:{add:function(e){return{type:"ADD_FRIEND",friend:e}},remove:function(e){return{type:"REMOVE_FRIEND",friend:e}},sort:function(){return{type:"SORT_FRIENDS"}}},addFriend:function(){const e=this.$["friend-name"];e.value&&(this.dispatch("add",e.value),e.value="",e.focus())},removeFriend:function(e){this.dispatch("remove",e.model.item)},sortFriends:function(){this.dispatch("sort")},canSortFriends:function(e){return e>1},handleKeypress:function(e){13===e.charCode&&this.addFriend()}})</script><friends-list></friends-list></template></demo-snippet></div></body></html>

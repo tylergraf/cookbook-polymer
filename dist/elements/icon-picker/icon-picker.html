@@ -1,0 +1,86 @@
+<link rel="import" href="/components/polymer/polymer.html"><link rel="import" href="/elements/cookbook-icons/cookbook-icons.html" async><link rel="import" href="/components/iron-icon/iron-icon.html"><link rel="import" href="/components/iron-selector/iron-selector.html"><dom-module id="icon-picker"><template><style>:host{display:block}.main{display:block;position:fixed;height:100%;width:300px;right:-300px;top:64px;z-index:1;background:#f8f8f8;border-left:1px solid #ccc;overflow:scroll;transition:right ease 260ms}.main.open{right:0}.icons-wrapper{display:flex;flex-flow:column}input{margin:10px 5px;height:30px;font-size:30px;line-height:30px;font-family:'Scope One',sans-serif}.icons{display:flex;flex-flow:wrap}.icon-wrapper-plus{display:flex;flex-flow:column;align-items:center;padding:5px;width:80px}.icon-wrapper{display:flex;flex-flow:column;align-items:center;justify-content:center;height:80px;width:80px;background:#fff;border:1px solid transparent}.icon-wrapper.iron-selected{background:#eaeaea}iron-icon{height:50px;width:50px}.colors{display:flex;flex-flow:wrap}.color-wrapper{border:1px solid transparent}.color{height:50px;width:50px;margin:4px}.color-wrapper.iron-selected,.icon-wrapper-plus.iron-selected .icon-wrapper{border-color:#333}.white{background-color:var(--white-color)}.blue{background-color:var(--blue-color)}.red{background-color:var(--red-color)}.yellow{background-color:var(--yellow-color)}.green{background-color:var(--green-color)}.purple{background-color:var(--purple-color)}.orange{background-color:var(--orange-color)}</style><section class$="[[_genClass(open)]]"><paper-button on-tap="_close">Close</paper-button><iron-selector id="colors" selected="-1" as="color" class="colors"><template id="colorList" is="dom-repeat" items="[[colors]]" as="color"><div class="color-wrapper" color$="[[color]]"><div class$="color [[color]]"></div></div></template></iron-selector><div class="icons-wrapper"><input type="text" name="name" value="{{iconFilterVal::input}}" placeholder="Filter Icons"><iron-selector id="icons" selected="-1" class="icons"><template is="dom-repeat" items="[[icons]]" as="icon" id="iconRepeat" filter="[[_filterIcons(iconFilterVal)]]"><div class="icon-wrapper-plus" icon$="[[icon.icon]]"><div class="icon-wrapper"><iron-icon class="icon" icon="[[icon.icon]]"></iron-icon></div><p>[[icon.name]]</p></div></template></iron-selector></div></section></template><script>Polymer({
+      is: 'icon-picker',
+      behaviors: [__state__],
+      properties: {
+        subcategoryId: String,
+        icons: {
+          type: Object,
+          statePath: 'main.icons'
+        },
+        colors: {
+          type: Array,
+          value: ['white','red','blue','green','yellow','purple','orange']
+        },
+        open: {
+          type: Boolean,
+          statePath: 'main.iconPickerOpen'
+        }
+      },
+      _close: function(e) {
+        e.preventDefault();
+        this.dispatch({type: 'TOGGLE_ICON_PICKER', open: false});
+      },
+      _genClass: function(open) {
+        if(open){
+          return 'main open';
+        }
+        return 'main'
+      },
+      _filterIcons: function(val) {
+        return function(icon) {
+          if (!val) return true;
+          if (!icon) return false;
+          return (icon.name && icon.name.includes(val));
+        };
+      },
+      ready: function(){
+        this.dispatch(__actions__.getIcons());
+
+        document.addEventListener('keydown',e=>{
+          if(e.keyCode === 18){
+            this.delete = true;
+          }
+        });
+        document.addEventListener('keyup',e=>{
+          if(e.keyCode === 18){
+            this.delete = false;
+          }
+        });
+        this.$.colors.addEventListener('iron-select',e=>{
+          var color = this.$.colorList.itemForElement(e.detail.item);
+          this.fire('color-selected', color);
+          this.dispatch({type: 'SET_ICON_COLOR', color})
+        });
+        this.$.icons.addEventListener('iron-select',e=>{
+          var icon = this.$.iconRepeat.itemForElement(e.detail.item);
+          this.fire('icon-selected', icon);
+          this.dispatch({type: 'SET_ICON_COLOR', icon})
+        });
+      },
+      _deleteRecipe: function(e, detail){
+        if(this.delete){
+          e.preventDefault();
+          var id = e.target.id
+          this.dispatch(__actions__.removeRecipe(id, this.subcategoryId));
+
+          return false;
+        }
+      },
+      _recipesObserver: function(e){
+        console.log(e);
+      },
+      _addRecipe: function(e){
+        e.preventDefault();
+        var newRecipe = {
+          title: this.title,
+          imageUrl: this.imageUrl,
+          description: this.description,
+          ingredients: this.ingredients,
+          directions: this.directions,
+        }
+        this.dispatch(__actions__.addRecipe(newRecipe, this.subcategoryId));
+        this.newRecipe = '';
+
+        return false;
+      },
+    });</script></dom-module>
