@@ -103,6 +103,9 @@
       if(called.getIcons){
         return false;
       }
+      if(!window.fb){
+        return;
+      }
       fb.database().ref('icons').orderByChild('name').on('value', snapshot => {
         called.getIcons = true;
         const icons = [];
