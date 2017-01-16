@@ -15,6 +15,8 @@ firebase.auth().onAuthStateChanged(function(user) {
       user
     };
     __state__.dispatch(action);
+    __state__.dispatch(__actions__.getUser(user.uid));
+
     document.querySelector("start-google-analytics-tracker").userId = user.uid;
   } else {
     var user = localStorage.getItem(`firebase:authUser:${FB_CONFIG.apiKey}:[DEFAULT]`);

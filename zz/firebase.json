@@ -1,0 +1,22 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "hosting": {
+    "public": "dist",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [{
+          "key": "Link",
+          "value": "</components/firebase/firebase.js>;rel=preload;as=script,</components/redux/index.js>;rel=preload;as=script,</components/redux-thunk/index.js>;rel=preload;as=script,</components/polymer/polymer.html>;rel=preload;as=html,</components/polymer/polymer-mini.html>;rel=preload;as=html,</components/polymer/polymer-micro.html>;rel=preload;as=html,</elements/app-state/app-state.html>;rel=preload;as=html,</components/app-layout/app-header/app-header.html>;rel=preload;as=html,</components/app-layout/app-header-layout/app-header-layout.html>;rel=preload;as=html,</components/app-layout/app-toolbar/app-toolbar.html>;rel=preload;as=html,</components/app-route/app-location.html>;rel=preload;as=html,</components/app-route/app-route.html>;rel=preload;as=html,</components/iron-pages/iron-pages.html>;rel=preload;as=html,</elements/search-bar/search-bar.html>;rel=preload;as=html,</elements/sign-in/sign-in.html>;rel=preload;as=html,</elements/my-app.html>;rel=preload;as=html"}]
+      }
+    ]
+  }
+}

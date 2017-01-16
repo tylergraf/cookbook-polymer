@@ -36,6 +36,11 @@
       case 'SET_USER':
         state.user = Object.assign({}, action.user);
         break;
+      case 'SET_USER_ADMIN':
+        if(action.admin){
+          state.user = Object.assign(state.user, {admin: action.admin});
+        }
+        break;
       case 'UNSET_USER':
         state.user = null;
         break;
@@ -162,9 +167,30 @@
       name: "apple"
     }
   };
+
   function iconReducer(state = {}, action) {
     switch (action.type) {
       case 'SET_ICON_COLOR':
+        if(action.color){
+          state.color = action.color;
+        }
+        if(action.icon){
+          state.icon = Object.assign({},action.icon);
+        }
+        break;
+      default:
+
+    }
+    return state;
+  }
+
+  var initialRecipeState = {
+
+  };
+
+  function recipeReducer(state = {}, action) {
+    switch (action.type) {
+      case 'RECEIVE_RECIPE':
         if(action.color){
           state.color = action.color;
         }
@@ -182,12 +208,14 @@
 
   const rootReducer = Redux.combineReducers({
     icon: iconReducer,
-    main: reducer
+    main: reducer,
+    // recipe: recipeReducer
   });
 
   const initialState = {
     icon: initialIconState,
-    main: initialMainState
+    main: initialMainState,
+    // recipe: {}
   };
 
   var store = Redux.createStore(rootReducer, initialState, composeEnhancers(Redux.applyMiddleware(ReduxThunk.default)));

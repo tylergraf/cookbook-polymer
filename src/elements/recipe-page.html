@@ -32,6 +32,7 @@
     </style>
     <paper-header-panel>
       <paper-toolbar><taxonomy-path subcategory-id="[[recipeObj.subcategoryId]]" show="category,subcategory"></taxonomy-path></paper-toolbar>
+
       <div class$="[[_computeWrapperClass(recipeObj)]]">
         <recipe-card
           title="[[recipeObj.title]]"
@@ -43,6 +44,7 @@
           ingredients="[[recipeObj.ingredients]]"
           directions="[[recipeObj.directions]]"
           image-url="[[recipeObj.imageUrl]]"
+          editable="[[_isEditable(admin)]]"
           icon="[[recipeObj.icon]]"></recipe-card>
       </div>
     </paper-header-panel>
@@ -66,6 +68,14 @@
           statePath: function({main}) {
             return main.recipeObjs[this.recipeId]
           }
+        },
+        userId: {
+          type: Object,
+          statePath: 'main.user.uid'
+        },
+        admin: {
+          type: Boolean,
+          statePath: 'main.user.admin'
         }
       },
       observers: ['_viewChanged(routeData.recipeId)'],
@@ -74,6 +84,9 @@
         if(recipeId !== 'edit' && recipeId !== 'add'){
           this.dispatch(__actions__.getRecipe(recipeId));
         }
+      },
+      _isEditable: function(admin){
+        return (admin);
       },
       _computeWrapperClass: function(recipeObj){
         if(!recipeObj) return '';

@@ -30,19 +30,19 @@
       }
       iron-selector.recipes {
         width: calc(100vw - 300px);
-
+      }
+      iron-selector.recipes recipe-card{
+        border: 2px solid transparent;
       }
       .recipe-wrapper {
         width: 33.333333%;
       }
       recipe-card {
-        /*width: 32%;*/
-        /*padding-right: 1%;*/
         cursor: pointer;
         margin: 10px;
       }
-      recipe-card.iron-selected {
-        border: 1px solid #ccc;
+      .recipe-wrapper.iron-selected recipe-card{
+        border: 2px solid #555;
       }
       @media (min-width: 1000px) {
         .recipe-wrapper {
@@ -74,16 +74,18 @@
       <section class="recipes-wrapper">
         <iron-selector id="recipeList" selected="0" class$="[[_recipesClass(edit)]]" hidden$="[[!edit]]">
           <template id="recipeRepeat" is="dom-repeat" items="[[recipes]]" as="recipe">
-            <recipe-card
-              on-click="_deleteRecipe"
-              id="[[recipe.id]]"
-              subcategory-id="[[recipe.subcategoryId]]"
-              favorites="[[recipe.favorites]]"
-              title="[[recipe.title]]"
-              description="[[recipe.description]]"
-              color="[[recipe.color]]"
-              image-url="[[recipe.imageUrl]]"
-              icon="[[recipe.icon]]"></recipe-card>
+            <div class="recipe-wrapper">
+              <recipe-card
+                on-click="_deleteRecipe"
+                id="[[recipe.id]]"
+                subcategory-id="[[recipe.subcategoryId]]"
+                favorites="[[recipe.favorites]]"
+                title="[[recipe.title]]"
+                description="[[recipe.description]]"
+                color="[[recipe.color]]"
+                image-url="[[recipe.imageUrl]]"
+                icon="[[recipe.icon]]"></recipe-card>
+            </div>
           </template>
         </iron-selector>
         <section class="recipes" hidden$="[[edit]]">

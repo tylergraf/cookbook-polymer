@@ -35,6 +35,15 @@
       p {
         margin: 5px 0;
       }
+      .edit {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      paper-button {
+        background-color: #fff;
+        color: #333;
+      }
       paper-card {
         font-family: 'Scope One', serif;
         margin: 0;
@@ -96,6 +105,7 @@
     </style>
     <paper-card id="card" image="[[imageUrl]]" class$="[[_cardIconColorClass(icon, color)]]">
       <div class="card-content">
+        <a href="[[_getEditLink(id)]]" class="edit" hidden$="[[!editable]]"><paper-button>Edit</paper-button></a>
         <header class="card-header">
           <template is="dom-if" if="[[_hasImage(imageUrl)]]">
             <div class="header-icon">
@@ -183,6 +193,13 @@
           type: String,
           statePath: 'main.user.uid'
         },
+        editable: {
+          type: Boolean,
+          value: false
+        },
+      },
+      _getEditLink: function(id) {
+        return `/recipe/edit/${id}`
       },
       _saveColor: function(color, oldColor) {
         // if(oldColor && color && oldColor !== color){

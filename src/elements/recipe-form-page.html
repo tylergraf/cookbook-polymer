@@ -193,9 +193,6 @@
   <script>
     Polymer({
       is: 'recipe-form-page',
-      ready: function(){
-
-      },
       behaviors: [__state__],
       properties: {
         recipeId: {
@@ -212,6 +209,10 @@
         userId: {
           type: Object,
           statePath: 'main.user.uid'
+        },
+        admin: {
+          type: Object,
+          statePath: 'main.user.admin'
         },
         saved: {
           type: Object,

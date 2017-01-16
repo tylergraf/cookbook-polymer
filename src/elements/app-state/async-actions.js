@@ -26,6 +26,31 @@
       localStorage[key] = JSON.stringify(data);
     }
   }
+  function getUser(userId){
+    return function(dispatch){
+      const STORAGE_KEY = 'USER_ADMIN';
+
+      if(called.getUser){
+        return false;
+      }
+      var action = {
+        type: 'SET_USER_ADMIN'
+      };
+      if(CACHE.exists(STORAGE_KEY)){
+        action.admin = CACHE.get(STORAGE_KEY);
+        dispatch(action);
+      }
+      fb.database().ref(`/users/${userId}/admin`).on('value', snapshot => {
+        called.getUser = true;
+        const admin = snapshot.val();
+
+        console.log(admin);
+        CACHE.set(STORAGE_KEY, admin)
+        action.admin = admin;
+        dispatch(action);
+      });
+    }
+  }
   function getCategories(){
     return function(dispatch){
       const STORAGE_KEY = 'CATEGORIES';
@@ -563,6 +588,7 @@
   }
 
   window.__actions__ = {
+    getUser,
     getCategories,
     getIcons,
     getCategory,
