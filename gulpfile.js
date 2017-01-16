@@ -4,6 +4,7 @@ var htmlmin = require('gulp-htmlmin');
 var uglify = require('gulp-uglify');
 var babel = require('gulp-babel');
 var del = require('del');
+var replace = require('gulp-string-replace');
 
 gulp.task('generate-service-worker', function(callback) {
   var path = require('path');
@@ -25,9 +26,16 @@ gulp.task('generate-service-worker', function(callback) {
 });
 
 gulp.task('generate-firebase', function () {
-    return gulp.src('firebase.json')
+    return gulp.src('fb/firebase.json')
         .pipe(fb())
-        .pipe(gulp.dest('zz'));
+        .pipe(gulp.dest(''));
+});
+
+gulp.task('generate-prod-firebase', function () {
+    return gulp.src('fb/firebase.json')
+        .pipe(fb())
+        .pipe(replace('src', 'dist'))
+        .pipe(gulp.dest(''));
 });
 
 gulp.task('htmlmin', function() {
@@ -86,10 +94,24 @@ gulp.task('clean', function(done) {
   done();
 });
 
+gulp.task('replaceAnalytics', function(done) {
+  return gulp.src('src/components/start-google-analytics-tracker/start-google-analytics-tracker.html')
+    .pipe(replace("'scripts/analytics.js'", "'/scripts/analytics.js'"))
+    .pipe(gulp.dest('src/components/start-google-analytics-tracker'));
+});
+
 gulp.task('default', [
   'clean',
+  'replaceAnalytics',
   'generate-service-worker',
-  'generate-firebase',
+  'generate-firebase'
+]);
+
+gulp.task('prod', [
+  'clean',
+  'replaceAnalytics',
+  'generate-service-worker',
+  'generate-prod-firebase',
   'componentScripts',
   'elementScripts',
   'scripts',
