@@ -141,6 +141,12 @@
       }
       .form {
         width: 600px;
+        padding: 20px 0;
+      }
+      @media (max-width: 600px) {
+        .form {
+          width: 90vw;
+        }
       }
     </style>
     <app-route
@@ -170,19 +176,19 @@
         <iron-autogrow-textarea rows="2" id="directions" bind-value="{{directions}}"></iron-autogrow-textarea>
       </div>
       <div>
-        <label for="image">Image</label>
+        <!-- <label for="image">Image</label>
         <paper-radio-group selected="icon" id="imageType">
           <paper-radio-button name="icon" value="icon">Icon</paper-radio-button>
           <paper-radio-button name="image" value="image">Image</paper-radio-button>
-        </paper-radio-group>
+        </paper-radio-group> -->
         <section hidden$="[[_showImageUploader(imageType)]]">
           <cookbook-icon icon="[[icon.icon]]" color="[[color]]"></cookbook-icon>
           <paper-button type="button" on-tap="_openIconPicker">Choose Icon</paper-button>
         </section>
-        <section hidden$="[[!_showImageUploader(imageType)]]">
+        <!-- <section hidden$="[[!_showImageUploader(imageType)]]">
           <polymer-dropzone id="upload" user="[[user]]" path="images/[[user.uid]]"></polymer-dropzone>
           <input id="image" is="iron-input" bind-value="{{imageUrl}}" type="text">
-        </section>
+        </section> -->
       </div>
       <category-picker></category-picker>
 
@@ -320,14 +326,14 @@
         var action = {type: 'OPEN_ICON_PICKER'};
         this.dispatch(action);
       },
-      attached: function(){
-        this.$.imageType.addEventListener('iron-select', (e)=>{
-          this.set('imageType', e.detail.item.value)
-        });
-      },
-      detached: function(){
-        this.$.imageType.removeEventListener('iron-select');
-      }
+      // attached: function(){
+      //   this.$.imageType.addEventListener('iron-select', (e)=>{
+      //     this.set('imageType', e.detail.item.value)
+      //   });
+      // },
+      // detached: function(){
+      //   this.$.imageType.removeEventListener('iron-select');
+      // }
     });
   </script>
 </dom-module>

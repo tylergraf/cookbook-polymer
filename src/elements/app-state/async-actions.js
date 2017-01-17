@@ -104,6 +104,23 @@
         return false;
       }
       if(!window.fb){
+        fetch(`${FB_CONFIG.databaseURL}/icons.json?orderBy="name"`)
+          .then(res=>res.json())
+          .then(data=>{
+            const icons = [];
+            for (var x in data) {
+              if (data.hasOwnProperty(x)) {
+                var obj = data[x];
+                obj.id = x;
+                icons.push(obj);
+              }
+            }
+            let action = {
+              type: 'RECEIVE_ICONS',
+              icons
+            };
+            dispatch(action);
+          });
         return;
       }
       fb.database().ref('icons').orderByChild('name').on('value', snapshot => {
