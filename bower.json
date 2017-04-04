@@ -44,7 +44,9 @@
     "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.7",
     "paper-ripple": "PolymerElements/paper-ripple#^1.0.10",
     "start-google-analytics-tracker": "^1.1.1",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.24"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.24",
+    "es6-promise": "stefanpenner/es6-promise#^4.1.0",
+    "fetch": "github/fetch#^2.0.3"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

@@ -51,6 +51,9 @@
         useNativeCSSProperties: true
       };
 
+      window.Promise || document.write('<script src="/components/es6-promise/dist/es6-promise.min.js")"><\/script>');
+      window.fetch || document.write('<script src="/components/fetch/fetch.js""><\/script>');
+
       // Load webcomponentsjs polyfill if browser does not support native Web Components
       (function() {
         if ('registerElement' in document
@@ -60,8 +63,8 @@
         } else {
           // polyfill the platform!
           var e = document.createElement('script');
-          e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
-          document.body.appendChild(e);
+          e.src = '/components/webcomponentsjs/webcomponents-lite.min.js';
+          document.head.appendChild(e);
         }
       })();
 
