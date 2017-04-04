@@ -11,7 +11,7 @@ var flat = require('./gulp-helpers/flatImports');
 gulp.task('generate-service-worker', function(callback) {
   var path = require('path');
   var swPrecache = require('sw-precache');
-  var rootDir = 'dist';
+  var rootDir = 'src';
 
   swPrecache.write(path.join(rootDir, 'service-worker.js'), {
     staticFileGlobs: [
@@ -22,8 +22,18 @@ gulp.task('generate-service-worker', function(callback) {
       `${rootDir}/manifest.json`
     ],
     stripPrefix: rootDir,
-    navigateFallback: `${rootDir}/index.html`,
-    verbose: true
+    navigateFallback: '/',
+    navigateFallbackWhitelist: [
+      '/',
+      /^\/category\//,
+      /^\/subcategory\//,
+      /^\/recipe\//
+    ],
+    verbose: true,
+    runtimeCaching: [ {
+      urlPattern: /\/(elements|components)\//,
+      handler: 'fastest'
+    }]
   }, callback);
 });
 
@@ -88,13 +98,17 @@ gulp.task('elementScripts', function() {
 
 gulp.task('manifest', function() {
   return gulp.src([
-    'src/manifest.json'
+    'src/manifest.json',
+    'src/service-worker.js',
   ])
     .pipe(gulp.dest('dist'));
 });
 
 gulp.task('clean', function(done) {
   del.sync(['dist']);
+
+  // these cause the minifier to fail
+  del.sync(['src/components/es6-promise/+(config|lib|server)']);
   done();
 });
 
