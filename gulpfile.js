@@ -6,6 +6,7 @@ var babel = require('gulp-babel');
 var del = require('del');
 var replace = require('gulp-string-replace');
 var run = require('gulp-run');
+var flat = require('./gulp-helpers/flatImports');
 
 gulp.task('generate-service-worker', function(callback) {
   var path = require('path');
@@ -43,6 +44,8 @@ gulp.task('htmlmin', function() {
   var dollarAttribute = /\$=/;
 
   return gulp.src('src/**/*.html')
+    .pipe(replace(/<link.*href=".*typography.html">/,''))
+    .pipe(replace(/<link.*href=".*font-roboto\/roboto.html">/,''))
     .pipe(htmlmin({
       collapseWhitespace: true,
       removeComments: true,
@@ -107,6 +110,18 @@ gulp.task('default', [
   'generate-service-worker',
   'generate-firebase'
 ]);
+
+/**
+ * A task to automate front-loading assets. It will take
+ * whatever imports are in the views/bundle folder and
+ * create imports and preloads for all their deps and
+ * stick them in the views/builtBundles folder
+ */
+gulp.task('bundle', function() {
+  return gulp.src('bundles/*')
+    .pipe(flat())
+    .pipe(gulp.dest('dist/bundles'));
+});
 
 gulp.task('prod', [
   'clean',

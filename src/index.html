@@ -42,7 +42,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://www.google-analytics.com/">
     <link rel="preconnect" href="https://cookbook-144005.firebaseio.com/">
-    
+
     <script>
       // Setup Polymer options
       window.Polymer = {
@@ -53,34 +53,18 @@
 
       // Load webcomponentsjs polyfill if browser does not support native Web Components
       (function() {
-        'use strict';
-
-        var onload = function() {
-          // For native Imports, manually fire WebComponentsReady so user code
-          // can use the same code path for native and polyfill'd imports.
-          if (!window.HTMLImports) {
-            document.dispatchEvent(
-              new CustomEvent('WebComponentsReady', {bubbles: true})
-            );
-          }
-        };
-
-        var webComponentsSupported = (
-          'registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')
-        );
-
-        if (!webComponentsSupported) {
-          var script = document.createElement('script');
-          script.async = true;
-          script.src = '/components/webcomponentsjs/webcomponents-lite.min.js';
-          script.onload = onload;
-          document.head.appendChild(script);
+        if ('registerElement' in document
+            && 'import' in document.createElement('link')
+            && 'content' in document.createElement('template')) {
+          // platform is good!
         } else {
-          onload();
+          // polyfill the platform!
+          var e = document.createElement('script');
+          e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+          document.body.appendChild(e);
         }
       })();
+
 
       // Load pre-caching Service Worker
       if ('serviceWorker' in navigator) {
@@ -89,21 +73,110 @@
         });
       }
     </script>
-    <!-- <link rel="prefetch" href="/components/polymer/polymer.html">
-    <link rel="prefetch" href="/components/polymer/polymer-mini.html">
-    <link rel="prefetch" href="/components/polymer/polymer-micro.html">
-    <link rel="prefetch" href="/elements/app-state/app-state.html">
-    <link rel="prefetch" href="/components/app-layout/app-header/app-header.html">
-    <link rel="prefetch" href="/components/app-layout/app-header-layout/app-header-layout.html">
-    <link rel="prefetch" href="/components/app-layout/app-toolbar/app-toolbar.html">
-    <link rel="prefetch" href="/components/app-route/app-location.html">
-    <link rel="prefetch" href="/components/app-route/app-route.html">
-    <link rel="prefetch" href="/components/iron-pages/iron-pages.html">
-    <link rel="prefetch" href="/elements/search-bar/search-bar.html">
-    <link rel="prefetch" href="/elements/sign-in/sign-in.html"> -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/scopeone/v2/_52Fm41u4u2R3EEH0A9bn5Bw1xU1rKptJj_0jans920.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Scope+One" as="stylesheet" crossorigin>
+    <link rel="preload" href="https://cookbook-144005.firebaseio.com/categories.json" as="data" type="application/json" crossorigin>
+
+
+    <!-- IMPORTS:START -->
+    <link rel="preload" href="/components/polymer-redux/polymer-redux.js" as="script">
+    <link rel="preload" href="/components/redux/index.js" as="script">
+    <link rel="preload" href="/components/redux-thunk/index.js" as="script">
+    <link rel="preload" href="/elements/app-state/async-actions.js" as="script">
+    <link rel="preload" href="/elements/app-state/app-state.js" as="script">
+    <link rel="preload" href="/components/web-animations-js/web-animations-next-lite.min.js" as="script">
 
     <link rel="import" href="/elements/my-app.html">
-    <link rel="import" href="/components/start-google-analytics-tracker/start-google-analytics-tracker.html">
+    <link rel="import" href="/components/polymer/polymer.html">
+    <link rel="import" href="/components/polymer/polymer-mini.html">
+    <link rel="import" href="/components/polymer/polymer-micro.html">
+    <link rel="import" href="/elements/app-state/app-state.html">
+    <link rel="import" href="/components/polymer-redux/polymer-redux.html">
+    <link rel="import" href="/components/app-layout/app-header/app-header.html">
+    <link rel="import" href="/components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="/components/iron-resizable-behavior/iron-resizable-behavior.html">
+    <link rel="import" href="/components/app-layout/app-scroll-effects/app-scroll-effects-behavior.html">
+    <link rel="import" href="/components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+    <link rel="import" href="/components/app-layout/helpers/helpers.html">
+    <link rel="import" href="/components/app-layout/app-header-layout/app-header-layout.html">
+    <link rel="import" href="/components/app-layout/app-toolbar/app-toolbar.html">
+    <link rel="import" href="/components/app-route/app-location.html">
+    <link rel="import" href="/components/iron-location/iron-location.html">
+    <link rel="import" href="/components/iron-location/iron-query-params.html">
+    <link rel="import" href="/components/app-route/app-route-converter-behavior.html">
+    <link rel="import" href="/components/app-route/app-route.html">
+    <link rel="import" href="/components/iron-pages/iron-pages.html">
+    <link rel="import" href="/components/iron-selector/iron-selectable.html">
+    <link rel="import" href="/components/iron-selector/iron-selection.html">
+    <link rel="import" href="/elements/search-bar/search-bar.html">
+    <link rel="import" href="/components/iron-icon/iron-icon.html">
+    <link rel="import" href="/components/iron-meta/iron-meta.html">
+    <link rel="import" href="/components/iron-selector/iron-selector.html">
+    <link rel="import" href="/components/iron-selector/iron-multi-selectable.html">
+    <link rel="import" href="/components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="/components/paper-behaviors/paper-inky-focus-behavior.html">
+    <link rel="import" href="/components/iron-behaviors/iron-button-state.html">
+    <link rel="import" href="/components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+    <link rel="import" href="/components/iron-behaviors/iron-control-state.html">
+    <link rel="import" href="/components/paper-behaviors/paper-ripple-behavior.html">
+    <link rel="import" href="/components/paper-ripple/paper-ripple.html">
+    <link rel="import" href="/components/paper-styles/default-theme.html">
+    <link rel="import" href="/components/paper-styles/color.html">
+    <link rel="import" href="/elements/sign-in/sign-in.html">
+    <link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
+    <link rel="import" href="/components/iron-dropdown/iron-dropdown.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-overlay-behavior.html">
+    <link rel="import" href="/components/iron-fit-behavior/iron-fit-behavior.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-overlay-manager.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-overlay-backdrop.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-focusables-helper.html">
+    <link rel="import" href="/components/neon-animation/neon-animation-runner-behavior.html">
+    <link rel="import" href="/components/neon-animation/neon-animatable-behavior.html">
+    <link rel="import" href="/components/neon-animation/animations/opaque-animation.html">
+    <link rel="import" href="/components/neon-animation/neon-animation-behavior.html">
+    <link rel="import" href="/components/neon-animation/web-animations.html">
+    <link rel="import" href="/components/iron-dropdown/iron-dropdown-scroll-manager.html">
+    <link rel="import" href="/components/neon-animation/animations/fade-in-animation.html">
+    <link rel="import" href="/components/neon-animation/animations/fade-out-animation.html">
+    <link rel="import" href="/components/paper-styles/shadow.html">
+    <link rel="import" href="/components/paper-menu-button/paper-menu-button-animations.html">
+    <link rel="import" href="/components/paper-menu/paper-menu.html">
+    <link rel="import" href="/components/iron-menu-behavior/iron-menu-behavior.html">
+    <link rel="import" href="/components/paper-menu/paper-menu-shared-styles.html">
+    <link rel="import" href="/components/paper-item/paper-item.html">
+    <link rel="import" href="/components/paper-item/paper-item-behavior.html">
+    <link rel="import" href="/components/paper-item/paper-item-shared-styles.html">
+    <link rel="import" href="/components/paper-button/paper-button.html">
+    <link rel="import" href="/components/paper-behaviors/paper-button-behavior.html">
+    <link rel="import" href="/components/paper-material/paper-material-shared-styles.html">
+    <link rel="import" href="/elements/categories-page.html">
+    <link rel="import" href="/components/paper-listbox/paper-listbox.html">
+    <link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
+    <link rel="import" href="/components/iron-iconset-svg/iron-iconset-svg.html">
+    <link rel="import" href="/components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="/components/paper-header-panel/paper-header-panel.html">
+
+    <link rel="inert" href="/elements/cookbook-icons/cookbook-icons.html">
+    <link rel="inert" href="/components/iron-icons/iron-icons.html">
+    <!-- IMPORTS:END -->
+
+    <script>
+      window.addEventListener("load", function(event) {
+        setTimeout(function(){
+
+          var inerts = document.querySelectorAll('link[rel="inert"]');
+
+          inerts.forEach(function(node){
+            var el = document.createElement('link');
+            el.rel = 'import';
+            el.href = node.href;
+            document.head.appendChild(el);
+          });
+        },1000);
+      });
+    </script>
+
+    <link rel="inert" href="/components/start-google-analytics-tracker/start-google-analytics-tracker.html">
 
     <style is="custom-style">
       :root {
