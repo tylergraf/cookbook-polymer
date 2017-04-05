@@ -11,7 +11,7 @@ var flat = require('./gulp-helpers/flatImports');
 gulp.task('generate-service-worker', function(callback) {
   var path = require('path');
   var swPrecache = require('sw-precache');
-  var rootDir = 'src';
+  var rootDir = 'dist';
 
   swPrecache.write(path.join(rootDir, 'service-worker.js'), {
     staticFileGlobs: [
@@ -135,20 +135,20 @@ gulp.task('default', [
 gulp.task('bundle', function() {
   return gulp.src('bundles/*')
     .pipe(flat())
-    .pipe(gulp.dest('dist/bundles'));
+    .pipe(gulp.dest('builtBundles'));
 });
 
 gulp.task('prod', [
   'clean',
   'replaceAnalytics',
   'generate-service-worker',
-  'generate-prod-firebase',
   'componentScripts',
   'elementScripts',
   'scripts',
   'htmlmin',
   'images',
-  'manifest'
+  'manifest',
+  'generate-prod-firebase',
 ]);
 
 gulp.task('deploy', ['prod'], function(done){

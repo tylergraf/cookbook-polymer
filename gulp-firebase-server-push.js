@@ -30,7 +30,7 @@ module.exports = function() {
            //file.contents = file.contents.pipe(...
            //return callback(null, file);
        } else if (file.isBuffer()) {
-         var contents = fs.readFileSync(path.join(__dirname,'/dist/bundles/my-app.html'), 'utf-8');
+         var contents = fs.readFileSync(path.join(__dirname,'/builtBundles/my-app.html'), 'utf-8');
          var imports = [];
          var preloads = [];
 
