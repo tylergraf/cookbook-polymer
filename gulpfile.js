@@ -122,6 +122,7 @@ gulp.task('default', [
   'clean',
   'replaceAnalytics',
   'generate-service-worker',
+  'bundle',
   'generate-firebase'
 ]);
 

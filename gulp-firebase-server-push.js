@@ -1,4 +1,19 @@
-var through = require('through2');    // npm install --save through2
+var through = require('through2');
+var fs = require('fs');
+var path = require('path');
+var dom5 = require('dom5');
+var pred = dom5.predicates;
+
+var importsQuery = pred.AND(
+  pred.hasTagName('link'),
+  pred.hasAttrValue('rel', 'import'),
+  pred.hasAttr('href')
+);
+var preloadsQuery = pred.AND(
+  pred.hasTagName('link'),
+  pred.hasAttrValue('rel', 'preload'),
+  pred.hasAttr('href')
+);
 
 module.exports = function() {
   return through.obj(function(file, encoding, callback) {
@@ -8,7 +23,6 @@ module.exports = function() {
        }
 
        if (file.isStream()) {
-         console.log('stream');
            // file.contents is a Stream - https://nodejs.org/api/stream.html
            this.emit('error', new PluginError(PLUGIN_NAME, 'Streams not supported!'));
 
@@ -16,11 +30,35 @@ module.exports = function() {
            //file.contents = file.contents.pipe(...
            //return callback(null, file);
        } else if (file.isBuffer()) {
-         console.log('buffer');
-         console.log(file.contents);
-           // or, if you can handle Buffers:
-           //file.contents = ...
-           return callback(null, file);
+         var contents = fs.readFileSync(path.join(__dirname,'/dist/bundles/my-app.html'), 'utf-8');
+         var imports = [];
+         var preloads = [];
+
+         var dom = dom5.parse(contents);
+
+         dom5.queryAll(dom, importsQuery)
+             .forEach(function(node) {
+               var relativePath = dom5.getAttribute(node, 'href');
+               imports.push(relativePath);
+
+             });
+         dom5.queryAll(dom, preloadsQuery)
+             .forEach(function(node) {
+               var relativePath = dom5.getAttribute(node, 'href');
+               preloads.push(relativePath);
+             });
+
+          imports = imports.map(p=>`<${p}>;rel=preload;as=html`);
+          preloads = preloads.map(p=>`<${p}>;rel=preload;as=script`);
+
+          var val = imports.join(',')+preloads.join(',');
+
+          var fbFile = JSON.parse(file.contents);
+          fbFile.hosting.headers[0].headers[0].value = val;
+
+          file.contents = new Buffer(JSON.stringify(fbFile, null, 2), "utf-8");
+
+          return callback(null, file);
        }
   });
 };
