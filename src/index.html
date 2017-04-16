@@ -69,12 +69,7 @@
       })();
 
 
-      // Load pre-caching Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/service-worker.js');
-        });
-      }
+
     </script>
     <link rel="preload" href="https://fonts.gstatic.com/s/scopeone/v2/_52Fm41u4u2R3EEH0A9bn5Bw1xU1rKptJj_0jans920.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css?family=Scope+One" as="stylesheet" crossorigin>
@@ -175,7 +170,11 @@
             el.href = node.href;
             document.head.appendChild(el);
           });
-        },1000);
+          // Load pre-caching Service Worker
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js');
+          }
+        },4000);
       });
     </script>
 

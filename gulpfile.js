@@ -1,12 +1,12 @@
 const gulp = require('gulp');
-const fb = require('./gulp-firebase-server-push');
+const fb = require('./gulp-helpers/firebase-server-push');
 var htmlmin = require('gulp-htmlmin');
 var uglify = require('gulp-uglify');
 var babel = require('gulp-babel');
 var del = require('del');
 var replace = require('gulp-string-replace');
 var run = require('gulp-run');
-var flat = require('./gulp-helpers/flatImports');
+var flat = require('./gulp-helpers/flat-stream');
 
 gulp.task('generate-service-worker', function(callback) {
   var path = require('path');

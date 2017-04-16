@@ -1,4 +1,5 @@
 var through = require('through2');
+var flat = require('./flat-imports');
 var fs = require('fs');
 var path = require('path');
 var dom5 = require('dom5');
@@ -30,7 +31,8 @@ module.exports = function() {
            //file.contents = file.contents.pipe(...
            //return callback(null, file);
        } else if (file.isBuffer()) {
-         var contents = fs.readFileSync(path.join(__dirname,'/builtBundles/my-app.html'), 'utf-8');
+
+         var contents = fs.readFileSync(path.join(__dirname,'/../builtBundles/my-app.html'), 'utf-8');
          var imports = [];
          var preloads = [];
 
@@ -51,7 +53,8 @@ module.exports = function() {
           imports = imports.map(p=>`<${p}>;rel=preload;as=html`);
           preloads = preloads.map(p=>`<${p}>;rel=preload;as=script`);
 
-          var val = imports.join(',')+preloads.join(',');
+          imports = imports.splice(0,30);
+          var val = preloads.join(',')+','+imports.join(',');
 
           var fbFile = JSON.parse(file.contents);
           fbFile.hosting.headers[0].headers[0].value = val;
