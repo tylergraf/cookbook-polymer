@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/components/paper-item/paper-item.html">
 <link rel="import" href="/components/iron-input/iron-input.html">
@@ -47,7 +47,7 @@
 
     <paper-header-panel>
 
-      <paper-toolbar><taxonomy-path category-id="[[category.id]]" show="category"></taxonomy-path></paper-toolbar>
+      <paper-toolbar><taxonomy-path slot="top" category-id="[[category.id]]" show="category"></taxonomy-path></paper-toolbar>
       <paper-listbox>
         <template is="dom-repeat" items="[[subcategories]]" as="subcategory">
           <a href$="/subcategory/[[subcategory.id]]"><paper-item>[[subcategory.name]]</paper-item></a>
@@ -63,42 +63,50 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'category-page',
-      behaviors: [__state__],
-      properties: {
-        categoryId: String,
-        category: {
-          type: Object,
-          statePath: 'main.category',
-          observer: '_categoryObserver'
-        },
-        subcategories: {
-          type: Object,
-          statePath: 'main.subcategories',
-          observer: '_subcategoryObserver'
+
+      class CategoryPage extends ReduxMixin(Polymer.Element) {
+      static get is() { return "category-page"; }
+
+      static get properties() {
+        return {
+          categoryId: String,
+          category: {
+            type: Object,
+            statePath: 'main.category',
+            observer: '_categoryObserver'
+          },
+          subcategories: {
+            type: Object,
+            statePath: 'main.subcategories',
+            observer: '_subcategoryObserver'
+          }
         }
-      },
-      observers: ['_viewChanged(routeData.categoryId)'],
-      _viewChanged: function(categoryId){
+      }
+      static get observers(){
+        return ['_viewChanged(routeData.categoryId)']
+      }
+      _viewChanged(categoryId){
         if(this.route.prefix.includes('/category') && categoryId){
           this.dispatch(__actions__.getCategory(categoryId));
         }
-      },
-      _deleteSubcategory: function(e, detail){
+      }
+      _deleteSubcategory(e, detail){
         e.preventDefault();
         var id = e.model.__data__.subcategory.id
         this.dispatch(__actions__.removeSubcategory(id, this.categoryId));
 
         return false;
-      },
-      _addNewSubcategory: function(e){
+      }
+      _addNewSubcategory(e){
         e.preventDefault();
         this.dispatch(__actions__.addSubcategory(this.newSubcategory, this.categoryId));
         this.newSubcategory = '';
 
         return false;
-      },
-    });
+      }
+    }
+
+    // Define your Element
+    customElements.define(CategoryPage.is, CategoryPage);
   </script>
 </dom-module>

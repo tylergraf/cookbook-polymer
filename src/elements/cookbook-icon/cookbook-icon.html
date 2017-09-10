@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="inert" href="/elements/cookbook-icons/cookbook-icons.html">
 <link rel="import" href="/components/iron-icon/iron-icon.html">
 
@@ -71,27 +71,30 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'cookbook-icon',
-      properties: {
-        icon: {
-          type: Object,
-          statePath: 'icons'
-        },
-        color: {
-          type: String,
-          value: 'white'
-        },
-        name: {
-          type: String
-        }
-      },
-      ready: function(){
 
-      },
-      _genClass: function(color) {
+    class CookbookIcon extends ReduxMixin(Polymer.Element) {
+      static get is() { return "cookbook-icon"; }
+      static get properties() {
+        return {
+          icon: {
+            type: Object,
+            statePath: 'icons'
+          },
+          color: {
+            type: String,
+            value: 'white'
+          },
+          name: {
+            type: String
+          }
+        }
+      }
+      _genClass(color) {
         return `icon-wrapper ${color}`;
       }
-    });
+    }
+
+    // Define your Element
+    customElements.define(CookbookIcon.is, CookbookIcon);
   </script>
 </dom-module>

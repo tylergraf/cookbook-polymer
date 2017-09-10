@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/iron-input/iron-input.html">
 <link rel="inert" href="/elements/cookbook-icons/cookbook-icons.html">
 <link rel="import" href="/components/iron-icon/iron-icon.html">
@@ -127,10 +127,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'manage-icons',
-      behaviors: [__state__],
-      properties: {
+    
+      class manage-icons extends ReduxMixin(Polymer.Element) {
+      static get is() { return "manage-icons"; }
+      
+      static get properties() {
+return {
         user: {
           type: Object,
           statePath: 'user'
@@ -143,7 +145,7 @@
           statePath: 'icons',
         }
       },
-      ready: function(){
+      ready(){
         this.dispatch(__actions__.getIcons());
         this.$.potentialIconList.addEventListener('iron-select', e=>{
           var item = this.$.potentialIconsRepeat.itemForElement(e.detail.item);
@@ -346,7 +348,7 @@
     'cookbook:strawberry',
   ];
       },
-      _save: function(e){
+      _save(e){
         e.preventDefault();
 
         var newIcon = {
@@ -358,12 +360,16 @@
 
         return false;
       },
-      _deleteIcon: function(e){
+      _deleteIcon(e){
         var item = this.$.iconList.itemForElement(e.target);
         var id = item && item.id;
 
         this.dispatch(__actions__.removeIcon(id));
       },
     });
-  </script>
+  }
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 </dom-module>

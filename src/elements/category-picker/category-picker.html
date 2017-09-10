@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/components/paper-item/paper-item.html">
@@ -37,10 +37,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'category-picker',
-      behaviors: [__state__],
-      properties: {
+    
+      class category-picker extends ReduxMixin(Polymer.Element) {
+      static get is() { return "category-picker"; }
+      
+      static get properties() {
+return {
         categoryId: {
           type: String,
           statePath: 'main.categoryId',
@@ -70,24 +72,24 @@
           statePath: 'main.categories'
         }
       },
-      attached: function(){
+      connectedCallback(){
         this.dispatch(__actions__.getCategories());
       },
-      _categoryIdObserver: function(categoryId, oldCategoryId){
+      _categoryIdObserver(categoryId, oldCategoryId){
         if(!categoryId) return;
 
         this.dispatch(__actions__.getCategory(categoryId));
 
 
       },
-      _subcategoryObserver: function(subcategory){
+      _subcategoryObserver(subcategory){
         if(!subcategory) return;
 
         this.dispatch(__actions__.getCategory(subcategory.categoryId));
         this.dispatch({type: 'SET_CATEGORY', categoryId: subcategory.categoryId});
 
       },
-      _categorySelected: function(e){
+      _categorySelected(e){
         var category = this.$.categoryRepeat.itemForElement(e.detail.item);
 
         let action = {
@@ -97,7 +99,7 @@
 
         this.dispatch(action);
       },
-      _subcategorySelected: function(e){
+      _subcategorySelected(e){
         var subcategory = this.$.subcategoryRepeat.itemForElement(e.detail.item);
 
         let action = {
@@ -107,7 +109,7 @@
 
         this.dispatch(action);
       },
-      _subcategoriesObserver: function(){
+      _subcategoriesObserver(){
         if(this.subcategoryId){
           setTimeout(()=>{
 
@@ -115,7 +117,7 @@
         })
         }
       },
-      _subcategoryIdObserver: function(subcategoryId, oldSubcategoryId){
+      _subcategoryIdObserver(subcategoryId, oldSubcategoryId){
         if(!oldSubcategoryId && subcategoryId){
           this.dispatch(__actions__.getSubcategory(subcategoryId));
         }
@@ -123,5 +125,9 @@
 
       },
     });
-  </script>
+  }
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 </dom-module>

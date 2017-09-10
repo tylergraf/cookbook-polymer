@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-button/paper-button.html">
 <link rel="import" href="/components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/components/iron-selector/iron-selector.html">
@@ -234,10 +234,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'edit-recipe-page',
-      behaviors: [__state__],
-      properties: {
+    
+      class edit-recipe-page extends ReduxMixin(Polymer.Element) {
+      static get is() { return "edit-recipe-page"; }
+      
+      static get properties() {
+return {
         user: {
           type: Object,
           statePath: 'user'
@@ -307,15 +309,16 @@
           value: ['white','red','blue','green','yellow','purple','orange']
         }
       },
-      observers: ['_recipePreview(title,description,color,icon,imageUrl)','_viewChanged(routeData.recipeId)'],
-      _viewChanged: function(recipeId){
+      static get observers(){
+return ['_recipePreview(title,description,color,icon,imageUrl)','_viewChanged(routeData.recipeId)'],
+      _viewChanged(recipeId){
         debugger;
         if(this.route.prefix.includes('/recipe') && recipeId){
           this.recipeId = recipeId;
           this.dispatch(__actions__.getRecipe(recipeId));
         }
       },
-      ready: function(){
+      ready(){
         debugger;
         this.dispatch(__actions__.getCategories());
         this.dispatch(__actions__.getIcons());
@@ -340,37 +343,37 @@
           this.$.subcategoryList.selectIndex(0);
         });
       },
-      _ingredientsObserver: function(ingredients){
+      _ingredientsObserver(ingredients){
         if(ingredients){
           this.set('ingredientsArr',this.ingredients.split('\n'));
         }
       },
-      _directionsObserver: function(directions){
+      _directionsObserver(directions){
         if(directions){
           this.set('directionsArr',this.directions.split('\n'));
         }
       },
-      _showImageUploader: function(imageType){
+      _showImageUploader(imageType){
         return imageType === 'image';
       },
-      _filterIconHandler: function(e) {
+      _filterIconHandler(e) {
         console.log(e.target.value);
       },
-      _filterIcons: function(val) {
+      _filterIcons(val) {
         return function(icon) {
           if (!val) return true;
           if (!icon) return false;
           return (icon.name && icon.name.includes(val));
         };
       },
-      _recipePreview: function(title,description,color,icon,imageUrl){
+      _recipePreview(title,description,color,icon,imageUrl){
         this.set('title',title);
         this.set('description',description);
         this.set('color',color);
         this.set('icon',icon);
         this.set('imageUrl',imageUrl);
       },
-      _categoryIdObserver: function(categoryId){
+      _categoryIdObserver(categoryId){
         let action = {
           type: 'SELECT_SUBCATEGORY'
         };
@@ -380,10 +383,10 @@
 
         this.dispatch(__actions__.getCategory(categoryId));
       },
-      _subcategoryIdObserver: function(subcategoryId){
+      _subcategoryIdObserver(subcategoryId){
         this.$.subcategoryList.selectIndex(0);
       },
-      _categorySelected: function(e){
+      _categorySelected(e){
         var selectedItem = e.target.selectedItem;
         let action = {
           type: 'SELECT_CATEGORY',
@@ -392,7 +395,7 @@
 
         this.dispatch(action);
       },
-      _subcategorySelected: function(e){
+      _subcategorySelected(e){
         var selectedItem = e.target.selectedItem;
         let action = {
           type: 'SELECT_SUBCATEGORY',
@@ -401,7 +404,7 @@
 
         this.dispatch(action);
       },
-      _addRecipe: function(e){
+      _addRecipe(e){
         e.preventDefault();
 
         var newRecipe = {
@@ -419,5 +422,9 @@
         return false;
       },
     });
-  </script>
+  }
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 </dom-module>

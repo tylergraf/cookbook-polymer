@@ -1,10 +1,14 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-button/paper-button.html">
 <link rel="import" href="/components/paper-progress/paper-progress.html">
 <link rel="import" href="/elements/generate-uuid/generate-uuid.html">
 <link rel="inert" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../iron-icon/iron-icon.html">
-<script src="/components/dropzone/dist/min/dropzone.min.js"></script>
+<script src="/components/dropzone/dist/min/dropzone.min.js">}
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 
 <!--
 `polymer-dropzone`
@@ -67,10 +71,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'polymer-dropzone',
-      behaviors: [__state__],
-      properties: {
+    
+      class polymer-dropzone extends ReduxMixin(Polymer.Element) {
+      static get is() { return "polymer-dropzone"; }
+      
+      static get properties() {
+return {
         user: {
           type: Object
         },
@@ -82,13 +88,13 @@
           value: 0
         }
       },
-      ready: function(){
+      ready(){
 
       },
-      _hidePreview: function(uploadProgress){
+      _hidePreview(uploadProgress){
         return !uploadProgress;
       },
-      _deleteImage: function(e){
+      _deleteImage(e){
         this.imageRef.delete().then(d=>{
           this.uploadProgress = 0;
           this.$.preview.src = '';
@@ -96,7 +102,7 @@
         })
 
       },
-      _fileChange: function(e){
+      _fileChange(e){
         if(!this.user){
           console.warn('no user specified.');
           return;
@@ -146,7 +152,7 @@
           this.fire('image-uploaded', {downloadURL, file});
         });
       },
-      _openDialog: function(){
+      _openDialog(){
         var elem = this.$.fileInput;
         if (elem && document.createEvent) { // sanity check
           var evt = document.createEvent("MouseEvents");
@@ -154,7 +160,7 @@
           elem.dispatchEvent(evt);
         }
       },
-      attached: function(){
+      connectedCallback(){
         if (window.File && window.FileReader && window.FileList && window.Blob) {
           // Great success! All the File APIs are supported.
         } else {
@@ -163,5 +169,9 @@
       },
 
     });
-  </script>
+  }
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 </dom-module>

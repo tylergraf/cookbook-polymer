@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/app-route/app-route.html">
 <link rel="import" href="/elements/recipe-card/recipe-card.html">
 
@@ -80,10 +80,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'favorites-page',
-      behaviors: [__state__],
-      properties: {
+    
+      class favorites-page extends ReduxMixin(Polymer.Element) {
+      static get is() { return "favorites-page"; }
+      
+      static get properties() {
+return {
         subcategoryId: String,
         subcategory: {
           type: Object,
@@ -100,16 +102,20 @@
           observer: '_userObserver'
         }
       },
-      ready: function(){
+      ready(){
       },
-      _userObserver: function(userId){
+      _userObserver(userId){
         if(userId){
           this.dispatch(__actions__.getFavorites(userId));
         }
       },
-      _favoritesObserver: function(favorites){
+      _favoritesObserver(favorites){
 
       }
     });
-  </script>
+  }
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 </dom-module>

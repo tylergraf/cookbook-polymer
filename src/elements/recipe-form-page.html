@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="/components/app-route/app-route.html">
 <link rel="import" href="/components/paper-radio-group/paper-radio-group.html">
@@ -197,65 +197,70 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'recipe-form-page',
-      behaviors: [__state__],
-      properties: {
-        recipeId: {
-          type: String,
-          observer: '_recipeIdObserver'
-        },
-        recipeObj: {
-          type: Object,
-          statePath: function({main}) {
-            return main.recipeObjs[this.recipeId]
+
+    class recipeFormPage extends ReduxMixin(Polymer.Element) {
+      static get is() { return "recipe-form-page"; }
+
+      static get properties() {
+        return {
+          recipeId: {
+            type: String,
+            observer: '_recipeIdObserver'
           },
-          observer: '_recipeObjObserver'
-        },
-        userId: {
-          type: Object,
-          statePath: 'main.user.uid'
-        },
-        admin: {
-          type: Object,
-          statePath: 'main.user.admin'
-        },
-        saved: {
-          type: Object,
-          statePath: 'main.saved',
-          observer: '_recipeSaved'
-        },
-        icon: {
-          type: Object,
-          statePath: 'icon.icon'
-        },
-        color: {
-          type: String,
-          statePath: 'icon.color'
-        },
-        subcategoryId: {
-          type: String,
-          statePath: 'main.subcategoryId'
-        },
-      },
-      observers: ['_routeChange(routeData)'],
-      _recipeSaved: function(recipe){
+          recipeObj: {
+            type: Object,
+            statePath({main}) {
+              return main.recipeObjs[this.recipeId]
+            },
+            observer: '_recipeObjObserver'
+          },
+          userId: {
+            type: Object,
+            statePath: 'main.user.uid'
+          },
+          admin: {
+            type: Object,
+            statePath: 'main.user.admin'
+          },
+          saved: {
+            type: Object,
+            statePath: 'main.saved',
+            observer: '_recipeSaved'
+          },
+          icon: {
+            type: Object,
+            statePath: 'icon.icon'
+          },
+          color: {
+            type: String,
+            statePath: 'icon.color'
+          },
+          subcategoryId: {
+            type: String,
+            statePath: 'main.subcategoryId'
+          },
+        }
+      }
+      static get observers(){
+        return ['_routeChange(routeData)']
+      }
+      _recipeSaved(recipe){
         if(!recipe) return;
         this.dispatch({type: 'NAVIGATE', href: `/recipe/${recipe.id}`});
         this.dispatch({type: 'CLEAR_SAVED'});
 
-      },
-      _showImageUploader: function(imageType){
+      }
+      _showImageUploader(imageType){
         return imageType === 'image';
-      },
-      _recipeIdObserver: function(recipeId){
+      }
+      _recipeIdObserver(recipeId){
         if(!recipeId) return;
 
         if(recipeId !== 'add'){
           this.dispatch(__actions__.getRecipe(recipeId));
         }
-      },
-      _recipeObjObserver: function(recipeObj){
+      }
+      _recipeObjObserver(recipeObj){
         if(!recipeObj) return;
         console.log(recipeObj);
         this.set('title', recipeObj.title);
@@ -268,13 +273,13 @@
         }
         this.dispatch({type:'SET_ICON_COLOR', color: recipeObj.color, icon: recipeObj.icon});
         this.dispatch({type:'SET_SUBCATEGORY', subcategoryId: recipeObj.subcategoryId});
-      },
-      _routeChange: function(routeData){
+      }
+      _routeChange(routeData){
         if(!routeData) return;
         this.set('action', routeData.action);
         this.set('recipeId', routeData.recipeId);
-      },
-      _splitList: function(text){
+      }
+      _splitList(text){
         if(!text.length){
           return [];
         }
@@ -287,8 +292,8 @@
         } catch(e){
           console.error(`Error encoding directions or ingredients list: ${e}`);
         }
-      },
-      _saveRecipe: function(e){
+      }
+      _saveRecipe(e){
         e.preventDefault();
 
         var newRecipe = {
@@ -308,16 +313,16 @@
           this.dispatch(__actions__.addRecipe(newRecipe, this.subcategoryId, this.userId));
         }
 
-      },
-      _openIconPicker: function(e){
+      }
+      _openIconPicker(e){
         e.preventDefault();
         var action = {type: 'TOGGLE_ICON_PICKER', open: true};
         this.dispatch(action);
-      },
-      _setIconColor: function(e){
+      }
+      _setIconColor(e){
         console.log(e.detail);
-      },
-      _iconPickerObserver: function(open){
+      }
+      _iconPickerObserver(open){
         if(open){
           this.$.iconPicker.addEventListener('', this._setIconColor);
         } else {
@@ -325,15 +330,18 @@
         }
         var action = {type: 'OPEN_ICON_PICKER'};
         this.dispatch(action);
-      },
-      // attached: function(){
+      }
+      // connectedCallback(){
       //   this.$.imageType.addEventListener('iron-select', (e)=>{
       //     this.set('imageType', e.detail.item.value)
       //   });
       // },
-      // detached: function(){
+      // detached(){
       //   this.$.imageType.removeEventListener('iron-select');
       // }
-    });
+    }
+
+    // Define your Element
+    customElements.define(recipeFormPage.is, recipeFormPage);
   </script>
 </dom-module>

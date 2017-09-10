@@ -44,58 +44,76 @@
     <link rel="preconnect" href="https://cookbook-144005.firebaseio.com/">
 
     <script>
-      // Setup Polymer options
-      window.Polymer = {
-        dom: 'shadow',
-        lazyRegister: true,
-        useNativeCSSProperties: true
-      };
-
       window.Promise || document.write('<script src="/components/es6-promise/dist/es6-promise.min.js")"><\/script>');
       window.fetch || document.write('<script src="/components/fetch/fetch.js""><\/script>');
-
-      // Load webcomponentsjs polyfill if browser does not support native Web Components
-      (function() {
-        if ('registerElement' in document
-            && 'import' in document.createElement('link')
-            && 'content' in document.createElement('template')) {
-          // platform is good!
-        } else {
-          // polyfill the platform!
-          var e = document.createElement('script');
-          e.src = '/components/webcomponentsjs/webcomponents-lite.min.js';
-          document.head.appendChild(e);
-        }
-      })();
-
-
-
     </script>
+
+    <script src="/components/webcomponentsjs/webcomponents-loader.js" charset="utf-8"></script>
+
     <link rel="preload" href="https://fonts.gstatic.com/s/scopeone/v2/_52Fm41u4u2R3EEH0A9bn5Bw1xU1rKptJj_0jans920.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css?family=Scope+One" as="stylesheet" crossorigin>
     <link rel="preload" href="https://cookbook-144005.firebaseio.com/categories.json" as="data" type="application/json" crossorigin>
 
 
     <!-- IMPORTS:START -->
-    <link rel="preload" href="/components/polymer-redux/polymer-redux.js" as="script">
     <link rel="preload" href="/components/redux/index.js" as="script">
     <link rel="preload" href="/components/redux-thunk/index.js" as="script">
     <link rel="preload" href="/elements/app-state/async-actions.js" as="script">
     <link rel="preload" href="/elements/app-state/app-state.js" as="script">
+    <link rel="preload" href="/components/shadycss/apply-shim.min.js" as="script">
+    <link rel="preload" href="/components/shadycss/custom-style-interface.min.js" as="script">
     <link rel="preload" href="/components/web-animations-js/web-animations-next-lite.min.js" as="script">
 
     <link rel="import" href="/elements/my-app.html">
-    <link rel="import" href="/components/polymer/polymer.html">
-    <link rel="import" href="/components/polymer/polymer-mini.html">
-    <link rel="import" href="/components/polymer/polymer-micro.html">
+    <link rel="import" href="/components/polymer/polymer-element.html">
+    <link rel="import" href="/components/polymer/lib/mixins/element-mixin.html">
+    <link rel="import" href="/components/polymer/lib/utils/boot.html">
+    <link rel="import" href="/components/polymer/lib/utils/settings.html">
+    <link rel="import" href="/components/polymer/lib/utils/resolve-url.html">
+    <link rel="import" href="/components/polymer/lib/utils/mixin.html">
+    <link rel="import" href="/components/polymer/lib/utils/case-map.html">
+    <link rel="import" href="/components/polymer/lib/utils/style-gather.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-module.html">
+    <link rel="import" href="/components/polymer/lib/mixins/property-effects.html">
+    <link rel="import" href="/components/polymer/lib/utils/path.html">
+    <link rel="import" href="/components/polymer/lib/mixins/property-accessors.html">
+    <link rel="import" href="/components/polymer/lib/utils/async.html">
+    <link rel="import" href="/components/polymer/lib/mixins/template-stamp.html">
     <link rel="import" href="/elements/app-state/app-state.html">
     <link rel="import" href="/components/polymer-redux/polymer-redux.html">
+    <link rel="import" href="/components/polymer-redux/dist/polymer-redux.html">
     <link rel="import" href="/components/app-layout/app-header/app-header.html">
+    <link rel="import" href="/components/polymer/polymer.html">
+    <link rel="import" href="/components/polymer/lib/legacy/legacy-element-mixin.html">
+    <link rel="import" href="/components/shadycss/apply-shim.html">
+    <link rel="import" href="/components/polymer/lib/mixins/gesture-event-listeners.html">
+    <link rel="import" href="/components/polymer/lib/utils/gestures.html">
+    <link rel="import" href="/components/polymer/lib/utils/debounce.html">
+    <link rel="import" href="/components/polymer/lib/utils/import-href.html">
+    <link rel="import" href="/components/polymer/lib/utils/render-status.html">
+    <link rel="import" href="/components/polymer/lib/utils/unresolved.html">
+    <link rel="import" href="/components/polymer/lib/legacy/polymer.dom.html">
+    <link rel="import" href="/components/polymer/lib/utils/flattened-nodes-observer.html">
+    <link rel="import" href="/components/polymer/lib/utils/array-splice.html">
+    <link rel="import" href="/components/polymer/lib/utils/flush.html">
+    <link rel="import" href="/components/polymer/lib/legacy/polymer-fn.html">
+    <link rel="import" href="/components/polymer/lib/legacy/class.html">
+    <link rel="import" href="/components/polymer/lib/legacy/templatizer-behavior.html">
+    <link rel="import" href="/components/polymer/lib/utils/templatize.html">
+    <link rel="import" href="/components/polymer/lib/mixins/mutable-data.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-if.html">
+    <link rel="import" href="/components/polymer/lib/elements/array-selector.html">
+    <link rel="import" href="/components/polymer/lib/elements/custom-style.html">
+    <link rel="import" href="/components/shadycss/custom-style-interface.html">
+    <link rel="import" href="/components/polymer/lib/legacy/mutable-data-behavior.html">
     <link rel="import" href="/components/iron-flex-layout/iron-flex-layout.html">
-    <link rel="import" href="/components/iron-resizable-behavior/iron-resizable-behavior.html">
     <link rel="import" href="/components/app-layout/app-scroll-effects/app-scroll-effects-behavior.html">
     <link rel="import" href="/components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
     <link rel="import" href="/components/app-layout/helpers/helpers.html">
+    <link rel="import" href="/components/app-layout/app-layout-behavior/app-layout-behavior.html">
+    <link rel="import" href="/components/iron-resizable-behavior/iron-resizable-behavior.html">
     <link rel="import" href="/components/app-layout/app-header-layout/app-header-layout.html">
     <link rel="import" href="/components/app-layout/app-toolbar/app-toolbar.html">
     <link rel="import" href="/components/app-route/app-location.html">
@@ -130,25 +148,22 @@
     <link rel="import" href="/components/iron-overlay-behavior/iron-focusables-helper.html">
     <link rel="import" href="/components/neon-animation/neon-animation-runner-behavior.html">
     <link rel="import" href="/components/neon-animation/neon-animatable-behavior.html">
-    <link rel="import" href="/components/neon-animation/animations/opaque-animation.html">
-    <link rel="import" href="/components/neon-animation/neon-animation-behavior.html">
-    <link rel="import" href="/components/neon-animation/web-animations.html">
     <link rel="import" href="/components/iron-dropdown/iron-dropdown-scroll-manager.html">
     <link rel="import" href="/components/neon-animation/animations/fade-in-animation.html">
+    <link rel="import" href="/components/neon-animation/neon-animation-behavior.html">
+    <link rel="import" href="/components/neon-animation/web-animations.html">
     <link rel="import" href="/components/neon-animation/animations/fade-out-animation.html">
     <link rel="import" href="/components/paper-styles/shadow.html">
     <link rel="import" href="/components/paper-menu-button/paper-menu-button-animations.html">
-    <link rel="import" href="/components/paper-menu/paper-menu.html">
+    <link rel="import" href="/components/paper-listbox/paper-listbox.html">
     <link rel="import" href="/components/iron-menu-behavior/iron-menu-behavior.html">
-    <link rel="import" href="/components/paper-menu/paper-menu-shared-styles.html">
     <link rel="import" href="/components/paper-item/paper-item.html">
     <link rel="import" href="/components/paper-item/paper-item-behavior.html">
     <link rel="import" href="/components/paper-item/paper-item-shared-styles.html">
     <link rel="import" href="/components/paper-button/paper-button.html">
     <link rel="import" href="/components/paper-behaviors/paper-button-behavior.html">
-    <link rel="import" href="/components/paper-material/paper-material-shared-styles.html">
+    <link rel="import" href="/components/paper-styles/element-styles/paper-material-styles.html">
     <link rel="import" href="/elements/categories-page.html">
-    <link rel="import" href="/components/paper-listbox/paper-listbox.html">
     <link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
     <link rel="import" href="/components/iron-iconset-svg/iron-iconset-svg.html">
     <link rel="import" href="/components/paper-toolbar/paper-toolbar.html">
@@ -165,15 +180,12 @@
           var inerts = document.querySelectorAll('link[rel="inert"]');
 
           inerts.forEach(function(node){
-            var el = document.createElement('link');
-            el.rel = 'import';
-            el.href = node.href;
-            document.head.appendChild(el);
+            Polymer.importHref(node.href)
           });
           // Load pre-caching Service Worker
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js');
-          }
+          // if ('serviceWorker' in navigator) {
+          //   navigator.serviceWorker.register('/service-worker.js');
+          // }
         },4000);
       });
     </script>

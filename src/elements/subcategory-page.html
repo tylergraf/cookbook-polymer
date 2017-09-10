@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/iron-selector/iron-selector.html">
 <link rel="import" href="/elements/recipe-card/recipe-card.html">
 <link rel="import" href="/elements/icon-picker/icon-picker.html">
@@ -69,7 +69,7 @@
       pattern="/:subcategoryId"
       data="{{routeData}}"></app-route>
     <paper-header-panel>
-      <paper-toolbar><taxonomy-path category-id="[[subcategory.categoryId]]" show="category,subcategory"></taxonomy-path></paper-toolbar>
+      <paper-toolbar><taxonomy-path slot="top" category-id="[[subcategory.categoryId]]" show="category,subcategory"></taxonomy-path></paper-toolbar>
       <icon-picker id="iconPicker"></icon-picker>
       <section class="recipes-wrapper">
         <iron-selector id="recipeList" selected="0" class$="[[_recipesClass(edit)]]" hidden$="[[!edit]]">
@@ -111,37 +111,43 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'subcategory-page',
-      behaviors: [__state__],
-      properties: {
-        subcategoryId: String,
-        subcategory: {
-          type: Object,
-          statePath: 'main.subcategory'
-        },
-        recipes: {
-          type: Object,
-          statePath: 'main.recipes',
-          observer: '_recipesObserver'
-        },
-        edit: {
-          type: Boolean,
-          value: false,
-          observer: '_editObserver'
-        },
-        userId: {
-          type: String,
-          statePath: 'main.user.uid'
+
+    class SubcategoryPage extends ReduxMixin(Polymer.Element) {
+      static get is() { return "subcategory-page"; }
+
+      static get properties() {
+        return {
+          subcategoryId: String,
+          subcategory: {
+            type: Object,
+            statePath: 'main.subcategory'
+          },
+          recipes: {
+            type: Object,
+            statePath: 'main.recipes',
+            observer: '_recipesObserver'
+          },
+          edit: {
+            type: Boolean,
+            value: false,
+            observer: '_editObserver'
+          },
+          userId: {
+            type: String,
+            statePath: 'main.user.uid'
+          }
         }
-      },
-      observers: ['_viewChanged(routeData.subcategoryId)'],
-      _viewChanged: function(subcategoryId){
+      }
+      static get observers(){
+        return ['_viewChanged(routeData.subcategoryId)']
+      }
+      _viewChanged(subcategoryId){
         if(this.route.prefix.includes('/subcategory') && subcategoryId){
           this.dispatch(__actions__.getSubcategory(subcategoryId));
         }
-      },
-      ready: function(){
+      }
+      ready(){
+        super.ready();
         // this.dispatch(__actions__.getSubcategory(this.subcategoryId));
         document.addEventListener('keydown',e=>{
           if(e.keyCode === 18){
@@ -156,6 +162,7 @@
             this.delete = false;
           }
         });
+
         this.$.iconPicker.addEventListener('icon-selected',e=>{
           if(!this.edit) return;
           var recipe = Object.assign(this.selectedRecipe, {icon: e.detail});
@@ -172,8 +179,8 @@
           this.selectedRecipe = recipe;
           this.selectedRecipeEl = e.detail.item;
         });
-      },
-      _deleteRecipe: function(e, detail){
+      }
+      _deleteRecipe(e, detail){
         if(this.delete){
           e.preventDefault();
           var id = e.target.id
@@ -181,21 +188,21 @@
 
           return false;
         }
-      },
-      _recipesClass: function(edit){
+      }
+      _recipesClass(edit){
         if(edit){
           return 'recipes edit';
         }
         return 'recipes';
-      },
-      _editObserver: function(edit){
+      }
+      _editObserver(edit){
         this.$.iconPicker.open = edit;
 
-      },
-      _recipesObserver: function(e){
+      }
+      _recipesObserver(e){
         console.log(e);
-      },
-      _addRecipe: function(e){
+      }
+      _addRecipe(e){
         e.preventDefault();
         var newRecipe = {
           title: this.title,
@@ -208,7 +215,10 @@
         this.newRecipe = '';
 
         return false;
-      },
-    });
+      }
+    }
+
+    // Define your Element
+    customElements.define(SubcategoryPage.is, SubcategoryPage);
   </script>
 </dom-module>

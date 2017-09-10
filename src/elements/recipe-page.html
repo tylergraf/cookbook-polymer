@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/elements/app-state/app-state.html">
 <link rel="import" href="/elements/recipe-card/recipe-card.html">
 <link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
@@ -32,7 +32,7 @@
       }
     </style>
     <paper-header-panel>
-      <paper-toolbar><taxonomy-path subcategory-id="[[recipeObj.subcategoryId]]" show="category,subcategory"></taxonomy-path></paper-toolbar>
+      <paper-toolbar><taxonomy-path slot="top" subcategory-id="[[recipeObj.subcategoryId]]" show="category,subcategory"></taxonomy-path></paper-toolbar>
 
       <div class$="[[_computeWrapperClass(recipeObj)]]">
         <recipe-card
@@ -53,43 +53,47 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'recipe-page',
-      behaviors: [__state__],
-      ready: function(){
 
-      },
-      properties: {
-        recipeId: {
-          type: String,
-          observer: '_recipeIdObserver'
-        },
-        recipeObj: {
-          type: Object,
-          statePath: function({main}) {
-            return main.recipeObjs[this.recipeId]
+    class RecipePage extends ReduxMixin(Polymer.Element) {
+      static get is() { return "recipe-page"; }
+
+
+      static get properties() {
+        return {
+          recipeId: {
+            type: String,
+            observer: '_recipeIdObserver'
+          },
+          recipeObj: {
+            type: Object,
+            statePath({main}) {
+              return main.recipeObjs[this.recipeId]
+            }
+          },
+          userId: {
+            type: Object,
+            statePath: 'main.user.uid'
+          },
+          admin: {
+            type: Boolean,
+            statePath: 'main.user.admin'
           }
-        },
-        userId: {
-          type: Object,
-          statePath: 'main.user.uid'
-        },
-        admin: {
-          type: Boolean,
-          statePath: 'main.user.admin'
         }
-      },
-      observers: ['_viewChanged(routeData.recipeId)'],
-      _recipeIdObserver: function(recipeId){
+      }
+
+      static get observers(){
+        return ['_viewChanged(routeData.recipeId)']
+      }
+      _recipeIdObserver(recipeId){
         if(!recipeId) return;
         if(recipeId !== 'edit' && recipeId !== 'add'){
           this.dispatch(__actions__.getRecipe(recipeId));
         }
-      },
-      _isEditable: function(admin){
+      }
+      _isEditable(admin){
         return (admin);
-      },
-      _computeWrapperClass: function(recipeObj){
+      }
+      _computeWrapperClass(recipeObj){
         if(!recipeObj) return '';
 
         if(recipeObj.imageUrl){
@@ -97,6 +101,9 @@
         }
         return `recipe-card-wrapper ${recipeObj.color}`;
       }
-    });
+    }
+
+    // Define your Element
+    customElements.define(RecipePage.is, RecipePage);
   </script>
 </dom-module>

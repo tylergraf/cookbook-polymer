@@ -219,5 +219,5 @@
   };
 
   var store = Redux.createStore(rootReducer, initialState, composeEnhancers(Redux.applyMiddleware(ReduxThunk.default)));
-  window.__state__ = PolymerRedux(store);
+  window.ReduxMixin = PolymerRedux(store);
 })();

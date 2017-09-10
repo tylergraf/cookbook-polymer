@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="inert" href="/elements/cookbook-icons/cookbook-icons.html">
 <link rel="import" href="/components/iron-icon/iron-icon.html">
 <link rel="import" href="/components/iron-selector/iron-selector.html">
@@ -138,42 +138,47 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'icon-picker',
-      behaviors: [__state__],
-      properties: {
-        subcategoryId: String,
-        icons: {
-          type: Object,
-          statePath: 'main.icons'
-        },
-        colors: {
-          type: Array,
-          value: ['white','red','blue','green','yellow','purple','orange']
-        },
-        open: {
-          type: Boolean,
-          statePath: 'main.iconPickerOpen'
+
+    class IconPicker extends ReduxMixin(Polymer.Element) {
+      static get is() { return "icon-picker"; }
+
+      static get properties() {
+        return {
+          subcategoryId: String,
+          icons: {
+            type: Object,
+            statePath: 'main.icons'
+          },
+          colors: {
+            type: Array,
+            value: ['white','red','blue','green','yellow','purple','orange']
+          },
+          open: {
+            type: Boolean,
+            statePath: 'main.iconPickerOpen'
+          }
         }
-      },
-      _close: function(e) {
+      }
+      _close(e) {
         e.preventDefault();
         this.dispatch({type: 'TOGGLE_ICON_PICKER', open: false});
-      },
-      _genClass: function(open) {
+      }
+      _genClass(open) {
         if(open){
           return 'main open';
         }
         return 'main'
-      },
-      _filterIcons: function(val) {
+      }
+      _filterIcons(val) {
         return function(icon) {
           if (!val) return true;
           if (!icon) return false;
           return (icon.name && icon.name.includes(val));
         };
-      },
-      ready: function(){
+      }
+      ready(){
+        super.ready();
+
         this.dispatch(__actions__.getIcons());
 
         document.addEventListener('keydown',e=>{
@@ -196,8 +201,8 @@
           this.fire('icon-selected', icon);
           this.dispatch({type: 'SET_ICON_COLOR', icon})
         });
-      },
-      _deleteRecipe: function(e, detail){
+      }
+      _deleteRecipe(e, detail){
         if(this.delete){
           e.preventDefault();
           var id = e.target.id
@@ -205,11 +210,11 @@
 
           return false;
         }
-      },
-      _recipesObserver: function(e){
+      }
+      _recipesObserver(e){
         console.log(e);
-      },
-      _addRecipe: function(e){
+      }
+      _addRecipe(e){
         e.preventDefault();
         var newRecipe = {
           title: this.title,
@@ -222,7 +227,10 @@
         this.newRecipe = '';
 
         return false;
-      },
-    });
+      }
+    }
+
+    // Define your Element
+    customElements.define(IconPicker.is, IconPicker);
   </script>
 </dom-module>

@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/elements/search-bar/search-bar.html">
 <link rel="inert" href="/components/iron-icons/iron-icons.html">
 <link rel="import" href="/components/iron-iconset-svg/iron-iconset-svg.html">
@@ -79,37 +79,40 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'taxonomy-path',
-      behaviors: [__state__],
-      properties: {
-        categoryId: {
-          type: String,
-          observer: '_categoryIdObserver'
-        },
-        category: {
-          type: Object,
-          statePath: 'main.category'
-        },
-        subcategoryId: {
-          type: String,
-          observer: '_subcategoryIdObserver'
-        },
-        subcategory: {
-          type: Object,
-          statePath: 'main.subcategory',
-          observer: '_subcategoryObserver'
-        },
-        show: {
-          type: String,
-          value: ''
-        },
-        searchBarOpen: {
-          type: Boolean,
-          statePath: 'main.searchBarOpen'
+
+    class TaxonomyPath extends ReduxMixin(Polymer.Element) {
+      static get is() { return "taxonomy-path"; }
+
+      static get properties() {
+        return {
+          categoryId: {
+            type: String,
+            observer: '_categoryIdObserver'
+          },
+          category: {
+            type: Object,
+            statePath: 'main.category'
+          },
+          subcategoryId: {
+            type: String,
+            observer: '_subcategoryIdObserver'
+          },
+          subcategory: {
+            type: Object,
+            statePath: 'main.subcategory',
+            observer: '_subcategoryObserver'
+          },
+          show: {
+            type: String,
+            value: ''
+          },
+          searchBarOpen: {
+            type: Boolean,
+            statePath: 'main.searchBarOpen'
+          }
         }
-      },
-      _show: function(show, item){
+      }
+      _show(show, item){
         if(show){
           var showing = show.split(',');
           if(showing.includes(item)){
@@ -117,27 +120,30 @@
           }
         }
         return true;
-      },
-      _categoryIdObserver: function(id){
+      }
+      _categoryIdObserver(id){
         if(id){
           this.dispatch(__actions__.getCategory(id));
         }
-      },
-      _subcategoryIdObserver: function(id){
+      }
+      _subcategoryIdObserver(id){
         if(id){
           this.dispatch(__actions__.getSubcategory(id));
         }
-      },
-      _subcategoryObserver: function(subcategory){
+      }
+      _subcategoryObserver(subcategory){
         if(subcategory && subcategory.name && !(this.category && this.category.name)){
           this.dispatch(__actions__.getCategory(subcategory.categoryId));
         }
-      },
-      _openSearch: function(e) {
+      }
+      _openSearch(e) {
         e.preventDefault();
         this.dispatch({type: 'SET_SEARCH_BAR_OPEN', showing: true});
         this.$.searchBar.fire('focus-search');
-      },
-    });
+      }
+    }
+
+    // Define your Element
+    customElements.define(TaxonomyPath.is, TaxonomyPath);
   </script>
 </dom-module>

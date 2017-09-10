@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/components/paper-item/paper-item.html">
 <link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
@@ -35,7 +35,7 @@
       }
     </style>
     <paper-header-panel>
-      <paper-toolbar><taxonomy-path></taxonomy-path></paper-toolbar>
+      <paper-toolbar><taxonomy-path slot="top"></taxonomy-path></paper-toolbar>
       <paper-listbox>
         <template is="dom-repeat" items="[[categories]]" as="category">
           <a href$="/category/[[category.id]]"><paper-item>[[category.name]]</paper-item></a>
@@ -45,38 +45,45 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'categories-page',
-      behaviors: [__state__],
-      properties: {
-        categories: {
-          type: Array,
-          statePath: 'main.categories'
+
+    class CategoriesPage extends ReduxMixin(Polymer.Element) {
+      static get is() { return "categories-page"; }
+
+      static get properties() {
+        return {
+          categories: {
+            type: Array,
+            statePath: 'main.categories'
+          }
         }
-      },
-      ok: function(d){
+      }
+      ok(d){
         console.log(d);
-      },
-      ready: function(){
+      }
+      ready(){
+        super.ready();
         this.dispatch(__actions__.getCategories());
-      },
-      _deleteCategory: function(e, detail){
+      }
+      _deleteCategory(e, detail){
         e.preventDefault();
         var id = e.model.__data__.category.id
         this.dispatch(__actions__.removeCategory(id));
 
         return false;
-      },
-      _addNewCategory: function(e){
+      }
+      _addNewCategory(e){
         e.preventDefault();
         this.dispatch(__actions__.addCategory(this.newCategory));
         this.newCategory = '';
 
         return false;
-      },
-      _categoriesObserver: function(data){
+      }
+      _categoriesObserver(data){
         this.set('categories', data);
       }
-    });
+    }
+
+    // Define your Element
+    customElements.define(CategoriesPage.is, CategoriesPage);
   </script>
 </dom-module>

@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/app-route/app-route.html">
 <link rel="import" href="/components/iron-pages/iron-pages.html">
 
@@ -29,14 +29,19 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'recipe-router',
-      properties: {
-        route: Object,
-        page: String
-      },
-      observers: ['_viewChanged(routeData.recipeId)','_pageChanged(page)'],
-      _viewChanged: function(recipeId){
+
+    class RecipeRouter extends ReduxMixin(Polymer.Element) {
+      static get is() { return "recipe-router"; }
+      static get properties() {
+        return {
+          route: Object,
+          page: String
+        }
+      }
+      static get observers(){
+        return ['_viewChanged(routeData.recipeId)','_pageChanged(page)']
+      }
+      _viewChanged(recipeId){
         if(!recipeId) return;
         var component;
 
@@ -48,8 +53,11 @@
           component = 'recipe-page';
         }
         var resolvedPageUrl = this.resolveUrl( `${component}.html`);
-        this.importHref(resolvedPageUrl, null, null, true);
+        Polymer.importHref(resolvedPageUrl, null, null, true);
       }
-    });
+    }
+
+    // Define your Element
+    customElements.define(RecipeRouter.is, RecipeRouter);
   </script>
 </dom-module>

@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/elements/recipe-card/recipe-card.html">
 <link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
 <link rel="import" href="/components/paper-header-panel/paper-header-panel.html">
@@ -54,31 +54,34 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'admin-page',
-      behaviors: [__state__],
-      ready: function(){
+    
+      class admin-page extends ReduxMixin(Polymer.Element) {
+      static get is() { return "admin-page"; }
+      
+      ready(){
 
       },
-      properties: {
+      static get properties() {
+return {
         recipeId: {
           type: String
         },
         recipeObj: {
           type: Object,
-          statePath: function(state) {
+          statePath(state) {
             return state.recipeObjs[this.recipeId]
           }
         }
       },
-      observers: ['_viewChanged(routeData.recipeId)'],
-      _viewChanged: function(recipeId){
+      static get observers(){
+return ['_viewChanged(routeData.recipeId)'],
+      _viewChanged(recipeId){
         if(this.route.prefix.includes('/recipe') && recipeId){
           this.recipeId = recipeId;
           this.dispatch(__actions__.getRecipe(recipeId));
         }
       },
-      _computeWrapperClass: function(recipeObj){
+      _computeWrapperClass(recipeObj){
         if(!recipeObj) return '';
 
         if(recipeObj.imageUrl){

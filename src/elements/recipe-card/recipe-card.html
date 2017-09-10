@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-card/paper-card.html">
 <link rel="import" href="/components/paper-button/paper-button.html">
 <link rel="import" href="/elements/favorite-recipe/favorite-recipe.html">
@@ -107,11 +107,11 @@
       <div class="card-content">
         <a href="[[_getEditLink(id)]]" class="edit" hidden$="[[!editable]]"><paper-button>Edit</paper-button></a>
         <header class="card-header">
-          <template is="dom-if" if="[[_hasImage(imageUrl)]]">
+          <dom-if if="[[_hasImage(imageUrl)]]">
             <div class="header-icon">
               <iron-icon icon="[[icon.icon]]"></iron-icon>
             </div>
-          </template>
+          </dom-if>
           <h2 class="card-heading">[[title]]</h2>
         </header>
         <p>[[description]]</p>
@@ -140,105 +140,108 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'recipe-card',
-      behaviors: [__state__],
-      properties: {
-        recipeId: {
-          type: String,
-          observer: '_recipeIdObserver'
-        },
-        recipe: {
-          type: String,
-          statePath: function({main}) {
-            return main.recipeObjs[this.recipeId]
+
+    class RecipeCard extends ReduxMixin(Polymer.Element) {
+      static get is() { return "recipe-card"; }
+
+      static get properties() {
+        return {
+          recipeId: {
+            type: String,
+            observer: '_recipeIdObserver'
           },
-          observer: '_recipeObserver'
-        },
-        title: {
-          type: String
-        },
-        favorites: {
-          type: Number
-        },
-        icon: {
-          type: Object,
-          value: {},
-          observer: '_saveIcon'
-        },
-        ingredients: {
-          type: Array,
-          value: []
-        },
-        directions: {
-          type: Array,
-          value: []
-        },
-        id: {
-          type: String
-        },
-        description: {
-          type: String
-        },
-        imageUrl: {
-          type: String,
-          value: ''
-        },
-        color: {
-          type: String,
-          value: 'white',
-          observer: '_saveColor'
-        },
-        userId: {
-          type: String,
-          statePath: 'main.user.uid'
-        },
-        editable: {
-          type: Boolean,
-          value: false
-        },
-      },
-      _getEditLink: function(id) {
+          recipe: {
+            type: String,
+            statePath({main}) {
+              return main.recipeObjs[this.recipeId]
+            },
+            observer: '_recipeObserver'
+          },
+          title: {
+            type: String
+          },
+          favorites: {
+            type: Number
+          },
+          icon: {
+            type: Object,
+            value: {},
+            observer: '_saveIcon'
+          },
+          ingredients: {
+            type: Array,
+            value: []
+          },
+          directions: {
+            type: Array,
+            value: []
+          },
+          id: {
+            type: String
+          },
+          description: {
+            type: String
+          },
+          imageUrl: {
+            type: String,
+            value: ''
+          },
+          color: {
+            type: String,
+            value: 'white',
+            observer: '_saveColor'
+          },
+          userId: {
+            type: String,
+            statePath: 'main.user.uid'
+          },
+          editable: {
+            type: Boolean,
+            value: false
+          },
+        }
+      }
+      _getEditLink(id) {
         return `/recipe/edit/${id}`
-      },
-      _saveColor: function(color, oldColor) {
+      }
+      _saveColor(color, oldColor) {
         // if(oldColor && color && oldColor !== color){
         //   console.log(oldColor);
         //   console.log(color);
         //   this.dispatch(__actions__.updateRecipe(this.id, {color}, this.userId));
         // }
-      },
-      _saveIcon: function(icon, oldIcon) {
+      }
+      _saveIcon(icon, oldIcon) {
         // if(oldIcon && icon && oldIcon.icon !== icon.icon){
         //   console.log(oldIcon.name);
         //   console.log(icon.name);
         //   this.dispatch(__actions__.updateRecipe(this.id, {icon}, this.userId));
         // }
-      },
-      _recipeIdObserver: function(recipeId) {
+      }
+      _recipeIdObserver(recipeId) {
         this.dispatch(__actions__.getRecipe(recipeId));
-      },
-      _hasImage: function(imageUrl){
+      }
+      _hasImage(imageUrl){
         return !(imageUrl);
-      },
-      _cardImageClass: function(imageUrl){
+      }
+      _cardImageClass(imageUrl){
         return (imageUrl);
-      },
-      _cardIconColorClass: function(icon, color){
+      }
+      _cardIconColorClass(icon, color){
         return (icon) ? `icon ${color}`: color;
-      },
-      _imageUrlObserver: function(imageUrl){
+      }
+      _imageUrlObserver(imageUrl){
         console.log(imageUrl);
-      },
-      _recipeImage: function(recipe){
+      }
+      _recipeImage(recipe){
 
         if(!this.recipe) return;
         if(this.recipe.icon){
           return this.recipe.imageUrl || this.recipe.icon.imageUrl;
         }
         return this.recipe.imageUrl;
-      },
-      _recipeObserver: function(recipe){
+      }
+      _recipeObserver(recipe){
         if(recipe){
           this.set('title', recipe.title);
           this.set('description', recipe.description);
@@ -248,6 +251,9 @@
           this.set('favorites', recipe.favorites);
         }
       }
-    });
+    }
+
+    // Define your Element
+    customElements.define(RecipeCard.is, RecipeCard);
   </script>
 </dom-module>

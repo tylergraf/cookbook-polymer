@@ -1,8 +1,10 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="inert" href="/elements/cookbook-icons/cookbook-icons.html" async>
 <link rel="import" href="/components/iron-icon/iron-icon.html">
 <link rel="import" href="/components/iron-selector/iron-selector.html">
 <link rel="import" href="/components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/elements/app-state/app-state.html">
+
 
 <!--
 `search-bar`
@@ -65,38 +67,45 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'search-bar',
-      behaviors: [__state__],
-      properties: {
-        query: {
-          type: String,
-          statePath: 'main.searchQuery'
-        },
-        searchBarOpen: {
-          type: Boolean,
-          statePath: 'main.searchBarOpen'
+    class SearchBar extends ReduxMixin(Polymer.Element) {
+      static get is() { return "search-bar"; }
+
+      static get properties() {
+        return {
+          query: {
+            type: String,
+            statePath: 'main.searchQuery'
+          },
+          searchBarOpen: {
+            type: Boolean,
+            statePath: 'main.searchBarOpen'
+          }
         }
-      },
-      listeners: {
-        'focus-search': '_focusSearchHandler',
-      },
-      _focusSearchHandler: function(e) {
+      }
+      static get listeners() {
+        return {
+          'focus-search': '_focusSearchHandler'
+        }
+      }
+      _focusSearchHandler(e) {
         this.$.search.focus();
-      },
-      _search: function(e) {
+      }
+      _search(e) {
         e.preventDefault();
         if(!this.query) return;
         this.dispatch({type:'NAVIGATE', href: `/results/${this.query}`});
-      },
-      _formClass: function(searchBarOpen) {
+      }
+      _formClass(searchBarOpen) {
         return (searchBarOpen) ? 'form open' : 'form';
-      },
-      _clearSearch: function(e) {
+      }
+      _clearSearch(e) {
         e.preventDefault();
         this.dispatch({type: 'SET_SEARCH_QUERY', query: ''});
         this.dispatch({type: 'SET_SEARCH_BAR_OPEN', showing: false});
-      },
-    });
+      }
+    }
+
+    // Define your Element
+    customElements.define(SearchBar.is, SearchBar);
   </script>
 </dom-module>

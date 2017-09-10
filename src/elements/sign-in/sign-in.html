@@ -1,9 +1,10 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="/components/paper-menu/paper-menu.html">
+<link rel="import" href="/components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/components/paper-item/paper-item.html">
 <link rel="import" href="/components/paper-button/paper-button.html">
-<script>
+
+<!-- <script>
   window.addEventListener("load", function(event) {
     setTimeout(function(){
       !function(e,t,r){function n(){for(;d[0]&&"loaded"==d[0][f];)c=d.shift(),c[o]=!i.parentNode.insertBefore(c,i)}for(var s,a,c,d=[],i=e.scripts[0],o="onreadystatechange",f="readyState";s=r.shift();)a=e.createElement(t),"async"in i?(a.async=!1,e.head.appendChild(a)):i[f]?(d.push(a),a[o]=n):e.write("<"+t+' src="'+s+'" defer></'+t+">"),a.src=s}(document,"script",[
@@ -12,7 +13,7 @@
       ])
     },4000);
   });
-</script>
+</script> -->
 
 <!--
 `sign-in`
@@ -76,46 +77,50 @@
         }
       }
     </style>
-    <template is="dom-if" if="[[signedIn]]">
-    <paper-menu-button ignore-select horizontal-align="right">
-      <div class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div><span>[[user.displayName]]</span></div>
-      <paper-menu class="dropdown-content">
-        <a href="/favorites"><paper-item>Favorites</paper-item></a>
-        <paper-item><paper-button on-tap="_signOut">Sign Out</paper-button></paper-item>
-      </paper-menu>
-    </paper-menu-button>
-    </template>
-    <template is="dom-if" if="[[!signedIn]]">
-    <paper-menu-button ignore-select horizontal-align="right">
-      <div class="dropdown-trigger">Sign In</div>
-      <paper-menu class="dropdown-content">
-        <paper-item on-tap="_signIn" id="google">Sign in with Google</paper-item>
-        <paper-item on-tap="_signIn" id="facebook">Sign in with Facebook</paper-item>
-        <paper-item on-tap="_signIn" id="twitter">Sign in with Twitter</paper-item>
-      </paper-menu>
-    </paper-menu-button>
-    </template>
+    <dom-if if="[[signedIn]]">
+      <paper-menu-button ignore-select horizontal-align="right">
+        <div slot="dropdown-trigger" class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div><span>[[user.displayName]]</span></div>
+        <paper-listbox class="dropdown-content">
+          <a href="/favorites"><paper-item>Favorites</paper-item></a>
+          <paper-item><paper-button on-tap="_signOut">Sign Out</paper-button></paper-item>
+        </paper-listbox>
+      </paper-menu-button>
+    </dom-if>
+    <dom-if if="[[!signedIn]]">
+      <paper-menu-button ignore-select horizontal-align="right">
+        <div slot="dropdown-trigger" class="dropdown-trigger">Sign In</div>
+        <paper-listbox slot="dropdown-content">
+          <paper-item on-tap="_signIn" id="google">Sign in with Google</paper-item>
+          <paper-item on-tap="_signIn" id="facebook">Sign in with Facebook</paper-item>
+          <paper-item on-tap="_signIn" id="twitter">Sign in with Twitter</paper-item>
+        </paper-listbox>
+      </paper-menu-button>
+    </dom-if>
   </template>
 
   <script>
-    Polymer({
-      is: 'sign-in',
-      behaviors: [__state__],
-      properties: {
-        user: {
-          type: Object,
-          statePath: 'main.user',
-          observer: '_userObserver'
-        },
-        signedIn: {
-          type: Boolean,
-          value: false
+
+    class SignIn extends Polymer.Element {
+      static get is() { return "sign-in"; }
+
+      static get properties() {
+        return {
+          user: {
+            type: Object,
+            statePath: 'main.user',
+            observer: '_userObserver'
+          },
+          signedIn: {
+            type: Boolean,
+            value: false
+          }
         }
-      },
-      ready: function(){
+      }
+      ready(){
+        super.ready();
         this._defer();
-      },
-      _defer: function(){
+      }
+      _defer(){
         if(window.firebase){
           this.googleProvider = new firebase.auth.GoogleAuthProvider();
           this.facebookProvider = new firebase.auth.FacebookAuthProvider();
@@ -123,22 +128,26 @@
         } else {
           setTimeout(()=> this._defer(), 50);
         }
-      },
-      _userObserver: function(user){
+      }
+      _userObserver(user){
+        debugger;
         if(user){
           this.set('signedIn', true);
         } else {
           this.set('signedIn', false);
         }
-      },
-      _signIn: function(e){
+      }
+      _signIn(e){
         let social = e.target.id;
         fb.auth().signInWithRedirect(this[`${social}Provider`]);
-      },
-      _signOut: function(e){
+      }
+      _signOut(e){
         let social = e.target.id;
         fb.auth().signOut().then(()=>this.dispatch({type: 'UNSET_USER'}));
       }
-    });
+    }
+
+    // Define your Element
+    customElements.define(SignIn.is, SignIn);
   </script>
 </dom-module>

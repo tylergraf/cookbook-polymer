@@ -1,4 +1,4 @@
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/components/paper-button/paper-button.html">
 <link rel="import" href="/components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/components/paper-item/paper-item.html">
@@ -91,10 +91,12 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'recipe-converter',
-      behaviors: [__state__],
-      properties: {
+    
+      class recipe-converter extends ReduxMixin(Polymer.Element) {
+      static get is() { return "recipe-converter"; }
+      
+      static get properties() {
+return {
         json: {
           type: String,
           observer: '_parseJSON'
@@ -132,7 +134,7 @@
           observer: '_subcategoriesObserver'
         },
       },
-      ready: function(){
+      ready(){
         this.dispatch(__actions__.getCategories());
         fetch(`http://localhost:4000/api/categories`)
         .then(res=>res.json())
@@ -161,10 +163,10 @@
           this.set('oldSubcategoryId', _id)
         });
       },
-      _categoriesObserver: function(categories){
+      _categoriesObserver(categories){
         console.log(categories);
       },
-      _transferRecipes: function(){
+      _transferRecipes(){
         fetch(`http://localhost:4000/api/recipes/${this.oldSubcategoryId}`)
         .then(res=>res.json())
         .then(({recipes})=>{
@@ -176,7 +178,7 @@
           console.log(err);
         });
       },
-      _loadIt: function(r){
+      _loadIt(r){
         try{
           this.title = this._unEntitify(this._toTitleCase(r.title));
           this.description = this._unEntitify(r.subtitle);
@@ -192,7 +194,7 @@
           localStorage[this.old]=this.subcategoryId;
         }
       },
-      _save: function(e){
+      _save(e){
         // e.preventDefault();
         var newRecipe = {
           title: this.title,
@@ -203,7 +205,7 @@
         this.dispatch(__actions__.addRecipe(newRecipe, this.subcategoryId, this.user.uid));
 
       },
-      _parseHTML: function(html){
+      _parseHTML(html){
         var text = [];
         var div = document.createElement('div');
         div.innerHTML = html;
@@ -214,7 +216,7 @@
         }
         return text[0];
       },
-      _parseJSON: function(json){
+      _parseJSON(json){
         var parsed = JSON.parse(json);
         if(parsed){
           this.title = parsed.title;
@@ -223,14 +225,18 @@
           this.directions = this._parseHTML(parsed.directions).split('\n');
         }
       },
-      _unEntitify: function(html){
+      _unEntitify(html){
         var div = document.createElement('div');
         div.innerHTML = html;
         return div.innerText;
       },
-      _toTitleCase: function(title){
+      _toTitleCase(title){
         return title.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
       }
     });
-  </script>
+  }
+
+// Define your Element
+customElements.define(MyElement.is, MyElement);
+</script>
 </dom-module>

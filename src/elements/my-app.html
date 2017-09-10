@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="/components/polymer/polymer.html">
+<link rel="import" href="/components/polymer/polymer-element.html">
 <link rel="import" href="/elements/app-state/app-state.html">
 <link rel="import" href="/components/app-layout/app-header/app-header.html">
 <link rel="import" href="/components/app-layout/app-header-layout/app-header-layout.html">
@@ -54,55 +54,58 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    Polymer({
-      is: 'my-app',
+    class MyApp extends ReduxMixin(Polymer.Element) {
+      static get is() { return "my-app"; }
 
-      properties: {
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged'
-        },
-        id: {
-          type: String,
-          reflectToAttribute: true
-        },
-        recipeId: {
-          type: String
-        },
-        categoryId: {
-          type: String
-        },
-        subcategoryId: {
-          type: String
-        },
-        navigate: {
-          type: String,
-          statePath: 'main.navigate',
-          observer: '_navigateObserver'
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged'
+          },
+          id: {
+            type: String,
+            reflectToAttribute: true
+          },
+          recipeId: {
+            type: String
+          },
+          categoryId: {
+            type: String
+          },
+          subcategoryId: {
+            type: String
+          },
+          navigate: {
+            type: String,
+            statePath: 'main.navigate',
+            observer: '_navigateObserver'
+          }
         }
-      },
+      }
 
-      behaviors: [__state__],
-      observers: [
-        '_routeChange(route)',
-        '_routePageChanged(routeData.page)',
-        '_routePageChanged(routeData.page, routeData.id)'
-      ],
+      static get observers(){
+        return [
+          '_routeChange(route)',
+          '_routePageChanged(routeData.page)',
+          '_routePageChanged(routeData.page, routeData.id)'
+        ]
+      }
 
-      _routeChange: function({path}) {
-        this.fire('iron-signal', {name: 'track-page', data: { path} });
-      },
-      _routePageChanged: function(page, id) {
+      _routeChange({path}) {
+        // this.fire('iron-signal', {name: 'track-page', data: { path} });
+      }
+      _routePageChanged(page, id) {
         console.log('page', page);
         console.log('id', id);
         if(id){
           this[`${page}Id`] = id;
         }
         this.page = page || 'categories';
-      },
+      }
 
-      _pageChanged: function(page) {
+      _pageChanged(page) {
         if(!page.includes('results')){
           this.dispatch({type: 'SET_SEARCH_BAR_OPEN', showing: false});
           this.dispatch({type: 'SET_SEARCH_QUERY', query: ''});
@@ -112,22 +115,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if(page === 'recipe'){
           resolvedPageUrl = this.resolveUrl('recipe-router.html')
         }
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      },
-      _navigateObserver: function(href) {
+        Polymer.importHref(resolvedPageUrl, null, this._showPage404, true);
+      }
+      _navigateObserver(href) {
         if(!href) return;
         this.set('route.path', href);
         this.dispatch({type: 'CLEAR_NAVIGATION'});
-      },
-
-      _showPage404: function() {
-        this.page = 'view404';
-      },
-      attached: function(){
-        setTimeout(()=>{
-          document.querySelector('svg').remove();
-        },5000);
       }
-    });
+
+      _showPage404() {
+        this.page = 'view404';
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        const state = this.getState();
+console.log(state);
+        // setTimeout(()=>{
+          // document.querySelector('svg').remove();
+        // },5000);
+      }
+    }
+
+    // Define your Element
+    customElements.define(MyApp.is, MyApp);
   </script>
 </dom-module>
