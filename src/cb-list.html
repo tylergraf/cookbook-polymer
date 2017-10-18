@@ -35,6 +35,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       li {
+        display: flex;
+        flex-flow: row;
         padding: 8px 0;
         border-bottom: var(--separator-border);
         overflow-wrap: break-word;
@@ -58,6 +60,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         align-self: center;
         min-width: 1em;
         text-align: right;
+        margin-right: 5px;
       }
 
       .info, .domain {
@@ -101,11 +104,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <ul>
       <template is="dom-repeat" items="[[list]]" initial-count="10">
         <li>
-          <!-- <span class="index">[[_computeIndex(pageSize, page, index)]]</span> -->
-            <a href="[[item.url]]">
-              <span class="title" inner-h-t-m-l="[[item.title]]"></span>
-              <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
-            </a>
+          <span class="index" hidden="[[!_computeCount(item.recipeCount)]]">[[item.recipeCount]]</span>
+          <a href="[[item.url]]">
+            <span class="title" inner-h-t-m-l="[[item.title]]"></span>
+            <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
+          </a>
         </li>
       </template>
     </ul>
@@ -138,8 +141,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return (parseInt(page || 2) - 1) || 1;
       }
 
-      _computeIndex(pageSize, page, index) {
-        return pageSize * (page - 1) + index + 1;
+      _computeCount(count) {
+        return (count !== undefined);
       }
     }
 
