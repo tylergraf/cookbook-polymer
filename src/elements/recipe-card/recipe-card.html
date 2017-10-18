@@ -2,7 +2,7 @@
 <link rel="import" href="/components/paper-card/paper-card.html">
 <link rel="import" href="/components/paper-button/paper-button.html">
 <link rel="import" href="/elements/favorite-recipe/favorite-recipe.html">
-<link rel="inert" href="/elements/cookbook-icons/cookbook-icons.html" async>
+<link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
 <link rel="import" href="/components/iron-icon/iron-icon.html">
 <link rel="import" href="/components/paper-checkbox/paper-checkbox.html">
 
@@ -108,9 +108,11 @@
         <a href="[[_getEditLink(id)]]" class="edit" hidden$="[[!editable]]"><paper-button>Edit</paper-button></a>
         <header class="card-header">
           <dom-if if="[[_hasImage(imageUrl)]]">
-            <div class="header-icon">
-              <iron-icon icon="[[icon.icon]]"></iron-icon>
-            </div>
+            <template>
+              <div class="header-icon">
+                <iron-icon icon="[[icon.icon]]"></iron-icon>
+              </div>
+            </template>
           </dom-if>
           <h2 class="card-heading">[[title]]</h2>
         </header>

@@ -38,7 +38,7 @@
     "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
     "paper-ripple": "PolymerElements/paper-ripple#^2.0.1",
     "paper-toolbar": "PolymerElements/paper-toolbar#^2.0.0",
-    "polymer": "Polymer/polymer#^2.0.2",
+    "polymer": "Polymer/polymer#^2.1.1",
     "polymerfire": "firebase/polymerfire#^2.2.0",
     "redux-thunk": "https://npmcdn.com/redux-thunk@2.1.0/dist/redux-thunk.js",
     "redux": "https://npmcdn.com/redux@3.5.2/dist/redux.js",
@@ -49,5 +49,18 @@
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
+  },
+  "resolutions": {
+    "iron-icon": "^2.0.1",
+    "iron-flex-layout": "^2.0.0",
+    "iron-iconset-svg": "^2.1.0",
+    "paper-button": "^2.0.0",
+    "firebase": "^4.1.1",
+    "iron-selector": "^2.0.0",
+    "paper-icon-button": "^2.0.1",
+    "paper-ripple": "^2.0.1",
+    "polymer": "^2.0.0",
+    "webcomponentsjs": "^v1.0.2",
+    "paper-progress": "^2.0.1"
   }
 }

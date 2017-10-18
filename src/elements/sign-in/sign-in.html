@@ -78,23 +78,27 @@
       }
     </style>
     <dom-if if="[[signedIn]]">
-      <paper-menu-button ignore-select horizontal-align="right">
-        <div slot="dropdown-trigger" class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div><span>[[user.displayName]]</span></div>
-        <paper-listbox class="dropdown-content">
-          <a href="/favorites"><paper-item>Favorites</paper-item></a>
-          <paper-item><paper-button on-tap="_signOut">Sign Out</paper-button></paper-item>
-        </paper-listbox>
-      </paper-menu-button>
+      <template>
+        <paper-menu-button ignore-select horizontal-align="right">
+          <div slot="dropdown-trigger" class="dropdown-trigger"><div class="avatar"><img src$="[[user.photoURL]]" alt=""></div><span>[[user.displayName]]</span></div>
+          <paper-listbox class="dropdown-content">
+            <a href="/favorites"><paper-item>Favorites</paper-item></a>
+            <paper-item><paper-button on-tap="_signOut">Sign Out</paper-button></paper-item>
+          </paper-listbox>
+        </paper-menu-button>
+      </template>
     </dom-if>
     <dom-if if="[[!signedIn]]">
-      <paper-menu-button ignore-select horizontal-align="right">
-        <div slot="dropdown-trigger" class="dropdown-trigger">Sign In</div>
-        <paper-listbox slot="dropdown-content">
-          <paper-item on-tap="_signIn" id="google">Sign in with Google</paper-item>
-          <paper-item on-tap="_signIn" id="facebook">Sign in with Facebook</paper-item>
-          <paper-item on-tap="_signIn" id="twitter">Sign in with Twitter</paper-item>
-        </paper-listbox>
-      </paper-menu-button>
+      <template>
+        <paper-menu-button ignore-select horizontal-align="right">
+          <div slot="dropdown-trigger" class="dropdown-trigger">Sign In</div>
+          <paper-listbox slot="dropdown-content">
+            <paper-item on-tap="_signIn" id="google">Sign in with Google</paper-item>
+            <paper-item on-tap="_signIn" id="facebook">Sign in with Facebook</paper-item>
+            <paper-item on-tap="_signIn" id="twitter">Sign in with Twitter</paper-item>
+          </paper-listbox>
+        </paper-menu-button>
+      </template>
     </dom-if>
   </template>
 

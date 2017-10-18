@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Gretchen's Cookbook</title>
+    <meta name="description" content="Delicious recipes collected by my Mom. :)">
+
+    <link rel="icon" href="/images/favicon.ico">
+
+    <!-- See https://goo.gl/OOhYW5 -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- See https://goo.gl/qRE0vM -->
+    <meta name="theme-color" content="#3f51b5">
+
+    <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Gretchen's Cookbook">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Gretchen's Cookbook">
+
+    <!-- Homescreen icons -->
+    <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/manifest/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/images/manifest/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/images/manifest/icon-192x192.png">
+
+    <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="/images/manifest/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#3f51b5">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com/">
+    <link rel="dns-prefetch" href="https://cookbook-144005.firebaseio.com/">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://www.google-analytics.com/">
+    <link rel="preconnect" href="https://cookbook-144005.firebaseio.com/">
+
+    <script>
+      window.Promise || document.write('<script src="/components/es6-promise/dist/es6-promise.min.js")"><\/script>');
+      window.fetch || document.write('<script src="/components/fetch/fetch.js""><\/script>');
+    </script>
+
+    <script src="/components/webcomponentsjs/webcomponents-loader.js" charset="utf-8"></script>
+
+    <link rel="preload" href="https://fonts.gstatic.com/s/scopeone/v2/_52Fm41u4u2R3EEH0A9bn5Bw1xU1rKptJj_0jans920.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Scope+One" as="stylesheet" crossorigin>
+    <link rel="preload" href="https://cookbook-144005.firebaseio.com/categories.json" as="data" type="application/json" crossorigin>
+
+
+    <!-- IMPORTS:START -->
+    <link rel="import" href="/elements/my-app.html">
+    <!-- <link rel="preload" href="/components/redux/index.js" as="script">
+    <link rel="preload" href="/components/redux-thunk/index.js" as="script">
+    <link rel="preload" href="/elements/app-state/async-actions.js" as="script">
+    <link rel="preload" href="/elements/app-state/app-state.js" as="script">
+    <link rel="preload" href="/components/shadycss/apply-shim.min.js" as="script">
+    <link rel="preload" href="/components/shadycss/custom-style-interface.min.js" as="script">
+    <link rel="preload" href="/components/web-animations-js/web-animations-next-lite.min.js" as="script">
+
+    <link rel="import" href="/elements/my-app.html">
+    <link rel="import" href="/components/polymer/polymer-element.html">
+    <link rel="import" href="/components/polymer/lib/mixins/element-mixin.html">
+    <link rel="import" href="/components/polymer/lib/utils/boot.html">
+    <link rel="import" href="/components/polymer/lib/utils/settings.html">
+    <link rel="import" href="/components/polymer/lib/utils/resolve-url.html">
+    <link rel="import" href="/components/polymer/lib/utils/mixin.html">
+    <link rel="import" href="/components/polymer/lib/utils/case-map.html">
+    <link rel="import" href="/components/polymer/lib/utils/style-gather.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-module.html">
+    <link rel="import" href="/components/polymer/lib/mixins/property-effects.html">
+    <link rel="import" href="/components/polymer/lib/utils/path.html">
+    <link rel="import" href="/components/polymer/lib/mixins/property-accessors.html">
+    <link rel="import" href="/components/polymer/lib/utils/async.html">
+    <link rel="import" href="/components/polymer/lib/mixins/template-stamp.html">
+    <link rel="import" href="/elements/app-state/app-state.html">
+    <link rel="import" href="/components/polymer-redux/polymer-redux.html">
+    <link rel="import" href="/components/polymer-redux/dist/polymer-redux.html">
+    <link rel="import" href="/components/app-layout/app-header/app-header.html">
+    <link rel="import" href="/components/polymer/polymer.html">
+    <link rel="import" href="/components/polymer/lib/legacy/legacy-element-mixin.html">
+    <link rel="import" href="/components/shadycss/apply-shim.html">
+    <link rel="import" href="/components/polymer/lib/mixins/gesture-event-listeners.html">
+    <link rel="import" href="/components/polymer/lib/utils/gestures.html">
+    <link rel="import" href="/components/polymer/lib/utils/debounce.html">
+    <link rel="import" href="/components/polymer/lib/utils/import-href.html">
+    <link rel="import" href="/components/polymer/lib/utils/render-status.html">
+    <link rel="import" href="/components/polymer/lib/utils/unresolved.html">
+    <link rel="import" href="/components/polymer/lib/legacy/polymer.dom.html">
+    <link rel="import" href="/components/polymer/lib/utils/flattened-nodes-observer.html">
+    <link rel="import" href="/components/polymer/lib/utils/array-splice.html">
+    <link rel="import" href="/components/polymer/lib/utils/flush.html">
+    <link rel="import" href="/components/polymer/lib/legacy/polymer-fn.html">
+    <link rel="import" href="/components/polymer/lib/legacy/class.html">
+    <link rel="import" href="/components/polymer/lib/legacy/templatizer-behavior.html">
+    <link rel="import" href="/components/polymer/lib/utils/templatize.html">
+    <link rel="import" href="/components/polymer/lib/mixins/mutable-data.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="/components/polymer/lib/elements/dom-if.html">
+    <link rel="import" href="/components/polymer/lib/elements/array-selector.html">
+    <link rel="import" href="/components/polymer/lib/elements/custom-style.html">
+    <link rel="import" href="/components/shadycss/custom-style-interface.html">
+    <link rel="import" href="/components/polymer/lib/legacy/mutable-data-behavior.html">
+    <link rel="import" href="/components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="/components/app-layout/app-scroll-effects/app-scroll-effects-behavior.html">
+    <link rel="import" href="/components/iron-scroll-target-behavior/iron-scroll-target-behavior.html">
+    <link rel="import" href="/components/app-layout/helpers/helpers.html">
+    <link rel="import" href="/components/app-layout/app-layout-behavior/app-layout-behavior.html">
+    <link rel="import" href="/components/iron-resizable-behavior/iron-resizable-behavior.html">
+    <link rel="import" href="/components/app-layout/app-header-layout/app-header-layout.html">
+    <link rel="import" href="/components/app-layout/app-toolbar/app-toolbar.html">
+    <link rel="import" href="/components/app-route/app-location.html">
+    <link rel="import" href="/components/iron-location/iron-location.html">
+    <link rel="import" href="/components/iron-location/iron-query-params.html">
+    <link rel="import" href="/components/app-route/app-route-converter-behavior.html">
+    <link rel="import" href="/components/app-route/app-route.html">
+    <link rel="import" href="/components/iron-pages/iron-pages.html">
+    <link rel="import" href="/components/iron-selector/iron-selectable.html">
+    <link rel="import" href="/components/iron-selector/iron-selection.html">
+    <link rel="import" href="/elements/search-bar/search-bar.html">
+    <link rel="import" href="/components/iron-icon/iron-icon.html">
+    <link rel="import" href="/components/iron-meta/iron-meta.html">
+    <link rel="import" href="/components/iron-selector/iron-selector.html">
+    <link rel="import" href="/components/iron-selector/iron-multi-selectable.html">
+    <link rel="import" href="/components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="/components/paper-behaviors/paper-inky-focus-behavior.html">
+    <link rel="import" href="/components/iron-behaviors/iron-button-state.html">
+    <link rel="import" href="/components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+    <link rel="import" href="/components/iron-behaviors/iron-control-state.html">
+    <link rel="import" href="/components/paper-behaviors/paper-ripple-behavior.html">
+    <link rel="import" href="/components/paper-ripple/paper-ripple.html">
+    <link rel="import" href="/components/paper-styles/default-theme.html">
+    <link rel="import" href="/components/paper-styles/color.html">
+    <link rel="import" href="/elements/sign-in/sign-in.html">
+    <link rel="import" href="/components/paper-menu-button/paper-menu-button.html">
+    <link rel="import" href="/components/iron-dropdown/iron-dropdown.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-overlay-behavior.html">
+    <link rel="import" href="/components/iron-fit-behavior/iron-fit-behavior.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-overlay-manager.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-overlay-backdrop.html">
+    <link rel="import" href="/components/iron-overlay-behavior/iron-focusables-helper.html">
+    <link rel="import" href="/components/neon-animation/neon-animation-runner-behavior.html">
+    <link rel="import" href="/components/neon-animation/neon-animatable-behavior.html">
+    <link rel="import" href="/components/iron-dropdown/iron-dropdown-scroll-manager.html">
+    <link rel="import" href="/components/neon-animation/animations/fade-in-animation.html">
+    <link rel="import" href="/components/neon-animation/neon-animation-behavior.html">
+    <link rel="import" href="/components/neon-animation/web-animations.html">
+    <link rel="import" href="/components/neon-animation/animations/fade-out-animation.html">
+    <link rel="import" href="/components/paper-styles/shadow.html">
+    <link rel="import" href="/components/paper-menu-button/paper-menu-button-animations.html">
+    <link rel="import" href="/components/paper-listbox/paper-listbox.html">
+    <link rel="import" href="/components/iron-menu-behavior/iron-menu-behavior.html">
+    <link rel="import" href="/components/paper-item/paper-item.html">
+    <link rel="import" href="/components/paper-item/paper-item-behavior.html">
+    <link rel="import" href="/components/paper-item/paper-item-shared-styles.html">
+    <link rel="import" href="/components/paper-button/paper-button.html">
+    <link rel="import" href="/components/paper-behaviors/paper-button-behavior.html">
+    <link rel="import" href="/components/paper-styles/element-styles/paper-material-styles.html">
+    <link rel="import" href="/elements/categories-page.html">
+    <link rel="import" href="/elements/taxonomy-path/taxonomy-path.html">
+    <link rel="import" href="/components/iron-iconset-svg/iron-iconset-svg.html">
+    <link rel="import" href="/components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="/components/paper-header-panel/paper-header-panel.html">
+
+    <link rel="import" href="/elements/cookbook-icons/cookbook-icons.html">
+    <link rel="import" href="/components/iron-icons/iron-icons.html"> -->
+    <!-- IMPORTS:END -->
+
+    <!-- <script>
+      window.addEventListener("load", function(event) {
+        setTimeout(function(){
+
+          var inerts = document.querySelectorAll('link[rel="inert"]');
+
+          inerts.forEach(function(node){
+            Polymer.importHref(node.href)
+          });
+          // Load pre-caching Service Worker
+          // if ('serviceWorker' in navigator) {
+          //   navigator.serviceWorker.register('/service-worker.js');
+          // }
+        },4000);
+      });
+    </script> -->
+
+    <link rel="inert" href="/components/start-google-analytics-tracker/start-google-analytics-tracker.html">
+
+    <style is="custom-style">
+      :root {
+        --white-color: #fff;
+        --blue-color: #4A75E6;
+        --red-color: #EA2533;
+        --yellow-color: #FEBC1F;
+        --green-color: #08AF22;
+        --purple-color: purple;
+        --orange-color: orange;
+        --body-font: 'Scope One', sans-serif;
+      }
+      body {
+        margin: 0;
+        font-family: 'Scope One', sans-serif;
+        line-height: 1.5;
+        background-color: #eeeeee;
+      }
+      input {
+        font-family: 'Scope One', sans-serif;
+      }
+      app-header:not([style-scope]):not(.style-scope) {
+        background-color: #4285f4;
+        color: #fff;
+      }
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+      .page-wrapper {
+        /*max-width: 1000px;*/
+        /*margin: 0 auto;*/
+      }
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-toolbar {
+        display: flex;
+        justify-content: space-between;
+        color: #fff;
+        background-color: #4285f4;
+        height: 64px;
+        align-items: center;
+      }
+      app-toolbar a {
+        color: #fff;
+        font-size: 20px;
+        text-decoration: none;
+        margin-left: 10px;
+      }
+      my-app:not([page]){
+        height: calc(100vh - 64px);
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+
+  </head>
+  <body class="fullbleed layout vertical">
+    <app-header-layout class="flex">
+      <app-header fixed>
+        <app-toolbar>
+          <a href="/">
+            Gretchen's Cookbook
+          </a>
+          <sign-in></sign-in>
+        </app-toolbar>
+      </app-header>
+      <my-app>
+        <svg width='54px' height='54px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(0 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(30 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.08333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(60 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.16666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(90 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.25s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(120 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.3333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(150 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.4166666666666667s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(180 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(210 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.5833333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(240 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.6666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(270 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.75s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(300 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.8333333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#757575' transform='rotate(330 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='1s' begin='0.9166666666666666s' repeatCount='indefinite'/></rect></svg>
+      </my-app>
+    </app-header-layout>
+
+    <start-google-analytics-tracker code="UA-50584064-1"></start-google-analytics-tracker>
+
+  </body>
+</html>

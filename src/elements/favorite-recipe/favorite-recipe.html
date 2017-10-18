@@ -21,12 +21,18 @@
     </style>
 
     <dom-if if="[[_showFavorite(userId, recipeId, subcategoryId)]]">
-      <dom-if if="[[_userFavorited(favorites, userId)]]">
-        <iron-icon icon="favorite" on-tap="_unfavorite" title="Remove this recipe from your Favorites."></iron-icon>
-      </dom-if>
-      <dom-if if="[[!_userFavorited(favorites, userId)]]">
-        <iron-icon icon="favorite-border" on-tap="_favorite" title="Add this recipe to your Favorites."></iron-icon>
-      </dom-if>
+      <template>
+        <dom-if if="[[_userFavorited(favorites, userId)]]">
+          <template>
+          <iron-icon icon="favorite" on-tap="_unfavorite" title="Remove this recipe from your Favorites."></iron-icon>
+          </template>
+        </dom-if>
+        <dom-if if="[[!_userFavorited(favorites, userId)]]">
+          <template>
+            <iron-icon icon="favorite-border" on-tap="_favorite" title="Add this recipe to your Favorites."></iron-icon>
+          </template>
+        </dom-if>
+      </template>
     </dom-if>
   </template>
 

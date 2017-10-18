@@ -1,8 +1,10 @@
 // Initialize Firebase
+//
 var FB_CONFIG = {
   apiKey: "AIzaSyAhh3pxACqcPjT7stYyNYeH5NLXAUWkyao",
   authDomain: "cookbook-144005.firebaseapp.com",
   databaseURL: "https://cookbook-144005.firebaseio.com",
+  projectId: "cookbook-144005",
   storageBucket: "cookbook-144005.appspot.com",
   messagingSenderId: "463542253160"
 };
