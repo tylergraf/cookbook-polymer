@@ -11,13 +11,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
 
-<dom-module id="hn-list">
+<dom-module id="cb-list">
   <template strip-whitespace>
     <style>
       :host {
         display: block;
       }
-
+      [hidden] {
+        display: none !important;
+      }
       a {
         color: currentColor;
       }
@@ -33,7 +35,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       li {
-        display: flex;
         padding: 8px 0;
         border-bottom: var(--separator-border);
         overflow-wrap: break-word;
@@ -41,11 +42,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .title {
         flex: 1;
-        padding-left: 1rem;
+        text-decoration: none;
+        text-transform: uppercase;
       }
 
-      .title > a {
+      a {
         text-decoration: none;
+        display: flex;
+        flex-flow: column;
       }
 
       .index {
@@ -57,6 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .info, .domain {
+        display: block;
         color: var(--detail-font-color);
       }
 
@@ -67,6 +72,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .info {
         font-size: var(--detail-font-size);
+        color: var(--detail-font-color);
         padding-top: 8px;
       }
 
@@ -95,27 +101,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <ul>
       <template is="dom-repeat" items="[[list]]" initial-count="10">
         <li>
-          <span class="index">[[_computeIndex(pageSize, page, index)]]</span>
-          <div class="title">
-            <a href="[[item.url]]">[[item.title]]</a>
-            <span class="domain">([[item.domain]])</span>
-            <div class="info">
-              [[item.points]] points by
-              <a href="/user/[[item.user]]">[[item.user]]</a>
-              [[item.time_ago]]
-              <span class="spacer">|</span>
-              <a href="/item/[[item.id]]">[[item.comments_count]] comments</a>
-            </div>
-          </div>
+          <!-- <span class="index">[[_computeIndex(pageSize, page, index)]]</span> -->
+            <a href="[[item.url]]">
+              <span class="title" inner-h-t-m-l="[[item.title]]"></span>
+              <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
+            </a>
         </li>
       </template>
     </ul>
 
-    <div class="forwardback">
+    <!-- <div class="forwardback">
       <a class="prev" href="/[[type]]/[[_computePrevPage(page)]]" aria-label="Previous Page">◀ Previous</a>
       <span>Page [[page]]</span>
       <a class="next" href="/[[type]]/[[_computeNextPage(page)]]" aria-label="Next Page">Next ▶</a>
-    </div>
+    </div> -->
 
   </template>
   <script>
@@ -123,7 +122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     class HnList extends Polymer.Element {
 
-      static get is() { return 'hn-list'; }
+      static get is() { return 'cb-list'; }
 
       static get properties() {
         return {

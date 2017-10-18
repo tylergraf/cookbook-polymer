@@ -10,9 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="hn-comment.html">
+<link rel="import" href="cb-comment.html">
 
-<dom-module id="hn-item">
+<dom-module id="cb-recipe">
   <template strip-whitespace>
     <style>
       :host {
@@ -24,15 +24,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: currentColor;
       }
 
-      .title, .domain {
+      .title, .subtitle {
         font-size: 1rem;
       }
 
       .title {
         text-decoration: none;
+        text-transform: uppercase;
       }
 
-      .domain {
+      .subtitle {
         padding-left: 4px;
         color: var(--detail-font-color);
       }
@@ -52,33 +53,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <a class="title" href$="[[item.url]]" hidden="[[item.content]]">[[item.title]]</a>
-    <div class="title" hidden="[[!item.content]]">[[item.title]]</div>
-    <span class="domain" hidden="[[!item.domain]]">([[item.domain]])</span>
-    <div hidden="[[!item.content]]" inner-h-t-m-l="[[item.content]]"></div>
-    <div class="meta">
-      [[item.points]] points by
-      <a class="user" href$="/user/[[item.user]]">[[item.user]]</a>
-      [[item.time_ago]]
-      <span class="spacer">|</span>
-      <span>[[item.comments_count]] comments</span>
-    </div>
+    <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
+    <h2 class="subtitle"inner-h-t-m-l="[[item.subtitle]]"></h2>
+    <h3>Ingredients</h3>
+    <div hidden="[[!item.ingredients]]" inner-h-t-m-l="[[item.ingredients]]"></div>
+    <h3>Directions</h3>
+    <div hidden="[[!item.directions]]" inner-h-t-m-l="[[item.directions]]"></div>
 
-    <template is="dom-repeat" items="[[item.comments]]" initial-count="5">
-      <hn-comment comment=[[item]]></hn-comment>
-    </template>
   </template>
 
   <script>
   (function() {
 
-    class HnItem extends Polymer.Element {
+    class HnRecipe extends Polymer.Element {
 
-      static get is() { return 'hn-item'; }
+      static get is() { return 'cb-recipe'; }
 
     }
 
-    customElements.define(HnItem.is, HnItem);
+    customElements.define(HnRecipe.is, HnRecipe);
 
   })();
   </script>

@@ -1,12 +1,11 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/hn-app.html",
+  "shell": "src/cb-app.html",
   "fragments": [
-    "src/hn-list.html",
-    "src/hn-item.html",
-    "src/hn-user.html",
-    "src/hn-offline.html",
-    "src/hn-404.html"
+    "src/cb-list.html",
+    "src/cb-recipe.html",
+    "src/cb-offline.html",
+    "src/cb-404.html"
   ],
   "sources": [
     "src/**/*",
@@ -30,6 +29,14 @@
     "addPushManifest": true
   },{
     "name": "es6-unbundled",
+    "js": {"minify": true},
+    "css": {"minify": true},
+    "html": {"minify": true},
+    "addServiceWorker": true,
+    "addPushManifest": true
+  },{
+    "name": "es6-bundled",
+    "bundle": true,
     "js": {"minify": true},
     "css": {"minify": true},
     "html": {"minify": true},

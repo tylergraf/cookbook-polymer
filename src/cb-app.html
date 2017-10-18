@@ -13,7 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="simple-router.html">
 <script src="fetch.js"></script>
 
-<dom-module id="hn-app">
+<dom-module id="cb-app">
   <template strip-whitespace>
     <style>
       :host {
@@ -46,28 +46,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <slot></slot>
     <div id="views">
       <!-- page-size hardcoded to 30, but ideally would be provided by data source -->
-      <hn-list
+      <cb-list
         class$="[[_viewClass('list', _view, _loading)]]"
         list="[[_listData]]"
         type="[[_listType]]"
         page="[[_listPage]]"
         page-size="30">
-      </hn-list>
-      <hn-item
-        class$="[[_viewClass('item', _view, _loading)]]"
+      </cb-list>
+      <cb-recipe
+        class$="[[_viewClass('recipe', _view, _loading)]]"
         item="[[_itemData]]">
-      </hn-item>
-      <hn-user
-        class$="[[_viewClass('user', _view, _loading)]]"
-        user="[[_userData]]">
-      </hn-user>
-      <hn-404
+      </cb-recipe>
+      <cb-404
         class$="[[_viewClass('404', _view, _loading)]]">
-      </hn-404>
-      <hn-offline
+      </cb-404>
+      <cb-offline
         class$="[[_viewClass('offline', _view, _loading)]]"
         on-refresh="_refreshRoute">
-      </hn-offline>
+      </cb-offline>
     </div>
 
     <div class="loading" hidden$="[[!_loading]]">
@@ -81,25 +77,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     // base fetch url
     // url for server proxy to api, when running locally switch url's
-    // const fetchBaseUrl = '/hn';
-    const fetchBaseUrl = 'https://node-hnapi.herokuapp.com';
+    // const fetchBaseUrl = '/api';
+    const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
+    // const fetchBaseUrl = 'http://localhost:3000/api';
 
     // custom list-type for route page
     const pageToListType = {
-      top: 'news',
-      new: 'newest'
+      top: 'categories',
+      category: 'category',
+      subcategory: 'subcategory',
+      recipe: 'recipe'
+    }
+    const pageToPath = {
+      top: 'category',
+      category: 'subcategory',
+      subcategory: 'recipe'
     }
 
     class HnApp extends Polymer.Element {
 
-      static get is() { return 'hn-app'; }
+      static get is() { return 'cb-app'; }
 
       static get observers() {
         return [
           '_routeChanged(_path)',
-          '_fetchList(_listPath, _listPage)',
+          '_fetchList(_listPath, _listId)',
           '_fetchItem(_itemId)',
-          '_fetchUser(_userName)',
           '_viewChanged(_view)',
           '_selectedClass(_view, _listType)'
         ];
@@ -113,31 +116,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let props = {};
         let pending = this._pendingFetch = {};
         switch(page) {
-          case 'item':
+          case 'recipe':
             if (detail) {
-              props._view = 'item';
+              props._view = 'recipe';
               pending._itemId = props._itemId = detail;
             } else {
               props._view = '404';
             }
             break;
-          case 'user':
-            if (detail) {
-              props._view = 'user';
-              pending._userName = props._userName = detail;
-            } else {
-              props._view = '404';
-            }
-            break;
           case 'top':
+          case 'category':
+          case 'subcategory':
           case 'new':
           case 'ask':
           case 'show':
           case 'jobs':
             props._view = 'list';
             props._listType = page;
-            pending._listPage = props._listPage = detail || 1;
+            pending._listId = props._listId = detail;
             props._listPath = pageToListType[page] || page;
+            props._itemPath = pageToPath[page]
             break;
           default:
             props._view = '404';
@@ -155,28 +153,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _fetchList(path, page) {
+      _fetchList(path, id) {
         if (path) {
           let url = `${fetchBaseUrl}/${path}`;
-          if (page) {
-            url += `?page=${page}`;
+          if (id) {
+            url += `/${id}`;
           }
           this._fetch(url)
-            .then(data => this._listData = data, () => this._listPage = null);
+            .then(data => {
+              this._listData = data.map(c=>{
+                c.url = `/${this._itemPath}/${c._id}`;
+                c.title = c.title || c.name;
+                return c;
+              });
+            }, () => this._listPage = null);
         }
       }
 
       _fetchItem(id) {
         if (id) {
-          this._fetch(`${fetchBaseUrl}/item/${id}`)
-            .then(data => this._itemData = data, (e) => this._itemId = null);
-        }
-      }
-
-      _fetchUser(user) {
-        if (user) {
-          this._fetch(`${fetchBaseUrl}/user/${user}`)
-            .then(data => this._userData = data, () => this._userName = null);
+          this._fetch(`${fetchBaseUrl}/recipe/${id}`)
+            .then(data => {this._itemData = data}, (e) => this._itemId = null);
         }
       }
 
@@ -201,7 +198,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _viewChanged(view) {
         // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('hn-' + view + '.html');
+        var resolvedPageUrl = this.resolveUrl('cb-' + view + '.html');
         Polymer.importHref(resolvedPageUrl, null, ()=>this._view='404', true);
       }
 
@@ -217,7 +214,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           root.classList.remove(this._prevSelectedClass);
         }
         if (view == 'list') {
-          this._prevSelectedClass = `hn-${page}`;
+          this._prevSelectedClass = `cb-${page}`;
           root.classList.add(this._prevSelectedClass);
         }
       }

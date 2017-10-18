@@ -10,23 +10,23 @@
 
 /* eslint-env node */
 // const path = '/hn';
-const path = 'https://node-hnapi.herokuapp.com';
+const path = 'https://gretchenscookbook-api.herokuapp.com';
 
 module.exports = {
   staticFileGlobs: [
     '/index.html',
+    '/cb-*.html',
     '/manifest.json',
     '/node_modules/@webcomponents/webcomponentsjs/webcomponents*.js',
     '/node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'
   ],
   runtimeCaching: [
     {
-      urlPattern: new RegExp(`${path}/(news|newest|ask|show|jobs)`),
+      urlPattern: new RegExp(`${path}/api/(categories|category|subcategory|recipe)`),
       handler: 'networkFirst',
       options: {
         cache: {
-          maxEntries: 30,
-          name: 'articles-cache'
+          name: 'data-cache'
         }
       }
     }, {
@@ -36,15 +36,6 @@ module.exports = {
         cache: {
           maxEntries: 30,
           name: 'comments-cache'
-        }
-      }
-    }, {
-      urlPattern: new RegExp(`${path}/user/`),
-      handler: 'networkFirst',
-      options: {
-        cache: {
-          maxEntries: 30,
-          name: 'user-cache'
         }
       }
     }

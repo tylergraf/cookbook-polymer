@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 
-<dom-module id="hn-comment">
+<dom-module id="cb-comment">
   <template strip-whitespace>
     <style>
       :host {
@@ -65,7 +65,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="comment" inner-h-t-m-l="[[comment.content]]" hidden$="[[collapsed]]"></div>
     <div class="comments" hidden$="[[collapsed]]">
       <template is="dom-repeat" items="[[comment.comments]]" initial-count="3">
-        <hn-comment comment="[[item]]"></hn-comment>
+        <cb-comment comment="[[item]]"></cb-comment>
       </template>
     </div>
   </template>
@@ -74,7 +74,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     class HnComment extends Polymer.Element {
 
-      static get is() { return 'hn-comment'; }
+      static get is() { return 'cb-comment'; }
 
       constructor() {
         super();
