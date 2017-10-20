@@ -125,7 +125,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
     <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-
+    <script>
+      // base fetch url
+      // url for server proxy to api, when running locally switch url's
+      // const fetchBaseUrl = '/api';
+      // const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
+      const fetchBaseUrl = 'http://localhost:3000/api';
+    </script>
     <!-- Load your application shell -->
     <link rel="import" href="/src/cb-app.html">
 

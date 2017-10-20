@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/utils/import-href.html">
 <link rel="import" href="simple-router.html">
-<script src="fetch.js"></script>
+<!-- <script src="fetch.js"></script> -->
 
 <dom-module id="cb-app">
   <template strip-whitespace>
@@ -57,6 +57,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         class$="[[_viewClass('recipe', _view, _loading)]]"
         item="[[_itemData]]">
       </cb-recipe>
+      <cb-edit-recipe
+        class$="[[_viewClass('edit-recipe', _view, _loading)]]"
+        item="[[_itemData]]">
+      </cb-edit-recipe>
       <cb-404
         class$="[[_viewClass('404', _view, _loading)]]">
       </cb-404>
@@ -75,18 +79,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
   (function() {
 
-    // base fetch url
-    // url for server proxy to api, when running locally switch url's
-    // const fetchBaseUrl = '/api';
-    const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
-    // const fetchBaseUrl = 'http://localhost:3000/api';
-
     // custom list-type for route page
     const pageToListType = {
       top: 'categories',
       category: 'category',
       subcategory: 'subcategory',
-      recipe: 'recipe'
+      recipe: 'recipe',
+      edit: 'edit-recipe'
     }
     const pageToPath = {
       top: 'category',
@@ -116,6 +115,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let props = {};
         let pending = this._pendingFetch = {};
         switch(page) {
+          case 'edit':
+            if (detail) {
+              props._view = 'edit-recipe';
+              pending._itemId = props._itemId = detail;
+            } else {
+              props._view = '404';
+            }
+            break;
           case 'recipe':
             if (detail) {
               props._view = 'recipe';

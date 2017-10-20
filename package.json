@@ -3,7 +3,8 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "@polymer/polymer": "^2.0.2",
-    "@webcomponents/webcomponentsjs": "^1.0.7"
+    "@webcomponents/webcomponentsjs": "^1.0.7",
+    "marked": "^0.3.6"
   },
   "devDependencies": {
     "eslint": "^3.12.0",
