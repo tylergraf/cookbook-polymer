@@ -119,6 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .alert {
         padding: 10px;
+        margin-bottom: 10px;
       }
       .success {
         background: #C8E6C9;
@@ -128,14 +129,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: #ffcdd2;
         color: #f44336;
       }
-      .negative {
-        margin-top: 30px;
+      header {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
       }
     </style>
-    <h1>[[_getHeading(item)]] Recipe</h1>
+    <header>
+      <h1>[[_getHeading(item)]] Recipe</h1>
+      <div>
+        <button class="button warn" type="button" on-click="_delete">Delete Recipe</button>
+      </div>
+    </header>
     <form on-submit="_save">
-      <div class="alert success" hidden$="[[!_success]]">[[_successMessage]]</div>
-      <div class="alert error" hidden$="[[!_error]]">An Error Occurred.</div>
       <label for="title">Recipe Title</label>
       <input id="title" type="text" placeholder="Killer Hot Dogs" value="{{item.title::input}}">
 
@@ -153,12 +160,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="rendered" hidden="[[!item.directions]]" inner-h-t-m-l="[[item.directions]]"></div>
 
       <p class="support">Ingredients and Directions can be Markdown. <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown">What's Markdown?</a></p>
+
+      <div class="alert success" hidden$="[[!_success]]">[[_successMessage]]</div>
+      <div class="alert error" hidden$="[[!_error]]">An Error Occurred.</div>
       <button class="button" type="submit" on-click="_save">Save</button>
       <a href="/recipe/[[item._id]]" class="button minor">Cancel</a>
-
-      <div class="negative">
-        <button class="button warn" type="button" on-click="_delete">Delete Recipe</button>
-      </div>
 
     </form>
   </template>
@@ -197,7 +203,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this._error = false;
             this._success = true;
             this._successMessage = 'Recipe Saved Successfully.'
-            setTimeout(_=>window.location = `/recipe/${recipe._id}`,1000);
+            setTimeout(_=>pushUrl(`/recipe/${recipe._id}`),1000);
           })
           .catch(_=>{
             this._success = false;
@@ -212,7 +218,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               this._error = false;
               this._success = true;
               this._successMessage = 'Recipe Deleted Successfully.'
-              setTimeout(_=>window.location = `/`,1000);
+              setTimeout(_=>pushUrl(`/`),1000);
             })
             .catch(_=>{
               this._success = false;

@@ -10,13 +10,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
-
+<link rel="import" href="./cb-taxonomy.html">
 <dom-module id="cb-recipe">
   <template strip-whitespace>
     <style>
       :host {
         display: block;
-        font-size: var(--detail-font-size);
       }
 
       a {
@@ -49,9 +48,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .user {
         color: var(--detail-font-color);
       }
+      header {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header a {
+        font-size: var(--detail-font-size);
+      }
     </style>
-
-    <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
+    <cb-taxonomy category="[[item._subcategory._category]]" subcategory="[[item._subcategory]]"></cb-taxonomy>
+    <header>
+      <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
+      <a href="/edit/[[item._id]]">Edit Recipe</a>
+    </header>
     <h2 class="subtitle"inner-h-t-m-l="[[item.subtitle]]"></h2>
     <h3>Ingredients</h3>
     <div hidden="[[!item.ingredients]]" inner-h-t-m-l="[[item.ingredients]]"></div>

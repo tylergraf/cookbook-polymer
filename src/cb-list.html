@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="./cb-taxonomy.html">
 
 <dom-module id="cb-list">
   <template strip-whitespace>
@@ -100,7 +101,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         flex: 1;
         text-align: center;
       }
+      cb-taxonomy {
+        margin-bottom: 15px;
+      }
     </style>
+    <cb-taxonomy hidden="[[!_getCategory(list)]]" category="[[_getCategory(list)]]" subcategory="[[_getSubcategory(list)]]"></cb-taxonomy>
+
     <ul>
       <template is="dom-repeat" items="[[list]]" initial-count="10">
         <li>
@@ -132,7 +138,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           pageSize: Number,
         };
       }
-
+      _getCategory(list){
+        return list[0]._category || list[0]._subcategory && list[0]._subcategory._category;
+      }
+      _getSubcategory(list){
+        return list[0]._subcategory;
+      }
       _computeNextPage(page) {
         return parseInt(page || 1) + 1;
       }
