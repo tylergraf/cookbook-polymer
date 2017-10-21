@@ -127,6 +127,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             if (detail) {
               props._view = 'recipe';
               pending._itemId = props._itemId = detail;
+              if(detail === 'new'){
+                props._view = 'edit-recipe';
+                pending._itemId = props._itemId = null;
+
+              }
             } else {
               props._view = '404';
             }

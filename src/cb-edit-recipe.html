@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
+<link rel="import" href="./cb-choose-taxonomy.html">
 <script src="../node_modules/marked/marked.min.js"></script>
 
 <dom-module id="cb-edit-recipe">
@@ -76,7 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         max-height: 300px;
         border-color: #E0E0E0;
       }
-      button {
+      .button {
         background: #8BC34A;
         color: #fff;
         border: none;
@@ -84,12 +85,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 8px 16px;
         border-radius: 3px;
         cursor: pointer;
+        text-decoration: none;
+        margin-right: 10px;
       }
-      button:hover {
+      .button.minor {
+        background: #fff;
+        color: inherit;
+      }
+      .button.warn {
+        background: #f44336;
+      }
+      .button.warn:hover {
+        background: #e57373;
+      }
+      .button.warn:active {
+        background: #d32f2f;
+      }
+      .button:hover {
         background: #AED581;
       }
-      button:active {
+      .button:active {
         background: #689F38;
+      }
+      .button.minor:hover {
+        text-decoration: underline;
+        background: #fff;
       }
       .rendered {
         margin-bottom: 20px;
@@ -108,16 +128,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background: #ffcdd2;
         color: #f44336;
       }
+      .negative {
+        margin-top: 30px;
+      }
     </style>
     <h1>[[_getHeading(item)]] Recipe</h1>
     <form on-submit="_save">
-      <div class="alert success" hidden$="[[!_success]]">Recipe Saved Successfully.</div>
+      <div class="alert success" hidden$="[[!_success]]">[[_successMessage]]</div>
       <div class="alert error" hidden$="[[!_error]]">An Error Occurred.</div>
       <label for="title">Recipe Title</label>
       <input id="title" type="text" placeholder="Killer Hot Dogs" value="{{item.title::input}}">
 
       <label for="subtitle">Author/Source</label>
       <input id="subtitle" type="text" placeholder="Aunt Verna" value="{{item.subtitle::input}}">
+
+      <cb-choose-taxonomy subcategory-id="{{item._subcategory._id}}"></cb-choose-taxonomy>
 
       <label for="ingredients">Ingredients</label>
       <textarea id="ingredients" on-keyup="_renderMD" value="{{item.md_ingredients::input}}"></textarea>
@@ -127,9 +152,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <textarea id="directions"on-keyup="_renderMD" value="{{item.md_directions::input}}"></textarea>
       <div class="rendered" hidden="[[!item.directions]]" inner-h-t-m-l="[[item.directions]]"></div>
 
-
       <p class="support">Ingredients and Directions can be Markdown. <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown">What's Markdown?</a></p>
-      <button type="submit" on-click="_save">Save</button>
+      <button class="button" type="submit" on-click="_save">Save</button>
+      <a href="/recipe/[[item._id]]" class="button minor">Cancel</a>
+
+      <div class="negative">
+        <button class="button warn" type="button" on-click="_delete">Delete Recipe</button>
+      </div>
+
     </form>
   </template>
 
@@ -160,18 +190,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       _save(e){
         e.preventDefault();
-
+        this.item._subcategory = this.item._subcategory._id;
         fetch(`${fetchBaseUrl}/recipe/${this.item._id}`,{method: 'put',headers:{'content-type': 'application/json'}, body: JSON.stringify(this.item)})
           .then(res=>res.json())
           .then(recipe=>{
             this._error = false;
             this._success = true;
-            setTimeout(_=>window.location = `/recipe/${recipe._id}`,500);
+            this._successMessage = 'Recipe Saved Successfully.'
+            setTimeout(_=>window.location = `/recipe/${recipe._id}`,1000);
           })
           .catch(_=>{
             this._success = false;
             this._error = true;
           });
+      }
+      _delete(){
+        const confirmed = confirm('Are you sure?!');
+        if(confirmed){
+          fetch(`${fetchBaseUrl}/recipe/${this.item._id}`,{method: 'delete'})
+            .then(_=>{
+              this._error = false;
+              this._success = true;
+              this._successMessage = 'Recipe Deleted Successfully.'
+              setTimeout(_=>window.location = `/`,1000);
+            })
+            .catch(_=>{
+              this._success = false;
+              this._error = true;
+            });
+        }
       }
     }
 

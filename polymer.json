@@ -4,6 +4,7 @@
   "fragments": [
     "src/cb-list.html",
     "src/cb-recipe.html",
+    "src/cb-edit-recipe.html",
     "src/cb-offline.html",
     "src/cb-404.html"
   ],

@@ -1,0 +1,116 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
+<link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
+
+<dom-module id="cb-choose-taxonomy">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+      label {
+        display: block;
+      }
+
+    </style>
+    <label for="cateogryId">Category</label>
+    <select name="categoryId" id="categoryId" value="{{categoryId::change}}">
+      <template is="dom-repeat" items="[[categories]]">
+        <option value="[[item._id]]">[[item.name]]</option>
+      </template>
+    </select>
+
+    <label for="subcategoryId">Subcategory</label>
+    <select name="subcategoryId" id="subcategoryId" value="{{subcategoryId::change}}">
+      <template is="dom-repeat" items="[[subcategoriesFiltered]]">
+        <option value="[[item._id]]">[[item.name]]</option>
+      </template>
+    </select>
+  </template>
+
+  <script>
+  (function() {
+
+    class CBChooseTaxonomy extends Polymer.Element {
+
+      static get is() { return 'cb-choose-taxonomy'; }
+      static get properties() {
+        return {
+          categoryId: {
+            type: String,
+            notify: true,
+            observer: '_categoryIdObserver'
+          },
+          subcategoryId: {
+            type: String,
+            notify: true
+          },
+          categories: {
+            type: Array,
+            value: []
+          },
+          subcategories: {
+            type: Array,
+            value: []
+          },
+          subcategoriesFiltered: {
+            type: Array,
+            value: [],
+            computed: '_filterSubcategory(categories, subcategories, subcategoryId, categoryId)'
+          }
+        };
+      }
+      static get observers() {
+        return [
+          '_getCategory(categories, subcategories, subcategoryId)'
+        ]
+      }
+      _categoryIdObserver(categoryId){
+        if(categoryId){
+          setTimeout(_=>this.subcategoryId = this.$.subcategoryId.value)
+        }
+      }
+      _getCategory(categories, subcategories, subcategoryId){
+        if(!categories.length || !subcategories.length || subcategoryId === undefined) return;
+
+        let subcategory = subcategories.filter(s=>s._id === subcategoryId)[0];
+      setTimeout(_=>{
+        this.categoryId = categories.filter(c=>c._id === subcategory._category)[0]._id;
+      })
+
+
+      }
+      connectedCallback(){
+        super.connectedCallback();
+        Promise.all([
+          fetch(`${fetchBaseUrl}/categories`).then(res=>res.json()),
+          fetch(`${fetchBaseUrl}/subcategories`).then(res=>res.json())
+        ]).then(results=>{
+          this.categories = results[0];
+          this.subcategories = results[1];
+        });
+      }
+      _filterSubcategory(categories, subcategories, subcategoryId, categoryId){
+        if(!subcategories.length) return;
+
+        var subcategory = subcategories.filter(c=>c._id === subcategoryId)[0];
+        // this.set('categoryId', subcategory._category);
+
+        return subcategories.filter(s=>s._category === this.categoryId);
+      }
+    }
+
+    customElements.define(CBChooseTaxonomy.is, CBChooseTaxonomy);
+
+  })();
+  </script>
+</dom-module>
