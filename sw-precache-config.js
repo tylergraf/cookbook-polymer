@@ -15,7 +15,7 @@ const path = 'https://gretchenscookbook-api.herokuapp.com';
 module.exports = {
   staticFileGlobs: [
     '/index.html',
-    '/cb-*.html',
+    '/src/cb-*.html',
     '/manifest.json',
     '/node_modules/@webcomponents/webcomponentsjs/webcomponents*.js',
     '/node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'

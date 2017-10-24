@@ -1,0 +1,78 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
+
+<dom-module id="cb-search">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+      form {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+      }
+      input {
+        -webkit-appearance: textfield;
+        flex: auto;
+        margin: 10px;
+        line-height: 40px;
+        height: 40px;
+        font-size: 18px;
+        padding: 5px 8px;
+      }
+
+      button {
+        background: #8BC34A;
+        color: #fff;
+        border: none;
+        font-size: 16px;
+        padding: 8px 16px;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-right: 10px;
+      }
+    </style>
+    <form on-submit="_search">
+      <input type="search" placeholder="Search" value="{{searchTerm::input}}">
+      <div>
+        <button type="submit">Search</button>
+      </div>
+    </form>
+  </template>
+  <script>
+  (function() {
+
+    class CBSearch extends Polymer.Element {
+
+      static get is() { return 'cb-search'; }
+      static get properties() {
+        return {
+          searchTerm: {
+            type: String
+          }
+        }
+      }
+
+      _search(e){
+        e.preventDefault();
+
+        window.pushUrl(encodeURI(`/search/${this.searchTerm}`));
+      }
+    }
+
+    window.customElements.define(CBSearch.is, CBSearch);
+
+  })();
+  </script>
+</dom-module>

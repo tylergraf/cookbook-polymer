@@ -11,7 +11,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/utils/import-href.html">
 <link rel="import" href="simple-router.html">
-<!-- <script src="fetch.js"></script> -->
+<link rel="import" href="/src/cb-search.html">
+
+<script src="fetch.js"></script>
+<script src="../node_modules/localforage/dist/localforage.nopromises.min.js" charset="utf-8"></script>
 
 <dom-module id="cb-app">
   <template strip-whitespace>
@@ -36,38 +39,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .loading {
         color: var(--detail-font-color);
       }
+      .loading-wrapper {
+        height: 20px;
+      }
     </style>
-
+    <cb-search search-term="[[_searchTerm]]"></cb-search>
     <simple-router path="{{_path}}"></simple-router>
     <slot></slot>
+    <div class="loading-wrapper">
+      <div class="loading" hidden$="[[!_loading]]">
+        <slot name="load"></slot>
+      </div>
+    </div>
     <div id="views">
       <!-- page-size hardcoded to 30, but ideally would be provided by data source -->
       <cb-list
-        class$="[[_viewClass('list', _view, _loading)]]"
+        loading="[[_loading]]"
+        class$="[[_viewClass('list', _view)]]"
         list="[[_listData]]"
         type="[[_listType]]"
         page="[[_listPage]]"
         page-size="30">
       </cb-list>
       <cb-recipe
-        class$="[[_viewClass('recipe', _view, _loading)]]"
+        class$="[[_viewClass('recipe', _view)]]"
         item="[[_itemData]]">
       </cb-recipe>
       <cb-edit-recipe
-        class$="[[_viewClass('edit-recipe', _view, _loading)]]"
+        class$="[[_viewClass('edit-recipe', _view)]]"
         item="[[_itemData]]">
       </cb-edit-recipe>
       <cb-404
-        class$="[[_viewClass('404', _view, _loading)]]">
+        class$="[[_viewClass('404', _view)]]">
       </cb-404>
       <cb-offline
-        class$="[[_viewClass('offline', _view, _loading)]]"
+        class$="[[_viewClass('offline', _view)]]"
         on-refresh="_refreshRoute">
       </cb-offline>
-    </div>
-
-    <div class="loading" hidden$="[[!_loading]]">
-      <slot name="load"></slot>
     </div>
 
   </template>
@@ -81,12 +89,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       category: 'subcategories',
       subcategory: 'recipes',
       recipe: 'recipe',
-      edit: 'edit-recipe'
+      edit: 'edit-recipe',
+      search: 'search'
     }
     const pageToPath = {
       top: 'category',
       category: 'subcategory',
-      subcategory: 'recipe'
+      subcategory: 'recipe',
+      search: 'recipe'
     }
 
     class HnApp extends Polymer.Element {
@@ -133,6 +143,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             break;
           case 'top':
+          case 'search':
           case 'category':
           case 'subcategory':
           case 'new':
@@ -143,7 +154,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             props._listType = page;
             pending._listId = props._listId = detail;
             props._listPath = pageToListType[page] || page;
-            props._itemPath = pageToPath[page]
+            props._itemPath = pageToPath[page];
+            if(page === 'search'){
+              props._searchTerm = detail;
+            }
             break;
           default:
             props._view = '404';
@@ -167,35 +181,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (id) {
             url += `/${id}`;
           }
-          this._fetch(url)
+          this._loading = true;
+          localforage.getItem(url)
+            .then(data=>{
+              this._listData = data || [];
+              return this._fetch(url);
+            })
             .then(data => {
               this._listData = data.map(c=>{
                 c.url = `/${this._itemPath}/${c._id}`;
                 c.title = c.title || c.name;
                 return c;
               });
+              localforage.setItem(url,this._listData);
             }, () => this._listPage = null);
         }
       }
 
       _fetchItem(id) {
         if (id) {
-          this._fetch(`${fetchBaseUrl}/recipe/${id}`)
-            .then(data => {this._itemData = data}, (e) => this._itemId = null);
+          var url = `${fetchBaseUrl}/recipe/${id}`;
+          this._loading = true;
+          localforage.getItem(url)
+            .then(data=>{
+              this._itemData = data || null;
+              return this._fetch(url)
+            })
+            .then(data => {
+              this._itemData = data;
+              localforage.setItem(url,data);
+            }, (e) => this._itemId = null);
         }
       }
-
       _fetch(url) {
         // scroll to top when fetching
         document.body.scrollTop = 0;
-        this._loading = true;
-        return fetch(url).then(response => {
-          return response.json().then(data => {
-            this._pendingFetch = null;
-            this._loading = false;
-            return data;
-          });
-        }, reject => {
+        return _fetch(url).then(data => {
+          this._pendingFetch = null;
+          this._loading = false;
+          return data;
+        })
+        .catch(reject => {
           if (!navigator.onLine) {
             this._view = 'offline';
           }
@@ -210,8 +236,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.importHref(resolvedPageUrl, null, ()=>this._view='404', true);
       }
 
-      _viewClass(name, view, loading) {
-        return name == view && !loading ? 'selectedView' : '';
+      _viewClass(name, view) {
+        return name == view ? 'selectedView' : '';
       }
 
       // indicate selected list/tab; here we throw a class on body

@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-if.html">
 <link rel="import" href="./cb-taxonomy.html">
 
 <dom-module id="cb-list">
@@ -36,9 +37,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       li {
-        display: flex;
-        flex-flow: row;
-        padding: 8px 0;
         border-bottom: var(--separator-border);
         overflow-wrap: break-word;
       }
@@ -50,11 +48,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       a {
+        display: flex;
+        flex-flow: row;
+        padding: 8px 0;
         text-decoration: none;
+      }
+      .info-wrapper {
         display: flex;
         flex-flow: column;
       }
-
       .index {
         font-weight: bold;
         color: var(--detail-font-color);
@@ -106,19 +108,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <cb-taxonomy hidden="[[!_getCategory(list)]]" category="[[_getCategory(list)]]" subcategory="[[_getSubcategory(list)]]"></cb-taxonomy>
-
-    <ul>
-      <template is="dom-repeat" items="[[list]]" initial-count="10">
-        <li>
-          <span class="index" hidden="[[!_computeCount(item.recipeCount)]]">[[item.recipeCount]]</span>
-          <a href="[[item.url]]">
-            <span class="title" inner-h-t-m-l="[[item.title]]"></span>
-            <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
-          </a>
-        </li>
+    <dom-if if="[[_showNoItems(list, loading)]]">
+      <template>
+        <p>No items.</p>
       </template>
-    </ul>
-
+    </dom-if>
+    <dom-if if="[[list.length]]">
+      <template>
+        <ul>
+          <template is="dom-repeat" items="[[list]]" initial-count="10">
+            <li>
+              <a href="[[item.url]]">
+                <span class="index" hidden="[[!_computeCount(item.recipeCount)]]">[[item.recipeCount]]</span>
+                <span class="info-wrapper">
+                  <span class="title" inner-h-t-m-l="[[item.title]]"></span>
+                  <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
+                </span>
+              </a>
+            </li>
+          </template>
+        </ul>
+      </template>
+    </dom-if>
     <!-- <div class="forwardback">
       <a class="prev" href="/[[type]]/[[_computePrevPage(page)]]" aria-label="Previous Page">◀ Previous</a>
       <span>Page [[page]]</span>
@@ -136,12 +147,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get properties() {
         return {
           pageSize: Number,
+          list: {
+            type: Array,
+            value: []
+          },
+          loading: Boolean
         };
       }
       _getCategory(list){
+        if(list === undefined || !list.length) return;
         return list[0]._category || list[0]._subcategory && list[0]._subcategory._category;
       }
       _getSubcategory(list){
+        if(list === undefined || !list.length) return;
         return list[0]._subcategory;
       }
       _computeNextPage(page) {
@@ -151,7 +169,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _computePrevPage(page) {
         return (parseInt(page || 2) - 1) || 1;
       }
-
+      _showNoItems(list,loading){
+        return !list.length && !loading;
+      }
       _computeCount(count) {
         return (count !== undefined);
       }
