@@ -17,11 +17,11 @@
     ],
     "headers": [
       {
-        "source": "/item/*",
+        "source": "/recipe/*",
         "headers": [
           {
             "key": "Link",
-            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/hn-app.html>;rel=preload;as=document,</src/hn-item.html>;rel=preload;as=document"
+            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-recipe.html>;rel=preload;as=document"
           }
         ]
       },
@@ -30,7 +30,7 @@
         "headers": [
           {
             "key": "Link",
-            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/hn-app.html>;rel=preload;as=document,</src/hn-user.html>;rel=preload;as=document"
+            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-user.html>;rel=preload;as=document"
           }
         ]
       },
@@ -39,7 +39,7 @@
         "headers": [
           {
             "key": "Link",
-            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/hn-app.html>;rel=preload;as=document,</src/hn-list.html>;rel=preload;as=document,</hn/news?page=1>;rel=preload"
+            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-list.html>;rel=preload;as=document"
           }
         ]
       },
@@ -48,7 +48,7 @@
         "headers": [
           {
             "key": "Link",
-            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/hn-app.html>;rel=preload;as=document,</src/hn-list.html>;rel=preload;as=document,</hn/news?page=1>;rel=preload"
+            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-list.html>;rel=preload;as=document,</cb/news?page=1>;rel=preload"
           }
         ]
       },
@@ -57,7 +57,7 @@
         "headers": [
           {
             "key": "Link",
-            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/hn-app.html>;rel=preload;as=document,</src/hn-list.html>;rel=preload;as=document"
+            "value": "</node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-list.html>;rel=preload;as=document"
           }
         ]
       }

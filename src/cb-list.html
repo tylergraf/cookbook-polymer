@@ -57,13 +57,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: flex;
         flex-flow: column;
       }
-      .index {
+      .count {
         font-weight: bold;
         color: var(--detail-font-color);
         align-self: center;
         min-width: 1em;
         text-align: right;
         margin-right: 5px;
+        align-self: flex-start;
       }
 
       .info, .domain {
@@ -107,7 +108,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 15px;
       }
     </style>
-    <cb-taxonomy hidden="[[!_getCategory(list)]]" category="[[_getCategory(list)]]" subcategory="[[_getSubcategory(list)]]"></cb-taxonomy>
+    <cb-taxonomy hidden="[[hideTaxonomy]]" category="[[_getCategory(list)]]" subcategory="[[_getSubcategory(list)]]"></cb-taxonomy>
     <dom-if if="[[_showNoItems(list, loading)]]">
       <template>
         <p>No items.</p>
@@ -119,7 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <template is="dom-repeat" items="[[list]]" initial-count="10">
             <li>
               <a href="[[item.url]]">
-                <span class="index" hidden="[[!_computeCount(item.recipeCount)]]">[[item.recipeCount]]</span>
+                <span class="count" title="[[_countTitle(item.recipeCount,item.views)]]" hidden="[[!_countExists(item.recipeCount,item.views)]]">[[_showCount(item.recipeCount,item.views)]]</span>
                 <span class="info-wrapper">
                   <span class="title" inner-h-t-m-l="[[item.title]]"></span>
                   <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
@@ -147,6 +148,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get properties() {
         return {
           pageSize: Number,
+          hideTaxonomy: {
+            type: Boolean,
+            value: true
+          },
           list: {
             type: Array,
             value: []
@@ -162,9 +167,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if(list === undefined || !list.length) return;
         return list[0]._subcategory;
       }
-      _computeNextPage(page) {
-        return parseInt(page || 1) + 1;
-      }
 
       _computePrevPage(page) {
         return (parseInt(page || 2) - 1) || 1;
@@ -172,8 +174,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _showNoItems(list,loading){
         return !list.length && !loading;
       }
-      _computeCount(count) {
-        return (count !== undefined);
+      _countExists(count, views) {
+        return (count !== undefined || views !== undefined);
+      }
+      _countTitle(count, views) {
+        if(count !== undefined){
+          return 'Recipe Count';
+        } else if(views !== undefined) {
+          return 'Views';
+        }
+      }
+      _showCount(count, views) {
+        return count || views;
       }
     }
 

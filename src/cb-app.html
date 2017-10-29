@@ -39,11 +39,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .loading {
         color: var(--detail-font-color);
       }
+      [hidden] {
+        display: none;
+      }
       .loading-wrapper {
         height: 20px;
       }
     </style>
-    <cb-search search-term="[[_searchTerm]]"></cb-search>
+    <cb-search hidden="[[_hideSearch]]" search-term="[[_searchTerm]]"></cb-search>
     <simple-router path="{{_path}}"></simple-router>
     <slot></slot>
     <div class="loading-wrapper">
@@ -54,6 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div id="views">
       <!-- page-size hardcoded to 30, but ideally would be provided by data source -->
       <cb-list
+        hide-taxonomy="[[_hideTaxonomy]]"
         loading="[[_loading]]"
         class$="[[_viewClass('list', _view)]]"
         list="[[_listData]]"
@@ -62,10 +66,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         page-size="30">
       </cb-list>
       <cb-recipe
+        loading="[[_loading]]"
         class$="[[_viewClass('recipe', _view)]]"
         item="[[_itemData]]">
       </cb-recipe>
       <cb-edit-recipe
+        loading="[[_loading]]"
         class$="[[_viewClass('edit-recipe', _view)]]"
         item="[[_itemData]]">
       </cb-edit-recipe>
@@ -90,16 +96,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       subcategory: 'recipes',
       recipe: 'recipe',
       edit: 'edit-recipe',
-      search: 'search'
+      search: 'search',
+      popular: 'popular',
     }
     const pageToPath = {
       top: 'category',
       category: 'subcategory',
       subcategory: 'recipe',
-      search: 'recipe'
+      search: 'recipe',
+      popular: 'recipe',
     }
 
-    class HnApp extends Polymer.Element {
+    class CBApp extends Polymer.Element {
 
       static get is() { return 'cb-app'; }
 
@@ -111,6 +119,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           '_viewChanged(_view)',
           '_selectedClass(_view, _listType)'
         ];
+      }
+      static get properties() {
+        return {
+          _hideSearch: {
+            type: Boolean,
+            value: true
+          }
+        };
       }
 
       _routeChanged(path) {
@@ -143,6 +159,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             break;
           case 'top':
+          case 'popular':
           case 'search':
           case 'category':
           case 'subcategory':
@@ -150,6 +167,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case 'ask':
           case 'show':
           case 'jobs':
+            props._hideSearch = true;
+            props._hideTaxonomy = false;
             props._view = 'list';
             props._listType = page;
             pending._listId = props._listId = detail;
@@ -157,6 +176,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             props._itemPath = pageToPath[page];
             if(page === 'search'){
               props._searchTerm = detail;
+              props._hideSearch = false;
+            }
+            if(page === 'top' || page === 'search' || page === 'popular'){
+              props._hideTaxonomy = true;
             }
             break;
           default:
@@ -255,7 +278,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     }
 
-    window.customElements.define(HnApp.is, HnApp);
+    window.customElements.define(CBApp.is, CBApp);
 
   })();
   </script>

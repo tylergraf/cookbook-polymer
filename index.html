@@ -72,9 +72,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       nav {
         max-width: 500px;
         margin: 0 auto;
-        padding: 16px 0 16px 1em;
+        padding: 0;
         box-sizing: border-box;
         white-space: nowrap;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        height: 100%;
       }
 
       nav > a {
@@ -83,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         vertical-align: middle;
         font-weight: 300;
         letter-spacing: .075em;
-        margin-right: 0.5em;
+        margin-left: 0.5em;
         text-decoration: none;
       }
 
@@ -110,14 +114,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 0;
       }
 
-      .cb-top .top, .cb-new .new, .cb-ask .ask, .cb-show .show, .cb-jobs .jobs {
+      .cb-popular .popular, .cb-search .search, .cb-ask .ask, .cb-show .show, .cb-jobs .jobs {
         color: #f5d328;
       }
-      .logo,
-      .logo a {
-        font-size: 16px;
+      .logo {
+        padding: 8px;
         margin: 0;
-        color: #fff;
+      }
+      .logo svg {
+        fill: #fff;
         text-decoration: none;
       }
     </style>
@@ -126,14 +131,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <header>
 
       <nav>
-        <h1 class="logo">
-          <a href="/" title="Gretchen's Cookbook Home">Gretchen's Cookbook</a>
-        </h1>
-        <!-- <a class="top" href="/top/1">Top</a>
-        <a class="new" href="/new/1">New</a>
-        <a class="ask" href="/ask/1">Ask</a>
-        <a class="show" href="/show/1">Show</a>
-        <a class="jobs" href="/jobs/1">Jobs</a> -->
+        <a class="logo" href="/" title="Gretchen's Cookbook Home">
+          <svg width="21" height="38" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+           <g>
+            <path stroke="null" id="svg_2" d="m13.678057,0.102149c-0.088686,0.038008 -0.468771,0.684152 -0.848855,1.431652l-0.684152,1.368304l-0.48144,-0.114025c-0.760169,-0.177373 -2.749278,-0.126695 -3.813514,0.088686c-0.595466,0.114025 -1.494999,0.443432 -2.293176,0.823516c-1.152923,0.557457 -1.46966,0.798177 -2.483219,1.799067c-1.317626,1.304957 -2.014448,2.419871 -2.546566,4.079573c-0.405423,1.241609 -0.544788,3.357413 -0.316737,4.687709c0.329407,1.887753 1.431652,3.990887 2.787286,5.308513l0.633474,0.620805l-0.73483,1.46966c-0.886864,1.761058 -1.089576,2.521227 -0.98822,3.712158c0.139364,1.583685 1.203601,3.294065 2.546566,4.079573c1.051567,0.620805 1.672372,0.709491 4.713048,0.709491c3.040676,0 3.218049,0.038008 3.218049,0.684152c0,0.557457 -0.126695,0.582796 -3.484108,0.582796c-2.736608,0 -3.218049,0.025339 -3.471438,0.202712c-0.354746,0.25339 -3.078684,5.701267 -3.028006,6.068682c0.038008,0.25339 0.139364,0.25339 5.422539,0.25339c5.295844,0 5.3972,0 6.233385,-0.291398c2.901312,-1.000889 4.915759,-3.788175 4.915759,-6.790843c0,-2.850634 -1.685041,-5.460547 -4.282285,-6.61347c-0.97555,-0.443432 -1.672372,-0.570127 -3.496777,-0.671483c-1.46966,-0.063347 -1.647033,-0.101356 -1.811736,-0.342076c-0.152034,-0.228051 -0.139364,-0.304068 0.050678,-0.532118c0.177373,-0.202712 0.430762,-0.266059 1.241609,-0.329407c2.635252,-0.177373 5.219827,-1.494999 6.86686,-3.484108c0.785508,-0.962881 1.71038,-2.736608 2.027117,-3.940209c0.304068,-1.127584 0.304068,-3.800845 -0.012669,-4.941098c-0.24072,-0.924872 -1.064237,-2.660591 -1.520338,-3.230718l-0.304068,-0.380084l1.456991,-2.888642c0.823516,-1.659702 1.431652,-3.015337 1.406313,-3.18004c-0.038008,-0.266059 -0.063347,-0.266059 -3.395421,-0.291398c-1.849744,-0.012669 -3.43343,0.012669 -3.522116,0.050678zm-2.673261,9.350078c0.291398,0.114025 0.73483,0.342076 0.962881,0.519449c0.544788,0.405423 1.127584,1.444321 1.241609,2.153812c0.304068,2.039787 -1.824405,4.066904 -3.788175,3.610803c-0.886864,-0.202712 -1.647033,-0.684152 -2.090465,-1.317626c-0.950211,-1.393643 -0.823516,-2.964659 0.367415,-4.15559c0.924872,-0.924872 2.141143,-1.21627 3.306735,-0.810847z"/>
+           </g>
+          </svg>
+        </a>
+        <a class="popular" href="/popular">Popular</a>
+        <a class="search" href="/search">Search</a>
       </nav>
     </header>
     <cb-app role="main">

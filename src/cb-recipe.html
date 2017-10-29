@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
-<link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-if.html">
 <link rel="import" href="./cb-taxonomy.html">
 <dom-module id="cb-recipe">
   <template strip-whitespace>
@@ -33,6 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .subtitle {
         color: var(--detail-font-color);
+        margin-top: 0;
       }
 
       .spacer {
@@ -57,18 +58,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       header a {
         font-size: var(--detail-font-size);
       }
+      .views {
+        font-weight: bold;
+      }
     </style>
     <cb-taxonomy category="[[item._subcategory._category]]" subcategory="[[item._subcategory]]"></cb-taxonomy>
-    <header>
-      <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
-      <a href="/edit/[[item._id]]">Edit Recipe</a>
-    </header>
-    <h2 class="subtitle"inner-h-t-m-l="[[item.subtitle]]"></h2>
-    <h3>Ingredients</h3>
-    <div hidden="[[!item.ingredients]]" inner-h-t-m-l="[[item.ingredients]]"></div>
-    <h3>Directions</h3>
-    <div hidden="[[!item.directions]]" inner-h-t-m-l="[[item.directions]]"></div>
+    <dom-if if="[[!loading]]">
+      <template>
 
+        <header>
+          <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
+          <a href="/edit/[[item._id]]">Edit Recipe</a>
+        </header>
+        <h2 class="subtitle"inner-h-t-m-l="[[item.subtitle]]"></h2>
+
+        <p class="views">[[item.views]] Views</p>
+
+        <h3>Ingredients</h3>
+        <div hidden="[[!item.ingredients]]" inner-h-t-m-l="[[item.ingredients]]"></div>
+        <h3>Directions</h3>
+        <div hidden="[[!item.directions]]" inner-h-t-m-l="[[item.directions]]"></div>
+
+      </template>
+    </dom-if>
   </template>
 
   <script>
@@ -77,7 +89,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     class HnRecipe extends Polymer.Element {
 
       static get is() { return 'cb-recipe'; }
-
+      static get properties() {
+        return {
+          loading: {
+            type: Boolean,
+            value: false
+          }
+        }
+      };
     }
 
     customElements.define(HnRecipe.is, HnRecipe);
