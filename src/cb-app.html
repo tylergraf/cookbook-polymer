@@ -27,12 +27,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --detail-font-color: #666;
         --separator-border: 1px solid #eee;
       }
-
-      #views > :not(.selectedView) {
+      section {
+        max-width: 500px;
+        margin: 0 auto;
+        border-left: 1px solid #eaeaea;
+        border-right: 1px solid #eaeaea;
+        min-height: 100%;
+      }
+      .views > :not(.selectedView) {
         display: none !important;
       }
 
-      #views > * {
+      .views > * {
         padding: 1rem;
       }
 
@@ -46,43 +52,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 20px;
       }
     </style>
-    <cb-search hidden="[[_hideSearch]]" search-term="[[_searchTerm]]"></cb-search>
-    <simple-router path="{{_path}}"></simple-router>
-    <slot></slot>
-    <div class="loading-wrapper">
-      <div class="loading" hidden$="[[!_loading]]">
-        <slot name="load"></slot>
+    <section>
+      <cb-search hidden="[[_hideSearch]]" search-term="[[_searchTerm]]"></cb-search>
+      <simple-router path="{{_path}}"></simple-router>
+      <slot></slot>
+      <div class="loading-wrapper">
+        <div class="loading" hidden$="[[!_loading]]">
+          <slot name="load"></slot>
+        </div>
       </div>
-    </div>
-    <div id="views">
-      <!-- page-size hardcoded to 30, but ideally would be provided by data source -->
-      <cb-list
-        hide-taxonomy="[[_hideTaxonomy]]"
-        loading="[[_loading]]"
-        class$="[[_viewClass('list', _view)]]"
-        list="[[_listData]]"
-        type="[[_listType]]"
-        page="[[_listPage]]"
-        page-size="30">
-      </cb-list>
-      <cb-recipe
-        loading="[[_loading]]"
-        class$="[[_viewClass('recipe', _view)]]"
-        item="[[_itemData]]">
-      </cb-recipe>
-      <cb-edit-recipe
-        loading="[[_loading]]"
-        class$="[[_viewClass('edit-recipe', _view)]]"
-        item="[[_itemData]]">
-      </cb-edit-recipe>
-      <cb-404
-        class$="[[_viewClass('404', _view)]]">
-      </cb-404>
-      <cb-offline
-        class$="[[_viewClass('offline', _view)]]"
-        on-refresh="_refreshRoute">
-      </cb-offline>
-    </div>
+      <div id="views" class="views">
+        <!-- page-size hardcoded to 30, but ideally would be provided by data source -->
+        <cb-list
+          hide-taxonomy="[[_hideTaxonomy]]"
+          loading="[[_loading]]"
+          class$="[[_viewClass('list', _view)]]"
+          list="[[_listData]]"
+          type="[[_listType]]"
+          page="[[_listPage]]"
+          page-size="30">
+        </cb-list>
+        <cb-recipe
+          loading="[[_loading]]"
+          class$="[[_viewClass('recipe', _view)]]"
+          item="[[_itemData]]">
+        </cb-recipe>
+        <cb-edit-recipe
+          loading="[[_loading]]"
+          class$="[[_viewClass('edit-recipe', _view)]]"
+          item="[[_itemData]]">
+        </cb-edit-recipe>
+        <cb-404
+          class$="[[_viewClass('404', _view)]]">
+        </cb-404>
+        <cb-offline
+          class$="[[_viewClass('offline', _view)]]"
+          on-refresh="_refreshRoute">
+        </cb-offline>
+      </div>
+    </section>
 
   </template>
 
