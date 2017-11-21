@@ -213,7 +213,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             url += `/${id}`;
           }
           if(path === 'categories' && window.location.host === 'gretchenscookbook.com'){
-            url = '/api/'
+            url = '/api/categories'
           }
           this._loading = true;
           localforage.getItem(url)
