@@ -110,7 +110,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 0;
       }
 
-      .cb-popular .popular, .cb-search .search, .cb-ask .ask, .cb-show .show, .cb-jobs .jobs {
+      .cb-popular .popular,
+      .cb-search .search,
+      .cb-favorites .favorites,
+      .cb-show .show,
+      .cb-jobs .jobs {
         color: #f5d328;
       }
       .logo {
@@ -120,6 +124,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .logo svg {
         fill: #fff;
         text-decoration: none;
+      }
+      .flex {
+        flex-grow: 1;
+      }
+      .hide {
+        display: none;
       }
     </style>
   </head>
@@ -136,6 +146,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </a>
         <a class="popular" href="/popular">Popular</a>
         <a class="search" href="/search">Search</a>
+        <a class="favorites show-signed-in hide" href="/favorites">Favorites</a>
+        <span class="flex"></span>
+        <cb-sign-in></cb-sign-in>
       </nav>
     </header>
     <cb-app role="main">
@@ -150,11 +163,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // base fetch url
       // url for server proxy to api, when running locally switch url's
       // const fetchBaseUrl = '/api';
-      const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
-      // const fetchBaseUrl = 'http://localhost:3000/api';
+      // const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
+      const fetchBaseUrl = 'http://localhost:3000/api';
     </script>
     <!-- Load your application shell -->
     <link rel="import" href="/src/cb-app.html">
+    <link rel="import" href="/src/cb-sign-in.html">
 
     <!-- Load and register pre-caching Service Worker -->
     <script>

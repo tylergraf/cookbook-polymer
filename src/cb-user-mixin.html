@@ -1,0 +1,45 @@
+<link rel="import" href="/src/cb-firebase.html">
+
+<script>
+  CBUser = function(superClass) {
+    return class extends superClass {
+
+      static get properties() {
+        return {
+          user: {
+            type: Object
+          },
+          signedIn: {
+            type: Boolean
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_signedInObserver(signedIn)'
+        ];
+      }
+      _signedInObserver(signedIn){
+        if(signedIn){
+          Array.from(document.querySelectorAll('.show-signed-in')).forEach(el=>el.classList.remove('hide'))
+        } else {
+          Array.from(document.querySelectorAll('.show-signed-in')).forEach(el=>el.classList.add('hide'))
+        }
+      }
+      ready(){
+        super.ready();
+
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            this.user = user;
+            this.signedIn = true;
+          } else {
+            this.signedIn = false;
+          }
+        }.bind(this));
+
+      }
+    }
+  }
+</script>

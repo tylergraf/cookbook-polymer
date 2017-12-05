@@ -39,7 +39,7 @@
         "headers": [
           {
             "key": "Link",
-            "value": "</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-list.html>;rel=preload;as=document,</api/categories>;rel=preload"
+            "value": "</node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script,</src/cb-app.html>;rel=preload;as=document,</src/cb-list.html>;rel=preload;as=document,</src/cb-sign-in.html>;rel=preload;as=document,</api/categories>;rel=preload"
           }
         ]
       },

@@ -1,0 +1,161 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
+<link rel="import" href="../node_modules/@polymer/polymer/lib/utils/import-href.html">
+<link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../bower_components/dialog-el/dialog-el.html">
+<link rel="import" href="/src/cb-user-mixin.html">
+
+
+<dom-module id="cb-sign-in">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+        position: relative;
+        height: 100%;
+      }
+      dialog-el {
+        width: 160px;
+        position: absolute;
+        top: 49px;
+        right: 0;
+        display: flex;
+        flex-flow: column;
+        --dialog-el-border-radius: 0;
+      }
+      button {
+        cursor: pointer;
+        background: #8BC34A;
+        border: 1px solid #fff;
+        border-radius: 0;
+        padding: 8px 12px;
+        color: #fff;
+        display: block;
+        margin-top: 5px;
+      }
+      button.blank {
+        background: none;
+        border: 1px solid #fff;
+        border-radius: 0;
+        color: #fff;
+        display: inline;
+        margin-top: 8px;
+      }
+      .signed-in {
+        background: none;
+        border: none;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        color: #fff;
+        font-size: 14px;
+        max-width: 160px;
+        margin-top: 0;
+      }
+      .img-wrapper {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+      img {
+        height: 100%;
+        width: 100%;
+      }
+      .name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+    <dom-if if="[[signedIn]]">
+      <template>
+        <button class="signed-in" type="button" on-click="_openDialog">
+          <span class="img-wrapper">
+            <img src="[[user.photoURL]]" alt="[[user.displayName]]">
+          </span>
+          <span class="name">[[user.displayName]]</span>
+        </button>
+      </template>
+    </dom-if>
+    <dom-if if="[[!signedIn]]">
+      <template>
+        <button type="button" class="sign-in blank" on-click="_openDialog">Sign In</button>
+      </template>
+    </dom-if>
+
+    <dialog-el id="dialog">
+      <dom-if if="[[signedIn]]">
+        <template>
+          <button type="button" on-click="_signOut">Sign Out</button>
+        </template>
+      </dom-if>
+      <dom-if if="[[!signedIn]]">
+        <template>
+          <button on-click="_signInEH" type="button" auth="Facebook">Facebook</button>
+          <button on-click="_signInEH" type="button" auth="Google">Google</button>
+          <button on-click="_signInEH" type="button" auth="Twitter">Twitter</button>
+        </template>
+      </dom-if>
+    </dialog-el>
+
+  </template>
+
+  <script>
+  (function() {
+    class CBSignIn extends CBUser(Polymer.Element) {
+
+      static get is() { return 'cb-sign-in'; }
+
+      _openDialog(){
+        this.$.dialog.show();
+      }
+      _signInEH(e){
+        var auth = e.target.getAttribute('auth');
+        if(!firebase){
+          return Polymer.importHref('../src/cb-firebase.html', this._signIn);
+        }
+        this._signIn(auth);
+      }
+      _signIn(auth){
+        var provider = new firebase.auth[auth+'AuthProvider']();
+
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+          this.$.dialog.close();
+        }.bind(this)).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          console.log(error);
+        });
+      }
+      _signOut(){
+        firebase.auth().signOut().then(_=>{
+          // Sign-out successful.
+          this.$.dialog.close();
+        }).catch(function(error) {
+          // An error happened.
+        });
+      }
+    }
+
+    window.customElements.define(CBSignIn.is, CBSignIn);
+
+  })();
+  </script>
+</dom-module>

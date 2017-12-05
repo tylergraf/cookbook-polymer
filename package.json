@@ -4,6 +4,8 @@
   "dependencies": {
     "@polymer/polymer": "^2.0.2",
     "@webcomponents/webcomponentsjs": "^1.0.7",
+    "firebase": "^4.7.0",
+    "fs-dialog": "github:fs-webdev/fs-dialog",
     "localforage": "^1.5.2",
     "marked": "^0.3.6"
   },

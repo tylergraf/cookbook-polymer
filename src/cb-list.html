@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-if.html">
 <link rel="import" href="./cb-taxonomy.html">
+<link rel="import" href="./cb-favorite.html">
 
 <dom-module id="cb-list">
   <template strip-whitespace>
@@ -39,6 +40,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       li {
         border-bottom: var(--separator-border);
         overflow-wrap: break-word;
+        display: flex;
+        justify-content: space-between;
       }
 
       .title {
@@ -52,6 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         flex-flow: row;
         padding: 8px 0;
         text-decoration: none;
+        flex-grow: 1;
       }
       .info-wrapper {
         display: flex;
@@ -107,6 +111,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       cb-taxonomy {
         margin-bottom: 15px;
       }
+      .flex {
+        flex-grow: 1;
+      }
     </style>
     <cb-taxonomy hidden="[[hideTaxonomy]]" category="[[_getCategory(list)]]" subcategory="[[_getSubcategory(list)]]"></cb-taxonomy>
     <dom-if if="[[_showNoItems(list, loading)]]">
@@ -126,6 +133,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   <span class="info" hidden="[[!item.subtitle]]" inner-h-t-m-l="[[item.subtitle]]"></span>
                 </span>
               </a>
+              <cb-favorite hidden="[[!item.ingredients]]" recipe-id="[[item._id]]" count="[[item.favorites]]" favorited="[[item.favorited]]"></cb-favorite>
             </li>
           </template>
         </ul>

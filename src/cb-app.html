@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/lib/utils/import-href.html">
 <link rel="import" href="simple-router.html">
 <link rel="import" href="/src/cb-search.html">
+<link rel="import" href="/src/cb-user-mixin.html">
 
 <script src="fetch.js"></script>
 <script src="../node_modules/localforage/dist/localforage.nopromises.min.js" charset="utf-8"></script>
@@ -106,6 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       edit: 'edit-recipe',
       search: 'search',
       popular: 'popular',
+      favorites: 'favorites',
     }
     const pageToPath = {
       top: 'category',
@@ -113,17 +115,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       subcategory: 'recipe',
       search: 'recipe',
       popular: 'recipe',
+      favorites: 'recipe',
     }
 
-    class CBApp extends Polymer.Element {
+    class CBApp extends CBUser(Polymer.Element) {
 
       static get is() { return 'cb-app'; }
 
       static get observers() {
         return [
           '_routeChanged(_path)',
-          '_fetchList(_listPath, _listId)',
-          '_fetchItem(_itemId)',
+          '_fetchList(signedIn, _listPath, _listId)',
+          '_fetchItem(signedIn, _itemId)',
           '_viewChanged(_view)',
           '_selectedClass(_view, _listType)'
         ];
@@ -136,7 +139,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         };
       }
-
       _routeChanged(path) {
         let [page, detail] = path;
         if (!page) {
@@ -174,7 +176,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case 'new':
           case 'ask':
           case 'show':
-          case 'jobs':
+          case 'favorites':
             props._hideSearch = true;
             props._hideTaxonomy = false;
             props._view = 'list';
@@ -186,7 +188,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               props._searchTerm = detail;
               props._hideSearch = false;
             }
-            if(page === 'top' || page === 'search' || page === 'popular'){
+            if(page === 'top' || page === 'search' || page === 'popular' || page === 'favorites'){
               props._hideTaxonomy = true;
             }
             break;
@@ -206,7 +208,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _fetchList(path, id) {
+      _fetchList(signedIn, path, id) {
+        if(signedIn === undefined) return;
+
         if (path) {
           let url = `${fetchBaseUrl}/${path}`;
           if (id) {
@@ -232,7 +236,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _fetchItem(id) {
+      _fetchItem(signedIn, id) {
+        if(signedIn === undefined) return;
         if (id) {
           var url = `${fetchBaseUrl}/recipe/${id}`;
           this._loading = true;

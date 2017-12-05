@@ -2,6 +2,7 @@
   "entrypoint": "index.html",
   "shell": "src/cb-app.html",
   "fragments": [
+    "src/cb-sign-in.html",
     "src/cb-list.html",
     "src/cb-recipe.html",
     "src/cb-edit-recipe.html",
@@ -11,7 +12,9 @@
   "sources": [
     "src/**/*",
     "images/**/*",
-    "package.json"
+    "package.json",
+    "node_modules/firebase/firebase-*.js",
+    "bower_components/dialog-el/*.+(html|js)"
   ],
   "extraDependencies": [
     "manifest.json",
