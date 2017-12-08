@@ -71,6 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           list="[[_listData]]"
           type="[[_listType]]"
           page="[[_listPage]]"
+          heading="[[_pageHeading]]"
           page-size="30">
         </cb-list>
         <cb-recipe
@@ -108,6 +109,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       search: 'search',
       popular: 'popular',
       favorites: 'favorites',
+      user: 'user/recipes',
     }
     const pageToPath = {
       top: 'category',
@@ -116,6 +118,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       search: 'recipe',
       popular: 'recipe',
       favorites: 'recipe',
+      user: 'recipe',
     }
 
     class CBApp extends CBUser(Polymer.Element) {
@@ -139,6 +142,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         };
       }
+      ready(){
+        super.ready();
+        this.addEventListener('refresh-data', e=>{
+          this.__itemId = this._itemId;
+          this._itemId = '';
+          this._itemId = this.__itemId;
+          this.__listId = this._listId;
+          this._listId = '';
+          this._listId = this.__listId;
+        });
+      }
       _routeChanged(path) {
         let [page, detail] = path;
         if (!page) {
@@ -158,11 +172,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case 'recipe':
             if (detail) {
               props._view = 'recipe';
-              pending._itemId = props._itemId = detail;
               if(detail === 'new'){
                 props._view = 'edit-recipe';
                 pending._itemId = props._itemId = null;
-
+              } else {
+                pending._itemId = props._itemId = detail;
               }
             } else {
               props._view = '404';
@@ -177,6 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case 'ask':
           case 'show':
           case 'favorites':
+          case 'user':
             props._hideSearch = true;
             props._hideTaxonomy = false;
             props._view = 'list';
@@ -190,6 +205,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             if(page === 'top' || page === 'search' || page === 'popular' || page === 'favorites'){
               props._hideTaxonomy = true;
+            }
+            if(page === 'popular' || page === 'favorites'){
+              props._pageHeading = page;
+            } else {
+              props._pageHeading = '';
             }
             break;
           default:
@@ -232,7 +252,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 return c;
               });
               localforage.setItem(url,this._listData);
-            }, () => this._listPage = null);
+            }, () => this._listPage = null)
+            .catch(err=>{
+              localforage.removeItem(url);
+            });
         }
       }
 

@@ -1,0 +1,220 @@
+<!--
+@license
+Copyright (c) 2017 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
+<link rel="import" href="/src/cb-user-mixin.html">
+<script src="../node_modules/marked/marked.min.js"></script>
+
+<dom-module id="cb-note">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+        font-size: var(--detail-font-size);
+      }
+      textarea {
+        font-size: 13px;
+        min-width: 300px;
+        max-width: 100%;
+        width: 400px;
+        min-height: 50px;
+        max-height: 300px;
+        border-color: #E0E0E0;
+        display: block;
+        margin-bottom: 20px;
+      }
+      .button {
+        background: #8BC34A;
+        color: #fff;
+        border: none;
+        font-size: 13px;
+        padding: 6px 14px;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      .button.minor {
+        background: #fff;
+        color: inherit;
+      }
+      .button.warn {
+        background: #f44336;
+      }
+      .button.warn:hover {
+        background: #e57373;
+      }
+      .button.warn:active {
+        background: #d32f2f;
+      }
+      .support {
+        font-size: var(--detail-font-size);
+      }
+      .rendered {
+        margin-bottom: 20px;
+        margin-top: 10px;
+        background: #f4f4f4;
+        padding: 1px 10px;
+      }
+    </style>
+    <dom-if if="[[_showNote(user, note, _editMode)]]">
+      <template>
+        <button class="button" type="button" on-click="_toggleEdit">Edit Note</button>
+        <button class="button warn" type="button" on-click="_deleteNote">Delete Note</button>
+        <div inner-h-t-m-l="[[note]]"></div>
+      </template>
+    </dom-if>
+    <dom-if if="[[_showAdd(note, _editMode, recipeId, user)]]">
+      <template>
+        <button class="button" type="button" on-click="_toggleEdit">Add Note</button>
+      </template>
+    </dom-if>
+    <dom-if if="[[_editMode]]">
+      <template>
+        <p class="support">All notes are private and can be Markdown. <a target="_blank" href="https://en.wikipedia.org/wiki/Markdown#Example">What's Markdown?</a></p>
+        <textarea id="note" on-keyup="_renderMD" value="{{_noteObj.md_note::input}}"></textarea>
+        <div class="rendered" hidden="[[!_noteObj.note]]" inner-h-t-m-l="[[_noteObj.note]]"></div>
+
+        <button class="button" type="button" on-click="_save">Save</button>
+        <button class="button minor" type="button" on-click="_cancel">Cancel</button>
+      </template>
+    </dom-if>
+  </template>
+  <script>
+  (function() {
+    const renderer = new marked.Renderer();
+
+    class CBNote extends CBUser(Polymer.Element) {
+
+      static get is() { return 'cb-note'; }
+      static get properties() {
+        return {
+          note: {
+            type: String,
+            value: ''
+          },
+          recipeId: {
+            type: String
+          },
+          _editMode: {
+            type: Boolean,
+            value: false
+          },
+          _noteObj: {
+            type: Object,
+            value: {},
+            observer: '_noteObjObserver'
+          }
+        }
+      }
+      static get observers() {
+        return [
+          '_noteObjObserver(user,_noteObj,recipeId,_editMode, _noteObj.md_note)',
+          '_initialize(user,recipeId)'
+        ]
+      }
+      _initialize(user,recipeId){
+        if(user === undefined || recipeId === undefined) return;
+        if(this._initialized){
+          return;
+        }
+        this._initialized = true;
+        this.cacheKey = `${user.uid}/note/${recipeId}`
+
+        localforage.getItem(this.cacheKey)
+          .then(_noteObj=>{
+            if(_noteObj){
+              this._noteObj = _noteObj;
+              this._toggleEdit();
+            }
+          });
+      }
+      _noteObjObserver(user,_noteObj,recipeId,_editMode){
+        if(user === undefined || _noteObj === undefined || recipeId === undefined) return;
+
+        if(_noteObj.md_note && _editMode){
+          localforage.setItem(this.cacheKey,_noteObj);
+        }
+      }
+      _showNote(user, note, _editMode){
+        return user && note && !_editMode;
+      }
+      _showAdd(note, _editMode, recipeId, user){
+        return user && !note && !_editMode && recipeId;
+      }
+      _renderMD(){
+        this.set('_noteObj.note', marked(this._noteObj.md_note, {renderer}));
+      }
+      _toggleEdit(){
+        this._editMode = !this._editMode;
+        if(this._editMode && this.note && !this._noteObj.md_note){
+          var url = `${fetchBaseUrl}/note/${this.recipeId}`;
+
+          _fetch(url)
+            .then(note=>{
+              this._noteObj = note;
+            });
+        }
+        if(this._editMode){
+          setTimeout(_=>this.shadowRoot.querySelector('textarea').focus());
+        }
+      }
+      _cancel(){
+        this._toggleEdit();
+        localforage.removeItem(this.cacheKey);
+        delete this._noteObj;
+      }
+      _save(){
+        if(!this.user) return;
+
+        var url = `${fetchBaseUrl}/note/${this.recipeId}`;
+        var method = (this.note) ? 'put' : 'post';
+        var body = this._noteObj;
+
+        _fetch(url, method, body)
+          .then(note=>{
+            this.note = this._noteObj.note;
+            this._toggleEdit();
+            localforage.removeItem(this.cacheKey);
+
+          })
+          .catch(err=>{
+            console.log(err);
+            this._toggleEdit();
+          });
+
+
+      }
+      _deleteNote(){
+        if(!this.user) return;
+
+        var url = `${fetchBaseUrl}/note/${this.recipeId}`;
+        _fetch(url, 'delete')
+          .then(_=>{
+            this.note = '';
+            this._noteObj = {};
+            localforage.removeItem(this.cacheKey);
+          })
+          .catch(err=>{
+            console.log(err);
+            this._toggleEdit();
+          });
+
+
+      }
+
+    }
+
+    window.customElements.define(CBNote.is, CBNote);
+
+  })();
+  </script>
+</dom-module>

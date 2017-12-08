@@ -69,6 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         text-align: right;
         margin-right: 5px;
         align-self: flex-start;
+        flex-shrink: 0;
       }
 
       .info, .domain {
@@ -114,7 +115,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .flex {
         flex-grow: 1;
       }
+      .heading {
+        text-transform:capitalize;
+      }
     </style>
+    <h2 hidden="[[!heading]]" class="heading">[[heading]]</h2>
     <cb-taxonomy hidden="[[hideTaxonomy]]" category="[[_getCategory(list)]]" subcategory="[[_getSubcategory(list)]]"></cb-taxonomy>
     <dom-if if="[[_showNoItems(list, loading)]]">
       <template>
@@ -164,7 +169,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Array,
             value: []
           },
-          loading: Boolean
+          loading: Boolean,
+          heading: String
         };
       }
       _getCategory(list){

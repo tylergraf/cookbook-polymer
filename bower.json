@@ -6,7 +6,9 @@
   "license": "https://polymer.github.io/LICENSE.txt",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "dialog-el": "jshcrowthe/dialog-el#v2.0.0"
+    "dialog-el": "jshcrowthe/dialog-el#v2.0.0",
+    "shadydom": "webcomponents/shadydom#^1.0.9",
+    "shadycss": "webcomponents/shadycss#^1.1.0"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0"

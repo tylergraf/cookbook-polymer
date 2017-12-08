@@ -8,10 +8,7 @@ window._fetch = ((url, method = 'get', body) => {
   return firebase.auth().currentUser.getIdToken()
     .then(idToken=>{
       return fetchData(url,method,body,idToken);
-    })
-    .catch(err=>{
-      return fetchData(url,method,body);
-    })
+    });
 
 });
 
@@ -20,9 +17,14 @@ window.fetchData = ((url, method = 'get', body, idToken = '') => {
     return new Promise((resolve, reject) => {
       var request = new XMLHttpRequest();
       request.onerror = reject;
-      request.onload = () => resolve({
-        json: () => Promise.resolve(request.responseText).then(JSON.parse),
-      });
+      request.onload = () => {
+        if(request.status === 404){
+          return reject(404);
+        }
+        resolve({
+          json: () => Promise.resolve(request.responseText).then(JSON.parse),
+        });
+      }
       request.open('get', url);
       request.setRequestHeader('authorization', `Bearer ${idToken}`);
       request.send();
@@ -41,5 +43,10 @@ window.fetchData = ((url, method = 'get', body, idToken = '') => {
     options.body = JSON.stringify(body);
   }
   return fetch(url, options)
-    .then(res=>res.json());
+    .then(res=>{
+      if(res.status === 204){
+        return Promise.resolve();
+      }
+      return res.json()
+    });
 });

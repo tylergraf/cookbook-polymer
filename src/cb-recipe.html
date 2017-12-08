@@ -12,6 +12,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-if.html">
 <link rel="import" href="./cb-taxonomy.html">
 <link rel="import" href="./cb-favorite.html">
+<link rel="import" href="./cb-note.html">
+<link rel="import" href="/src/cb-user-mixin.html">
 
 <dom-module id="cb-recipe">
   <template strip-whitespace>
@@ -68,6 +70,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: flex;
         align-items: center;
       }
+      .flex {
+        flex: 1;
+      }
+      .img-wrapper {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+        display: inline-block;
+      }
+      img {
+        height: 100%;
+        width: 100%;
+      }
     </style>
     <cb-taxonomy category="[[item._subcategory._category]]" subcategory="[[item._subcategory]]"></cb-taxonomy>
     <dom-if if="[[!loading]]">
@@ -75,19 +92,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <header>
           <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
-          <a href="/edit/[[item._id]]">Edit Recipe</a>
+          <dom-if if="[[user]]">
+            <template>
+              <a href="/edit/[[item._id]]">Edit Recipe</a>
+            </template>
+          </dom-if>
         </header>
         <h2 class="subtitle"inner-h-t-m-l="[[item.subtitle]]"></h2>
 
         <section>
+          <dom-if if="[[item._user]]">
+            <template>
+              <span class="img-wrapper">
+                <img src="[[item._user.picture]]" alt="[[item._user.name]]">
+              </span>
+              <a class="user-name" href="/user/[[item._user.uid]]">[[item._user.name]]</a>
+              <span class="flex"></span>
+            </template>
+          </dom-if>
           <span class="views">[[item.views]] Views</span>
           <cb-favorite hidden="[[!item.ingredients]]" recipe-id="[[item._id]]" count="[[item.favorites]]" favorited="[[item.favorited]]"></cb-favorite>
         </section>
 
-        <h3>Ingredients</h3>
+        <h3 hidden="[[!item.ingredients]]">Ingredients</h3>
         <div hidden="[[!item.ingredients]]" inner-h-t-m-l="[[item.ingredients]]"></div>
-        <h3>Directions</h3>
+        <h3 hidden="[[!item.directions]]">Directions</h3>
         <div hidden="[[!item.directions]]" inner-h-t-m-l="[[item.directions]]"></div>
+
+        <dom-if if="[[user]]">
+          <template>
+            <h3>Notes</h3>
+            <cb-note note="[[item.note]]" recipe-id="[[item._id]]"></cb-note>
+          </template>
+        </dom-if>
+
 
       </template>
     </dom-if>
@@ -96,7 +134,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
   (function() {
 
-    class HnRecipe extends Polymer.Element {
+    class HnRecipe extends CBUser(Polymer.Element) {
 
       static get is() { return 'cb-recipe'; }
       static get properties() {

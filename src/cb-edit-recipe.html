@@ -94,6 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .button.warn {
         background: #f44336;
+        font-size: 12px;
       }
       .button.warn:hover {
         background: #e57373;
@@ -135,21 +136,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         align-items: center;
         justify-content: space-between;
       }
+      .actions {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+      }
     </style>
     <header>
       <h1>[[_getHeading(item)]] Recipe</h1>
-      <div>
-        <button class="button warn" type="button" on-click="_delete">Delete Recipe</button>
-      </div>
     </header>
     <form on-submit="_save">
       <label for="title">Recipe Title</label>
-      <input id="title" type="text" placeholder="Killer Hot Dogs" value="{{item.title::input}}">
+      <input id="title" type="text" autofocus placeholder="Killer Hot Dogs" value="{{item.title::input}}">
 
       <label for="subtitle">Author/Source</label>
       <input id="subtitle" type="text" placeholder="Aunt Verna" value="{{item.subtitle::input}}">
 
-      <cb-choose-taxonomy subcategory-id="{{item._subcategory._id}}"></cb-choose-taxonomy>
+      <cb-choose-taxonomy subcategory-id="{{_subcategoryId}}"></cb-choose-taxonomy>
 
       <label for="ingredients">Ingredients</label>
       <textarea id="ingredients" on-keyup="_renderMD" value="{{item.md_ingredients::input}}"></textarea>
@@ -163,8 +167,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <div class="alert success" hidden$="[[!_success]]">[[_successMessage]]</div>
       <div class="alert error" hidden$="[[!_error]]">An Error Occurred.</div>
-      <button class="button" type="submit" on-click="_save">Save</button>
-      <a href="/recipe/[[item._id]]" class="button minor">Cancel</a>
+      <section class="actions">
+        <div>
+          <button class="button" type="submit" on-click="_save">Save</button>
+          <a hidden="[[item._id]]" href="/" class="button minor">Cancel</a>
+          <a hidden="[[!item._id]]" href="/recipe/[[item._id]]" class="button minor">Cancel</a>
+        </div>
+        <span class="flex"></span>
+        <button hidden="[[!item._id]]" class="button warn" type="button" on-click="_delete">Delete Recipe</button>
+      </section>
 
     </form>
   </template>
@@ -177,6 +188,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get is() { return 'cb-edit-recipe'; }
       static get properties() {
         return {
+          item: {
+            type: Object,
+            value: {}
+          },
           _error: {
             type: Boolean,
             value: false
@@ -187,38 +202,73 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         };
       }
+      static get observers() {
+        return [
+          '_md_ingredientsObserver(item.md_ingredients)',
+          '_md_directionsObserver(item.md_directions)',
+          '_updateSubcategory(item._subcategory._id, item._subcategory)'
+        ];
+      }
+      _updateSubcategory(_subcategoryId, subcategoryId2){
+        this._subcategoryId = _subcategoryId || subcategoryId2;
+      }
+      _md_directionsObserver(md_directions){
+        if(!md_directions) return;
+
+        let val = md_directions.split(/\r\n|\r|\n/).length * 16;
+        val = val < 150 ? val : 150;
+        this.$.directions.style.minHeight = `${val}px`;
+      }
+      _md_ingredientsObserver(md_ingredients){
+        if(!md_ingredients) return;
+
+        let val = md_ingredients.split(/\r\n|\r|\n/).length * 16;
+        val = val < 150 ? val : 150;
+        this.$.ingredients.style.minHeight = `${val}px`;
+      }
       _renderMD(){
-        this.set('item.ingredients', marked(this.item.md_ingredients, {renderer}));
-        this.set('item.directions', marked(this.item.md_directions, {renderer}));
+        this.item.md_ingredients !== undefined && this.set('item.ingredients', marked(this.item.md_ingredients, {renderer}));
+        this.item.md_directions !== undefined && this.set('item.directions', marked(this.item.md_directions, {renderer}));
       }
       _getHeading(item){
-        return (!item) ? 'New' : 'Edit';
+        return (!item._id) ? 'New' : 'Edit';
       }
       _save(e){
         e.preventDefault();
-        this.item._subcategory = this.item._subcategory._id;
-        fetch(`${fetchBaseUrl}/recipe/${this.item._id}`,{method: 'put',headers:{'content-type': 'application/json'}, body: JSON.stringify(this.item)})
-          .then(res=>res.json())
+        this.item._subcategory = this._subcategoryId;
+        let url = this.item._id ? `${fetchBaseUrl}/recipe/${this.item._id}` : `${fetchBaseUrl}/recipe/new`;
+        let method = this.item._id ? 'put' : 'post';
+
+        _fetch(url, method, this.item)
           .then(recipe=>{
             this._error = false;
             this._success = true;
             this._successMessage = 'Recipe Saved Successfully.'
-            setTimeout(_=>pushUrl(`/recipe/${recipe._id}`),1000);
+            setTimeout(_=>{
+              pushUrl(`/recipe/${recipe._id}`);
+              this.dispatchEvent(new CustomEvent('refresh-data', {bubbles: true, composed: true}));
+              this._success = false;
+              this._error = false;
+            },1000);
           })
           .catch(_=>{
             this._success = false;
             this._error = true;
           });
       }
+
       _delete(){
         const confirmed = confirm('Are you sure?!');
         if(confirmed){
           fetch(`${fetchBaseUrl}/recipe/${this.item._id}`,{method: 'delete'})
             .then(_=>{
+              localforage.removeItem(`${fetchBaseUrl}/recipe/${this.item._id}`);
               this._error = false;
               this._success = true;
               this._successMessage = 'Recipe Deleted Successfully.'
               setTimeout(_=>pushUrl(`/`),1000);
+              this._success = false;
+              this._error = false;
             })
             .catch(_=>{
               this._success = false;

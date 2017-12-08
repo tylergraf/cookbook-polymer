@@ -13,7 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <head>
     <meta charset="utf-8">
     <meta name="generator" content="Polymer Starter Kit">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=0">
 
     <title>Gretchen's Cookbook</title>
     <meta name="description" content="Gretchen's Cookbook">
@@ -146,7 +146,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </a>
         <a class="popular" href="/popular">Popular</a>
         <a class="search" href="/search">Search</a>
-        <a class="favorites show-signed-in hide" href="/favorites">Favorites</a>
         <span class="flex"></span>
         <cb-sign-in></cb-sign-in>
       </nav>
@@ -165,6 +164,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // const fetchBaseUrl = '/api';
       // const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
       const fetchBaseUrl = 'http://localhost:3000/api';
+
+      fetch(fetchBaseUrl.replace('/api','/'));
     </script>
     <!-- Load your application shell -->
     <link rel="import" href="/src/cb-app.html">
