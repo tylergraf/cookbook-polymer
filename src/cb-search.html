@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <form on-submit="_search">
-      <input type="search" placeholder="Search" value="{{searchTerm::input}}">
+      <input type="search" autofocus placeholder="Search" value="{{searchTerm::input}}">
       <div>
         <button type="submit">Search</button>
       </div>
@@ -66,7 +66,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _search(e){
         e.preventDefault();
-
+        if(this.searchTerm === ''){
+          return;
+        }
         window.pushUrl(encodeURI(`/search/${this.searchTerm}`));
       }
     }

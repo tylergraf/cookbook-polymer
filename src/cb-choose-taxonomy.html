@@ -48,10 +48,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           categoryId: {
             type: String,
             notify: true,
-            observer: '_categoryIdObserver'
+            observer: '_categoryIdObserver',
+            value: '',
           },
           subcategoryId: {
             type: String,
+            value: '',
             reflectToAttribute: true,
             notify: true
           },
@@ -65,14 +67,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           subcategoriesFiltered: {
             type: Array,
-            value: [],
-            computed: '_filterSubcategory(categories, subcategories, subcategoryId, categoryId)'
+            value: []
           }
         };
       }
       static get observers() {
         return [
-          '_getCategory(categories, subcategories, subcategoryId)'
+          '_getCategory(categories, subcategories, subcategoryId)',
+          '_filterSubcategory(categories, subcategories, subcategoryId, categoryId)'
         ]
       }
       _categoryIdObserver(categoryId){
@@ -86,6 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let subcategory = subcategories.filter(s=>s._id === subcategoryId)[0];
       setTimeout(_=>{
         this.categoryId = categories.filter(c=>c._id === subcategory._category)[0]._id;
+        // this.subcategoryId = subcategory._id;
       })
 
 
@@ -96,17 +99,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           fetch(`${fetchBaseUrl}/categories`).then(res=>res.json()),
           fetch(`${fetchBaseUrl}/subcategories`).then(res=>res.json())
         ]).then(results=>{
-          this.categories = results[0];
-          this.subcategories = results[1];
+          let props = {};
+          props.categories = results[0];
+          props.subcategories = results[1];
+          props.subcategoriesFiltered = props.subcategories.filter(s=>s._category === props.categories[0]._id);
+          this.setProperties(props);
         });
       }
       _filterSubcategory(categories, subcategories, subcategoryId, categoryId){
-        if(!subcategories.length) return;
-
+        if(!subcategories.length || subcategoryId === undefined || categoryId === undefined) return;
         var subcategory = subcategories.filter(c=>c._id === subcategoryId)[0];
         // this.set('categoryId', subcategory._category);
-
-        return subcategories.filter(s=>s._category === this.categoryId);
+        if(categoryId){
+          this.subcategoriesFiltered = subcategories.filter(s=>s._category === categoryId);
+        }
       }
     }
 

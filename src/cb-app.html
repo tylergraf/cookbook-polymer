@@ -50,6 +50,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: none;
       }
       .loading-wrapper {
+        height: 0;
+        transition: height 300ms ease;
+      }
+      .loading-wrapper.true {
         height: 20px;
       }
     </style>
@@ -57,8 +61,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <cb-search hidden="[[_hideSearch]]" search-term="[[_searchTerm]]"></cb-search>
       <simple-router path="{{_path}}"></simple-router>
       <slot></slot>
-      <div class="loading-wrapper">
-        <div class="loading" hidden$="[[!_loading]]">
+      <div class="loading-wrapper [[_loading]]">
+        <div class="loading" hidden="[[!_loading]]">
           <slot name="load"></slot>
         </div>
       </div>
@@ -110,6 +114,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       popular: 'popular',
       favorites: 'favorites',
       user: 'user/recipes',
+      collections: 'collections',
+      collection: 'collection',
     }
     const pageToPath = {
       top: 'category',
@@ -119,6 +125,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       popular: 'recipe',
       favorites: 'recipe',
       user: 'recipe',
+      collection: 'recipe',
+      collections: 'collection',
     }
 
     class CBApp extends CBUser(Polymer.Element) {
@@ -184,6 +192,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             break;
           case 'top':
           case 'popular':
+          case 'collections':
+          case 'collection':
           case 'search':
           case 'category':
           case 'subcategory':

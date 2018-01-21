@@ -101,7 +101,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <template>
           <p><a href="/recipe/new">Add recipe</a></p>
           <p><a href="/favorites">Favorites</a></p>
-          <p><a href="/user/[[item._user.uid]]">My Recipes</a></p>
+          <p><a href="/user/[[user.uid]]">My Recipes</a></p>
           <button type="button" on-click="_signOut">Sign Out</button>
         </template>
       </dom-if>
