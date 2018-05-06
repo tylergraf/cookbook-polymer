@@ -34,6 +34,9 @@
           if (user) {
             this.user = user;
             this.signedIn = true;
+            if(gtag){
+              gtag('set', {'user_id': user.uid}); // Set the user ID using signed-in user_id.
+            }
           } else {
             this.signedIn = false;
           }

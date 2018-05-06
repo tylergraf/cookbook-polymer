@@ -11,13 +11,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="../node_modules/@polymer/polymer/lib/elements/dom-if.html">
 <link rel="import" href="./cb-taxonomy.html">
+<link rel="import" href="./cb-network-status.html">
 <link rel="import" href="./cb-favorite.html">
 <link rel="import" href="./cb-note.html">
-<link rel="import" href="/src/cb-user-mixin.html">
+<link rel="import" href="./cb-user-mixin.html">
+<link rel="import" href="./cb-styles.html">
 
 <dom-module id="cb-recipe">
   <template strip-whitespace>
-    <style>
+    <style include="cb-styles">
       :host {
         display: block;
       }
@@ -92,7 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <header>
           <h1 class="title"inner-h-t-m-l="[[item.title]]"></h1>
-          <dom-if if="[[user]]">
+          <dom-if if="[[_showEdit(online,user)]]">
             <template>
               <a href="/edit/[[item._id]]">Edit Recipe</a>
             </template>
@@ -134,7 +136,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
   (function() {
 
-    class HnRecipe extends CBUser(Polymer.Element) {
+    class HnRecipe extends CBNetworkStatus(CBUser(Polymer.Element)) {
 
       static get is() { return 'cb-recipe'; }
       static get properties() {
@@ -145,6 +147,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
       };
+      _showEdit(online, user){
+        return online && user;
+      }
     }
 
     customElements.define(HnRecipe.is, HnRecipe);

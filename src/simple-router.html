@@ -50,9 +50,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     _handleUrlChange() {
       this.location = window.location.href;
-      if(window.ga){
-        ga('set', 'page', window.location.pathname);
-        ga('send', 'pageview');
+      if(window.gtag){
+        gtag('config', GA_TRACKING_ID, {'page_path': window.location.pathname});
       }
     }
 

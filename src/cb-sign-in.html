@@ -79,6 +79,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .offline {
+        color: #fff;
+        font-size: 12px;
+      }
     </style>
     <dom-if if="[[signedIn]]">
       <template>
@@ -90,9 +94,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </button>
       </template>
     </dom-if>
-    <dom-if if="[[!signedIn]]">
+    <dom-if if="[[_showSigninButton(signedIn, _offline)]]">
       <template>
         <button type="button" class="sign-in blank" on-click="_openDialog">Sign In</button>
+      </template>
+    </dom-if>
+    <dom-if if="[[_showOffline(signedIn, _offline)]]">
+      <template>
+        <p class="offline">OFFLINE</p>
       </template>
     </dom-if>
 
@@ -121,7 +130,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     class CBSignIn extends CBUser(Polymer.Element) {
 
       static get is() { return 'cb-sign-in'; }
+      constructor(){
+        super();
 
+        function updateOnlineStatus({type}){
+          this._offline = type === 'offline';
+        }
+        window.addEventListener('online',  updateOnlineStatus.bind(this));
+        window.addEventListener('offline', updateOnlineStatus.bind(this));
+      }
+      _showSigninButton(signedIn, _offline){
+        return !signedIn && !_offline;
+      }
+      _showOffline(signedIn, _offline){
+        return !signedIn && _offline;
+      }
       _openDialog(){
         this.$.dialog.show();
       }
@@ -135,7 +158,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _signIn(auth){
         var provider = new firebase.auth[auth+'AuthProvider']();
 
-        firebase.auth().signInWithPopup(provider).then(function(result) {
+        firebase.auth().signInWithRedirect(provider).then(function(result) {
           this.$.dialog.close();
         }.bind(this)).catch(function(error) {
           // Handle Errors here.

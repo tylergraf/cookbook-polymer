@@ -29,9 +29,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="application-name" content="Gretchen's Cookbook">
 
     <!-- Add to homescreen for Safari on iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="My App">
+    <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Gretchen's Cookbook">
+    <link rel="apple-touch-startup-image" href="/launch.png">
+
+    <!-- splash screens -->
+    <link rel="apple-touch-startup-image" href="images/manifest/launch-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="images/manifest/launch-750x1294.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="images/manifest/launch-1242x2148.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="images/manifest/launch-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="images/manifest/launch-1536x2048.png" media="(min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="images/manifest/launch-1668x2224.png" media="(min-device-width: 834px) and (max-device-width: 834px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+  <link rel="apple-touch-startup-image" href="images/manifest/launch-2048x2732.png" media="(min-device-width: 1024px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait)">
+
+    <link rel="icon" href="/images/favicon.ico?v=2">
 
     <!-- Homescreen icons -->
     <link rel="apple-touch-icon" href="/images/manifest/icon-48x48.png">
@@ -45,11 +57,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="msapplication-TileColor" content="#3f51b5">
     <meta name="msapplication-tap-highlight" content="no">
     <style>
+      html {
+        background: linear-gradient(to right, #673ab7 0%,#9c27b0 60%,#9c27b0 100%);
+      }
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Noto", sans-serif;
         margin: 0 auto;
         padding: 0;
-        /*background: linear-gradient(to right, #673ab7 0%,#673ab7 0%,#9c27b0 100%);*/
+        background: linear-gradient(to right, #673ab7 0%,#673ab7 0%,#9c27b0 100%);
       }
       cb-app {
         overflow-y: scroll;
@@ -132,6 +147,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .hide {
         display: none;
       }
+      body.offline > header {
+        background: #666;
+      }
     </style>
   </head>
   <body>
@@ -163,8 +181,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // base fetch url
       // url for server proxy to api, when running locally switch url's
       // const fetchBaseUrl = '/api';
-      // const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
-      const fetchBaseUrl = 'http://localhost:3000/api';
+      const fetchBaseUrl = 'https://gretchenscookbook-api.herokuapp.com/api';
+      // const fetchBaseUrl = 'http://localhost:3000/api';
 
       fetch(fetchBaseUrl.replace('/api','/'));
     </script>
@@ -179,6 +197,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           navigator.serviceWorker.register('/service-worker.js');
         });
       }
+      function updateOnlineStatus({type}){
+        document.body.classList.toggle('offline', type === 'offline');
+      }
+      window.addEventListener('online',  updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+      updateOnlineStatus({type: window.navigator.onLine});
     </script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-50584064-1"></script>
@@ -186,8 +210,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'UA-50584064-1');
+      const GA_TRACKING_ID = 'UA-50584064-1';
+      gtag('config', GA_TRACKING_ID);
     </script>
 
   </body>

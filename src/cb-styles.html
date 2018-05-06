@@ -1,0 +1,70 @@
+<dom-module id="cb-styles">
+  <template>
+    <style>
+      :host {
+        --red: #f44336;
+        --yellow: #FFB74D;
+        --green: #8BC34A;
+      }
+      .alert {
+        padding: 10px;
+        margin-bottom: 10px;
+        color: #fff;
+        font-size: 1rem;
+      }
+      .warning {
+        background: var(--yellow);
+      }
+      .error {
+        background: var(--red);
+      }
+      .success {
+        background: var(--green);
+      }
+
+      .button {
+        background: #9C27B0;
+        color: #fff;
+        border: none;
+        font-size: 16px;
+        padding: 8px 16px;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        margin-right: 10px;
+        font-size: .8rem;
+      }
+
+      .button.minor {
+        background: #fff;
+        color: inherit;
+      }
+      .button.warn {
+        background: #f44336;
+        font-size: .8rem;
+      }
+      .button.warn:hover {
+        background: #e57373;
+      }
+      .button.warn:active {
+        background: #d32f2f;
+      }
+      .button:hover {
+        background: #BA68C8;
+      }
+      .button:active {
+        background: #7B1FA2;
+      }
+      .button.minor:hover {
+        text-decoration: underline;
+        background: #fff;
+      }
+      .button[disabled],
+      .button[disabled]:hover,
+      .button[disabled]:active {
+        cursor: not-allowed;
+        background: #90A4AE;
+      }
+    </style>
+  </template>
+</dom-module>

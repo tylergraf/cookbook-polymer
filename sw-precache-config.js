@@ -21,7 +21,7 @@ module.exports = {
   ],
   runtimeCaching: [
     {
-      urlPattern: new RegExp(`${path}/api/(categories|category|subcategory|recipe)`),
+      urlPattern: new RegExp(`${path}/api/(categories|category|subcategory|recipe|popular)`),
       handler: 'networkFirst',
       options: {
         cache: {

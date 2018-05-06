@@ -11,7 +11,7 @@
         "destination": "/index.html"
       },
       {
-        "source": "**/!(*.js|*.html|*.css|*.json|*.svg|*.png|*.jpg|*.jpeg)",
+        "source": "**/!(*.js|*.html|*.css|*.json|*.svg|*.png|*.jpg|*.jpeg|*.ico)",
         "destination": "/index.html"
       }
     ],

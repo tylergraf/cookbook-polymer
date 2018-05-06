@@ -10,11 +10,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../node_modules/@polymer/polymer/polymer-element.html">
 <link rel="import" href="./cb-choose-taxonomy.html">
+<link rel="import" href="./cb-styles.html">
+<link rel="import" href="./cb-network-status.html">
 <script src="../node_modules/marked/marked.min.js"></script>
 
 <dom-module id="cb-edit-recipe">
   <template strip-whitespace>
-    <style>
+    <style include="cb-styles">
       :host {
         display: block;
         font-size: var(--detail-font-size);
@@ -77,41 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         max-height: 300px;
         border-color: #E0E0E0;
       }
-      .button {
-        background: #8BC34A;
-        color: #fff;
-        border: none;
-        font-size: 16px;
-        padding: 8px 16px;
-        border-radius: 3px;
-        cursor: pointer;
-        text-decoration: none;
-        margin-right: 10px;
-      }
-      .button.minor {
-        background: #fff;
-        color: inherit;
-      }
-      .button.warn {
-        background: #f44336;
-        font-size: 12px;
-      }
-      .button.warn:hover {
-        background: #e57373;
-      }
-      .button.warn:active {
-        background: #d32f2f;
-      }
-      .button:hover {
-        background: #AED581;
-      }
-      .button:active {
-        background: #689F38;
-      }
-      .button.minor:hover {
-        text-decoration: underline;
-        background: #fff;
-      }
+
       .rendered {
         margin-bottom: 20px;
         margin-top: 10px;
@@ -122,14 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 10px;
         margin-bottom: 10px;
       }
-      .success {
-        background: #C8E6C9;
-        color: #689F38;
-      }
-      .error {
-        background: #ffcdd2;
-        color: #f44336;
-      }
+
       header {
         display: flex;
         flex-flow: row;
@@ -146,7 +107,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <header>
       <h1>[[_getHeading(item)]] Recipe</h1>
     </header>
-    <form on-submit="_save">
+    <dom-if if="[[!online]]">
+      <template>
+        <div class="alert warning">Sorry, can't edit while offline.</div>
+      </template>
+    </dom-if>
+    <form on-submit="_save" disabled$="[[!online]]">
       <label for="title">Recipe Title</label>
       <input id="title" type="text" autofocus placeholder="Killer Hot Dogs" value="{{item.title::input}}">
 
@@ -169,12 +135,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="alert error" hidden$="[[!_error]]">An Error Occurred.</div>
       <section class="actions">
         <div>
-          <button class="button" type="submit" on-click="_save">Save</button>
+          <button class="button" type="submit" disabled$="[[!online]]" on-click="_save">Save</button>
           <a hidden="[[item._id]]" href="/" class="button minor">Cancel</a>
           <a hidden="[[!item._id]]" href="/recipe/[[item._id]]" class="button minor">Cancel</a>
         </div>
         <span class="flex"></span>
-        <button hidden="[[!item._id]]" class="button warn" type="button" on-click="_delete">Delete Recipe</button>
+        <button hidden="[[!item._id]]" class="button warn" type="button" disabled$="[[!online]]" on-click="_delete">Delete Recipe</button>
       </section>
 
     </form>
@@ -184,7 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     const renderer = new marked.Renderer();
 
-    class HnEditRecipe extends Polymer.Element {
+    class HnEditRecipe extends CBNetworkStatus(Polymer.Element) {
       static get is() { return 'cb-edit-recipe'; }
       static get properties() {
         return {
